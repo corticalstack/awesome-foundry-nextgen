@@ -98,10 +98,3 @@ The agents lab is large enough to warrant its own breakdown:
 
 Issues, lab additions, and fixes are very welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)
 for branching, lab numbering, and PR checklist.
-
-## Resources
-
-- [What is Microsoft Foundry?](https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-foundry?view=foundry)
-- [Foundry portal](https://ai.azure.com)
-- [Microsoft Agent Framework](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/)
-- [Foundry IQ knowledge base](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/knowledge-base)
