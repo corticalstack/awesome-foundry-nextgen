@@ -1,0 +1,26 @@
+{
+  "as_of": "2026-05-09",
+  "fx_to_chf": {
+    "CHF": 1.0,
+    "EUR": 0.96,
+    "USD": 0.89,
+    "GBP": 1.13
+  },
+  "instrument_marks": {
+    "XX0000000001": {"price": 102.45, "currency": "EUR", "ytd_return_pct": 2.8, "ttm_yield_pct": 3.4, "trailing_30d_pct": -0.3},
+    "XX0000000002": {"price": 158.20, "currency": "CHF", "ytd_return_pct": 4.6, "ttm_yield_pct": 2.1, "trailing_30d_pct": 1.2},
+    "XX0000000003": {"price": 119.85, "currency": "CHF", "ytd_return_pct": 3.1, "ttm_yield_pct": 2.4, "trailing_30d_pct": 0.4},
+    "XX0000000004": {"price": 94.50, "currency": "USD", "ytd_return_pct": -2.1, "ttm_yield_pct": 1.9, "trailing_30d_pct": -3.6},
+    "XX0000000005": {"price": 215.40, "currency": "USD", "ytd_return_pct": 12.7, "ttm_yield_pct": 0.8, "trailing_30d_pct": 5.2},
+    "XX0000000006": {"price": 99.10, "currency": "EUR", "ytd_return_pct": 1.4, "ttm_yield_pct": 3.9, "trailing_30d_pct": -0.6},
+    "XX0000000007": {"price": 105.80, "currency": "CHF", "ytd_return_pct": 0.9, "ttm_yield_pct": 1.4, "trailing_30d_pct": 0.2},
+    "XX0000000008": {"price": 1245.00, "currency": "USD", "ytd_return_pct": 6.3, "ttm_yield_pct": 0.0, "trailing_30d_pct": 0.0, "valuation_lag_days": 90},
+    "XX0000000009": {"price": 132.60, "currency": "EUR", "ytd_return_pct": 5.8, "ttm_yield_pct": 4.2, "trailing_30d_pct": 1.1},
+    "XX0000000010": {"price": 187.95, "currency": "USD", "ytd_return_pct": 8.4, "ttm_yield_pct": 1.6, "trailing_30d_pct": 2.7},
+    "XX0000000011": {"price": 76.30, "currency": "USD", "ytd_return_pct": -0.8, "ttm_yield_pct": 2.3, "trailing_30d_pct": -1.4},
+    "XX0000000012": {"price": 100.05, "currency": "CHF", "ytd_return_pct": 0.6, "ttm_yield_pct": 1.1, "trailing_30d_pct": 0.1},
+    "XX0000000013": {"price": 112.70, "currency": "EUR", "ytd_return_pct": -1.5, "ttm_yield_pct": 1.0, "trailing_30d_pct": -2.8},
+    "XX0000000014": {"price": 1085.00, "currency": "USD", "ytd_return_pct": 3.4, "ttm_yield_pct": 0.0, "trailing_30d_pct": 0.6, "valuation_lag_days": 30},
+    "XX0000000015": {"price": 412.00, "currency": "CHF", "ytd_return_pct": 18.2, "ttm_yield_pct": 0.0, "trailing_30d_pct": 7.4, "lock_up_until": "2027-09-30"}
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "reg-004",
+  "title": "Suitability template — pension trustee summary pack",
+  "tags": ["suitability", "pension", "finma", "switzerland"],
+  "published": "2026-03-20",
+  "content": "Standard pack for pension-segment clients (e.g. cli-005 Riedi Pension Plan). Sections: (1) IPS conformance summary — actual vs target by asset class, regional, ESG, with auto-flagged drift items; (2) duration vs liability curve — 5y, 10y, 20y comparison; (3) funding-ratio sensitivity — to ±50bp parallel shift and ±200bp non-parallel; (4) sustainability disclosure — FINMA Circular 2024/2 attestation block; (5) recent transactions — last quarter, with intent classifications. The template is regenerated quarterly; the next refresh is 2026-06-30."
+}

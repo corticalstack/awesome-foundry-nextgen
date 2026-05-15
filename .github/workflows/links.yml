@@ -1,0 +1,39 @@
+name: Link check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly Monday at 06:00 UTC — catches link rot in upstream docs
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    name: Check markdown + notebook links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --cache
+            --max-cache-age 7d
+            --accept 200,206,429
+            --exclude-path .git
+            --exclude-path assets
+            --exclude '^https?://(localhost|127\.0\.0\.1|.*\.azure-api\.net|.*\.cognitiveservices\.azure\.com|.*\.search\.windows\.net|.*\.services\.ai\.azure\.com)'
+            './**/*.md'
+            './**/*.ipynb'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,11 @@
+{
+  "id": "doc-002",
+  "doc_type": "mom",
+  "project_id": "proj-001",
+  "meeting_id": "mtg-002",
+  "title": "MoM – Weekly Standup W8 – Project Aurora – 2026-02-26",
+  "tags": ["standup", "scope-change", "fragrance-variant"],
+  "created_at": "2026-02-26",
+  "approved": false,
+  "content": "Meeting: Weekly Standup W8 – Project Aurora\nDate: 26 February 2026\nChair: Jane Smith\nAttendees: Jane Smith (PM/OCM), Marco Rossi (R&D), Sarah Chen (Procurement), Tom Walsh (Quality), Lisa Park (Packaging)\n\nUPDATES\n- Marco Rossi: Formula stability testing in progress, on track for 05 March deadline. Early indicators positive\n- Sarah Chen: Supplier contacted regarding lead times, formal response expected by 28 February\n- Tom Walsh: Awaiting Marco's stability report before proceeding with compliance sign-off\n- Lisa Park: Dieline update on hold pending Sarah's lead time confirmation and fill weight spec lock\n\nSCOPE CHANGE RAISED\n- Categories (David Osei) have requested fragrance variant be added back to Aurora scope, UK market only\n- Impact assessment required from R&D (formulation effort) and Packaging (additional dieline and artwork)\n- Jane to circulate updated project plan reflecting this scope addition by 01 March\n- Scope review meeting to be scheduled with Categories and Packaging for week of 03 March\n\nACTIONS\n- Jane Smith: Prepare G3 gate update slide for governance board by 24 February 2026 [OVERDUE AT TIME OF MEETING]\n- Jane Smith: Circulate updated project plan with fragrance variant scope change by 01 March 2026\n\nRISKS NOTED\n- Fragrance variant re-addition has not been impact-assessed — risk of G4 timeline slip if scope is not locked quickly\n\nNEXT MEETING\n- Aurora Scope Review with Categories on 04 March 2026"
+}

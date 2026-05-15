@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cli-001",
+    "name": "Berger Family Trust",
+    "segment": "UHNW Multi-Generation",
+    "rm": "Anna Müller",
+    "rm_email": "anna.muller@contoso-private.example",
+    "base_currency": "CHF",
+    "aum_chf": 87500000,
+    "established": "2018-04-01",
+    "next_review_date": "2026-05-15",
+    "languages": ["DE", "EN"],
+    "domicile": "Zurich, CH",
+    "tags": ["esg-mandate", "multi-generation", "philanthropic"]
+  },
+  {
+    "id": "cli-002",
+    "name": "Eichmann Foundation",
+    "segment": "Philanthropic Foundation",
+    "rm": "Stefan Hofer",
+    "rm_email": "stefan.hofer@contoso-private.example",
+    "base_currency": "CHF",
+    "aum_chf": 42300000,
+    "established": "2012-09-15",
+    "next_review_date": "2026-06-02",
+    "languages": ["DE"],
+    "domicile": "Geneva, CH",
+    "tags": ["foundation", "income-mandate", "conservative"]
+  },
+  {
+    "id": "cli-003",
+    "name": "Lindemann Family Office",
+    "segment": "Single-Family Office",
+    "rm": "Claire Dubois",
+    "rm_email": "claire.dubois@contoso-private.example",
+    "base_currency": "EUR",
+    "aum_chf": 156800000,
+    "established": "2015-01-20",
+    "next_review_date": "2026-05-22",
+    "languages": ["FR", "EN", "DE"],
+    "domicile": "Geneva, CH",
+    "tags": ["growth-mandate", "alts-permitted", "private-equity"]
+  },
+  {
+    "id": "cli-004",
+    "name": "Müller Entrepreneurial Wealth",
+    "segment": "Post-Liquidity Entrepreneur",
+    "rm": "Anna Müller",
+    "rm_email": "anna.muller@contoso-private.example",
+    "base_currency": "USD",
+    "aum_chf": 68200000,
+    "established": "2024-07-10",
+    "next_review_date": "2026-05-12",
+    "languages": ["EN", "DE"],
+    "domicile": "Zug, CH",
+    "tags": ["growth-mandate", "concentrated-position-legacy", "private-equity"]
+  },
+  {
+    "id": "cli-005",
+    "name": "Riedi Pension Plan",
+    "segment": "Institutional Pension",
+    "rm": "Marc Vogel",
+    "rm_email": "marc.vogel@contoso-private.example",
+    "base_currency": "CHF",
+    "aum_chf": 234500000,
+    "established": "2008-02-01",
+    "next_review_date": "2026-06-30",
+    "languages": ["DE"],
+    "domicile": "Bern, CH",
+    "tags": ["pension", "ldi-mandate", "fixed-income-heavy"]
+  }
+]

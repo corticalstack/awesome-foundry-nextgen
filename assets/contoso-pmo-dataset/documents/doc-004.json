@@ -1,0 +1,11 @@
+{
+  "id": "doc-004",
+  "doc_type": "gate_doc",
+  "project_id": "proj-001",
+  "meeting_id": "mtg-001",
+  "title": "Project Aurora – G3 Gate Entry Pack",
+  "tags": ["G3", "gate-entry", "compliance", "checklist"],
+  "created_at": "2026-02-18",
+  "approved": true,
+  "content": "Project: Aurora | Gate: G3 | Submitted by: Jane Smith | Date: 18 February 2026\n\nG3 ENTRY CRITERIA CHECKLIST\n[x] Business case updated and approved by Categories\n[x] Project charter signed off\n[x] R&D concept confirmed and preliminary formula available\n[x] Preliminary cost model completed\n[x] Initial supplier identification completed\n[x] Regulatory assessment completed for target markets\n[ ] Formula stability data complete — IN PROGRESS (expected 05 March)\n[ ] Final packaging specification locked — PENDING supplier lead time confirmation\n\nGATE DECISION\n- Status: Conditional pass\n- Condition 1: Formula stability data to be submitted by 05 March 2026\n- Condition 2: Supplier lead time confirmation by 03 March 2026\n- Next gate: G4 target 15 April 2026\n\nAPPROVED BY\n- David Osei (Categories) — 20 February 2026\n- Jane Smith (OCM) — 20 February 2026"
+}

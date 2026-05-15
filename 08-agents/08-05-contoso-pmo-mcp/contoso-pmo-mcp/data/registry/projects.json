@@ -1,0 +1,23 @@
+[
+  {
+    "id": "proj-001",
+    "name": "Project Aurora",
+    "status": "active",
+    "current_gate": "G3",
+    "created_at": "2026-01-10"
+  },
+  {
+    "id": "proj-002",
+    "name": "Project Bolt",
+    "status": "active",
+    "current_gate": "G5",
+    "created_at": "2025-06-03"
+  },
+  {
+    "id": "proj-003",
+    "name": "Project Crest",
+    "status": "completed",
+    "current_gate": "G7",
+    "created_at": "2024-03-18"
+  }
+]

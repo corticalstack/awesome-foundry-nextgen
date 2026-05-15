@@ -1,0 +1,41 @@
+[project]
+name = "awesome-foundry-nextgen"
+version = "0.1.0"
+description = "Hands-on labs for Microsoft Foundry — Azure's unified PaaS for enterprise AI"
+requires-python = ">=3.11"
+dependencies = [
+    # Core Foundry SDKs
+    "azure-ai-projects>=2.0.0b1",
+    "azure-ai-evaluation>=1.16.2",
+    "azure-mgmt-cognitiveservices>=14.0.0",
+    "azure-search-documents>=11.7.0b2",
+    "openai>=1.0.0",
+    # Agent Framework — pinned: azure-ai's last release is 1.0.0rc6 (2026-03-30).
+    # Newer core/openai drop BaseContextProvider that azure-ai still imports.
+    "agent-framework-core==1.0.0rc6",
+    "agent-framework-azure-ai==1.0.0rc6",
+    "agent-framework-azure-ai-search==1.0.0b260330",
+    "agent-framework-openai==1.0.0rc6",
+    "agent-framework-foundry==1.0.0rc6",
+    # Observability
+    "azure-monitor-opentelemetry>=1.6.0",
+    "azure-monitor-query>=1.4.0",
+    # Data / utilities
+    "datasets>=3.0.0",
+    "pandas>=2.0.0",
+    "jinja2>=3.0.0",
+    "requests>=2.32.0",
+    "rich>=13.0.0",
+    # Auth / config
+    "azure-identity>=1.26.0b2",
+    "python-dotenv>=1.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.0",
+    "pytest>=9.0.2",
+]
+
+[tool.uv]
+prerelease = "allow"

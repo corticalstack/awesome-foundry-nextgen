@@ -1,0 +1,142 @@
+[
+  {
+    "id": "doc-001",
+    "doc_type": "mom",
+    "project_id": "proj-001",
+    "meeting_id": "mtg-001",
+    "title": "MoM – G3 Gate Review – Project Aurora – 2026-02-20",
+    "tags": ["G3", "gate-review", "formula", "packaging", "procurement"],
+    "created_at": "2026-02-20",
+    "approved": true
+  },
+  {
+    "id": "doc-002",
+    "doc_type": "mom",
+    "project_id": "proj-001",
+    "meeting_id": "mtg-002",
+    "title": "MoM – Weekly Standup W8 – Project Aurora – 2026-02-26",
+    "tags": ["standup", "scope-change", "fragrance-variant"],
+    "created_at": "2026-02-26",
+    "approved": false
+  },
+  {
+    "id": "doc-003",
+    "doc_type": "plan",
+    "project_id": "proj-001",
+    "meeting_id": null,
+    "title": "Project Aurora – Master Project Plan v2",
+    "tags": ["G3", "plan", "milestones", "WBS", "scope"],
+    "created_at": "2026-01-15",
+    "approved": true
+  },
+  {
+    "id": "doc-004",
+    "doc_type": "gate_doc",
+    "project_id": "proj-001",
+    "meeting_id": "mtg-001",
+    "title": "Project Aurora – G3 Gate Entry Pack",
+    "tags": ["G3", "gate-entry", "compliance", "checklist"],
+    "created_at": "2026-02-18",
+    "approved": true
+  },
+  {
+    "id": "doc-005",
+    "doc_type": "lesson",
+    "project_id": "proj-001",
+    "meeting_id": null,
+    "title": "Lesson: Supplier lead time risk at G3 – Project Helios",
+    "tags": ["G3", "risk", "Procurement", "supplier", "packaging"],
+    "created_at": "2025-09-14",
+    "approved": true
+  },
+  {
+    "id": "doc-006",
+    "doc_type": "mom",
+    "project_id": "proj-002",
+    "meeting_id": "mtg-004",
+    "title": "MoM – G5 Gate Review – Project Bolt – 2026-02-10",
+    "tags": ["G5", "gate-review", "supply-chain", "regulatory", "marketing"],
+    "created_at": "2026-02-10",
+    "approved": true
+  },
+  {
+    "id": "doc-007",
+    "doc_type": "mom",
+    "project_id": "proj-002",
+    "meeting_id": "mtg-006",
+    "title": "MoM – Bolt Risk Review – Supply Chain – 2026-02-24",
+    "tags": ["risk", "supply-chain", "supplier", "G5", "Procurement"],
+    "created_at": "2026-02-24",
+    "approved": true
+  },
+  {
+    "id": "doc-008",
+    "doc_type": "status_report",
+    "project_id": "proj-002",
+    "meeting_id": null,
+    "title": "Project Bolt – Monthly Status Report – February 2026",
+    "tags": ["G5", "status", "risks", "milestones"],
+    "created_at": "2026-02-01",
+    "approved": true
+  },
+  {
+    "id": "doc-009",
+    "doc_type": "lesson",
+    "project_id": "proj-003",
+    "meeting_id": "mtg-007",
+    "title": "Lesson: Late regulatory submission delayed FR market launch – Project Crest",
+    "tags": ["G5", "risk", "Quality & Compliance", "regulatory", "France"],
+    "created_at": "2025-11-12",
+    "approved": true
+  },
+  {
+    "id": "doc-010",
+    "doc_type": "lesson",
+    "project_id": "proj-003",
+    "meeting_id": "mtg-007",
+    "title": "Lesson: Scope creep from variant addition added 6 weeks to Crest timeline",
+    "tags": ["G3", "risk", "OCM", "scope-change", "variants"],
+    "created_at": "2025-11-12",
+    "approved": true
+  },
+  {
+    "id": "doc-011",
+    "doc_type": "gate_doc",
+    "project_id": "proj-002",
+    "meeting_id": "mtg-004",
+    "title": "Project Bolt – G5 Gate Entry Pack",
+    "tags": ["G5", "gate-entry", "compliance", "checklist", "supply-chain"],
+    "created_at": "2026-02-08",
+    "approved": true
+  },
+  {
+    "id": "doc-012",
+    "doc_type": "email",
+    "project_id": "proj-001",
+    "meeting_id": null,
+    "title": "Email: Categories request to re-add fragrance variant to Aurora scope",
+    "tags": ["scope-change", "fragrance-variant", "Categories", "G3"],
+    "created_at": "2026-02-24",
+    "approved": true
+  },
+  {
+    "id": "doc-013",
+    "doc_type": "chat",
+    "project_id": "proj-001",
+    "meeting_id": null,
+    "title": "Teams Chat: Aurora packaging dieline delay discussion",
+    "tags": ["packaging", "dieline", "delay", "supplier"],
+    "created_at": "2026-02-27",
+    "approved": true
+  },
+  {
+    "id": "doc-014",
+    "doc_type": "status_report",
+    "project_id": "proj-001",
+    "meeting_id": null,
+    "title": "Project Aurora – Monthly Status Report – February 2026",
+    "tags": ["G3", "status", "risks", "milestones"],
+    "created_at": "2026-02-01",
+    "approved": true
+  }
+]

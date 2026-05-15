@@ -1,0 +1,45 @@
+# Environment
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# uv
+uv.lock
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code
+CLAUDE.md
+.claude/
+settings.json
+
+# Project Maestro docs
+docs/20260226-Project Maestro - PoV User Stories.pdf
+
+# Workshop planning (kept local, not for the open-source repo)
+docs/private-banking-workshop-agenda.md
+docs/pictet-cheatsheet.md
+
+# MCP server build artifacts
+docs/05-custom-mcp-server/maestro-mcp/data/
+**/*-mcp.zip
+*.zip
+
+# Scratch / temp directories
+99-docs/
+99-tmp/
+
+# Ralph / tmux tooling
+.ralph/
+.tmux/
+.tmux.ralph.conf

@@ -1,0 +1,11 @@
+{
+  "id": "doc-005",
+  "doc_type": "lesson",
+  "project_id": "proj-001",
+  "meeting_id": null,
+  "title": "Lesson: Supplier lead time risk at G3 – Project Helios",
+  "tags": ["G3", "risk", "Procurement", "supplier", "packaging"],
+  "created_at": "2025-09-14",
+  "approved": true,
+  "content": "Project: Helios | Gate: G3 | Function: Procurement | Risk: Yes\n\nWHAT HAPPENED\nDuring the G3 review on Project Helios, supplier lead time confirmation for primary packaging was delayed by two weeks. Root cause: Procurement had not been informed early enough about the revised fill weight, which changed the packaging specification after supplier quotes had already been requested. Suppliers needed to re-quote, adding a two-week delay.\n\nIMPACT\nG4 milestone slipped by three weeks. Launch date pushed from September to October. Additional airfreight costs of ~€45K incurred to partially recover the timeline.\n\nLESSON\nPackaging specification must be frozen and communicated to Procurement at least four weeks before G3 gate review. Procurement should be a mandatory G3 attendee. Supplier lead time confirmation should be a gate entry criterion for G3, not a post-gate action.\n\nRECOMMENDATION\nAdd supplier lead time confirmation to the G3 entry checklist as a hard gate requirement. Update the BLAST standards accordingly."
+}

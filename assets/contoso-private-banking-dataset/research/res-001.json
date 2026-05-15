@@ -1,0 +1,9 @@
+{
+  "id": "res-001",
+  "title": "Contoso Sustainable Income Fund — May 2026 factsheet",
+  "isin": "XX0000000001",
+  "doc_type": "fund_factsheet",
+  "tags": ["fixed_income", "esg", "income"],
+  "published": "2026-05-01",
+  "content": "Strategy: Investment-grade EUR-denominated credit and sovereign exposure with an ESG floor at 7.5. Trailing 12-month yield 3.4%. Manager has slightly extended duration into the recent ECB rate-cut window (effective duration 5.8y vs 5.2y prior). Top sector exposures: sovereign 38%, IG financials 22%, IG industrials 18%. ESG score 8.2 (composite). Notable: fund underweights Russell-screened thermal coal issuers since 2024-Q1 reweighting."
+}

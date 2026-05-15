@@ -1,0 +1,11 @@
+{
+  "id": "doc-011",
+  "doc_type": "gate_doc",
+  "project_id": "proj-002",
+  "meeting_id": "mtg-004",
+  "title": "Project Bolt – G5 Gate Entry Pack",
+  "tags": ["G5", "gate-entry", "compliance", "checklist", "supply-chain"],
+  "created_at": "2026-02-08",
+  "approved": true,
+  "content": "Project: Bolt | Gate: G5 | Submitted by: Rachel Kim | Date: 08 February 2026\n\nG5 ENTRY CRITERIA CHECKLIST\n[x] Formula fully signed off by R&D\n[x] Packaging artwork approved for UK and DE\n[x] Manufacturing trial completed\n[x] Supply chain plan confirmed (UK + DE)\n[x] Commercial terms agreed with key customers (UK + DE)\n[x] Launch plan approved by Marketing\n[ ] France regulatory compliance submission confirmed — OUTSTANDING (assigned Tom Walsh, due 24 Feb)\n[ ] Backup supplier qualified — OUTSTANDING (new action, assigned Sarah Chen, due 05 Mar)\n\nGATE DECISION\n- Status: Passed for UK and DE. Conditional for FR\n- Condition: France regulatory documentation to be submitted by 24 February 2026\n- Next gate: G6 target 01 May 2026\n\nAPPROVED BY\n- Carlos Mendez (Marketing) — 10 February 2026\n- Rachel Kim (OCM) — 10 February 2026"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "doc-010",
+  "doc_type": "lesson",
+  "project_id": "proj-003",
+  "meeting_id": "mtg-007",
+  "title": "Lesson: Scope creep from variant addition added 6 weeks to Crest timeline",
+  "tags": ["G3", "risk", "OCM", "scope-change", "variants"],
+  "created_at": "2025-11-12",
+  "approved": true,
+  "content": "Project: Crest | Gate: G3 | Function: OCM | Risk: Yes\n\nWHAT HAPPENED\nAt G3 on Project Crest, Categories requested the addition of a second fragrance variant to the launch scope. The request was accepted without a formal impact assessment. The additional variant required new R&D formulation work, a second packaging dieline and artwork, and additional procurement activity. The cumulative effect added six weeks to the overall project timeline and ~€85K to the project cost.\n\nIMPACT\n- Six-week delay to G4 and knock-on delay to launch\n- Budget overrun of €85K (7% above approved budget)\n- Team morale impacted by rework across R&D and Packaging\n\nLESSON\nAny scope change request at or after G3 must be subject to a formal impact assessment covering timeline, cost, and resource before acceptance. The impact assessment must be presented at a governance board and require explicit approval before the scope change is incorporated into the plan.\n\nRECOMMENDATION\nIntroduce a formal scope change request process with a mandatory impact assessment template. No scope changes to be accepted after G3 without governance board approval. Update BLAST standards to include scope change governance."
+}

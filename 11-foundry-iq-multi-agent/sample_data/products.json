@@ -1,0 +1,66 @@
+[
+  {
+    "id": "prd-001",
+    "title": "ContosoBook Pro",
+    "content": "The ContosoBook Pro is Contoso Corporation's flagship business laptop, engineered for professionals who demand performance, portability, and AI-accelerated productivity. Powered by the Intel Core Ultra 7 Series 2 processor with Contoso ContextSense NPU, it delivers up to 48 TOPS of AI compute for real-time transcription, background noise cancellation, and intelligent power management. Display: 14-inch 2880×1800 OLED panel with 120Hz refresh rate, 400 nits brightness, and 100% DCI-P3 colour coverage. Battery life reaches 18 hours on video playback under standard conditions, supported by 80W Thunderbolt 4 charging. Memory options: 16GB or 32GB LPDDR5x; storage: 512GB, 1TB, or 2TB NVMe PCIe Gen 4. Connectivity: two Thunderbolt 4 ports, two USB-A 3.2 Gen 2 ports, HDMI 2.1, SD card reader, 3.5mm combo audio jack, and Wi-Fi 7 with Bluetooth 5.4. The chassis is machined from aircraft-grade aluminium and weighs 1.28 kg. The keyboard features a full-size island layout with 1.5mm key travel, backlit, with a fingerprint reader integrated into the power button and an IR camera for Windows Hello facial recognition. Dimensions: 311mm × 222mm × 14.8mm. Colour options: Platinum Silver and Midnight Black. The ContosoBook Pro ships with Windows 11 Pro and a one-year Contoso Premier Support subscription. Retail price starts at $1,299 USD. Three-year on-site warranty available. SKU: CBP-14-001.",
+    "category": "Laptops",
+    "lastModified": "2025-01-14T00:00:00Z",
+    "url": "https://contoso.com/products/contosobook-pro"
+  },
+  {
+    "id": "prd-002",
+    "title": "ContosoSound Pro Headphones",
+    "content": "ContosoSound Pro is Contoso Corporation's premium over-ear wireless headphone, designed for professionals who need exceptional audio quality and focus in any environment. Featuring 40mm proprietary Contoso BalancedField drivers and three-mic hybrid Active Noise Cancellation (ANC), ContosoSound Pro reduces ambient noise by up to 35dB. Transparency mode allows ambient audio passthrough with a single touch. Audio codecs supported: AAC, SBC, aptX HD, and LDAC for high-resolution wireless audio. Battery life: up to 32 hours with ANC on, 40 hours with ANC off; 15-minute fast charge provides 3 hours of playback. Charging: USB-C; also compatible with Qi wireless charging via the optional charging stand. Connectivity: Bluetooth 5.3 with multipoint pairing for up to three devices simultaneously; 3.5mm analogue cable included for wired use. The headband and ear cups are upholstered in premium memory foam with protein leather covering; the headband auto-adjusts for fit. Weight: 250g. On-ear controls include touch-sensitive swipe for volume, physical buttons for ANC modes and playback, and a dedicated Contoso AI button that activates voice assistant and real-time meeting transcription via the ContosoSound app. Frequency response: 20Hz–20kHz. Compatible with iOS, Android, and Windows. Colour options: Graphite, Pearl White, and Deep Navy. Retail price: $349 USD. SKU: CSP-OE-001.",
+    "category": "Audio",
+    "lastModified": "2024-09-10T00:00:00Z",
+    "url": "https://contoso.com/products/contososound-pro"
+  },
+  {
+    "id": "prd-003",
+    "title": "ContosoWatch Series 4",
+    "content": "ContosoWatch Series 4 is Contoso Corporation's most advanced smartwatch, combining health monitoring, productivity tools, and Contoso ecosystem integration in an ultra-thin form factor. The 1.9-inch AMOLED display delivers 2000 nits peak brightness and is protected by sapphire crystal glass. Health sensors include continuous heart rate, blood oxygen (SpO2), ECG, skin temperature, and stress monitoring. Sleep tracking analyses REM, light, and deep sleep stages with personalised coaching in the ContosoHealth app. GPS accuracy is enhanced by dual-frequency L1+L5 reception for precise outdoor navigation. The custom Contoso C2 chip achieves 36-hour battery life with always-on display, or 72 hours in battery saver mode; magnetic fast charge from 0–80% in 45 minutes. Water resistance: 5ATM plus IP68 for swimming. Connectivity: Bluetooth 5.4, Wi-Fi 6, NFC for contactless payment via Contoso Pay. Operating system: ContosoOS 4 with native app support and compatibility with Android 10+ and iOS 16+. The AI wellness assistant proactively surfaces health insights and nudges based on trends. Interchangeable bands available in silicone, woven nylon, Milanese loop, and leather; all Series 4 bands are compatible with Series 3. Case sizes: 41mm and 45mm; materials: aluminium (Sport) and titanium (Edition). Retail prices: Sport from $399 USD, Edition from $699 USD. SKU: CW4-41-001, CW4-45-001.",
+    "category": "Wearables",
+    "lastModified": "2025-02-03T00:00:00Z",
+    "url": "https://contoso.com/products/contosowatch-series-4"
+  },
+  {
+    "id": "prd-004",
+    "title": "ContosoTab",
+    "content": "ContosoTab is Contoso Corporation's versatile 12.9-inch productivity tablet, designed to serve as both a mobile workstation and a creative canvas. The display is a 2732×2048 Liquid Retina panel with ProMotion adaptive refresh rate up to 120Hz, True Tone, and P3 wide colour. The Contoso A3 chip with 10-core CPU, 10-core GPU, and 16-core Neural Engine delivers desktop-class performance with up to 16GB RAM and 2TB storage. ContosoTab supports the ContosoStylus 2 (sold separately) with sub-millisecond latency and 4096 levels of pressure sensitivity for professional illustration and note-taking. The Magic Connector port enables the ContosoBook Keyboard (sold separately) with trackpad, transforming ContosoTab into a full laptop experience running ContosoOS Desktop mode. Cameras: 12MP rear with LiDAR for AR applications; 12MP ultra-wide front with Centre Stage auto-framing for video calls. Battery life: 12 hours of web browsing; 20W USB-C charging. Connectivity: Thunderbolt 4 port (40Gbps), Wi-Fi 6E, Bluetooth 5.3; optional 5G model available. Four-speaker audio with spatial sound. Available in Silver, Space Grey, Gold, and Sky Blue. Storage: 128GB, 256GB, 512GB, 1TB, 2TB. Retail price starts at $799 USD for 128GB Wi-Fi. SKU: CTB-129-001. Three-year warranty available.",
+    "category": "Tablets",
+    "lastModified": "2024-10-22T00:00:00Z",
+    "url": "https://contoso.com/products/contosotab"
+  },
+  {
+    "id": "prd-005",
+    "title": "ContosoType Mechanical Keyboard",
+    "content": "ContosoType is Contoso Corporation's professional mechanical keyboard, built for developers, writers, and power users who demand precision, comfort, and durability. The full-size 104-key layout includes a dedicated numpad and media controls; a tenkeyless (87-key) variant is also available. ContosoType uses hot-swappable Kailh Box switches available in three variants: Red (linear, 45g actuation), Brown (tactile, 55g), and Blue (clicky, 60g). Each switch is rated for 80 million keystrokes. The double-shot PBT keycaps resist shine and are thicker than standard ABS caps for a premium feel. Per-key RGB backlighting with 16.8 million colours is configurable via the ContosoType app for Windows and macOS. The aluminium top case with 5-degree typing angle and detachable wrist rest reduces fatigue during extended sessions. Connectivity: USB-C (braided 1.8m cable included) plus 2.4GHz wireless receiver; also Bluetooth 5.2 for multi-device pairing across up to three devices. On-board memory stores three profiles for use with any computer. N-key rollover with anti-ghosting ensures accurate simultaneous keypress registration. USB passthrough port on the right side. Dimensions: 444mm × 140mm × 40mm; weight 1.05 kg. Colour: Space Black. Retail price: $179 USD (full-size), $159 USD (TKL). SKU: CTY-104-001, CTY-087-001.",
+    "category": "Peripherals",
+    "lastModified": "2024-08-05T00:00:00Z",
+    "url": "https://contoso.com/products/contosotype"
+  },
+  {
+    "id": "prd-006",
+    "title": "ContosoCharge Wireless Charging Pad",
+    "content": "ContosoCharge is Contoso Corporation's 3-in-1 wireless charging station, designed to charge a smartphone, smartwatch, and wireless earbuds simultaneously with a single cable. Compatible devices: Qi2-certified smartphones (including iPhone 13+ and Android phones with Qi2); ContosoWatch Series 3 and 4 via the integrated magnetic charging puck; ContosoEarBuds case via Qi 5W charging spot. The ContosoCharge delivers up to 15W to Qi2-certified phones, 5W to ContosoWatch, and 5W to earbuds, for a total output of up to 25W. The surface is made from premium Italian full-grain leather that protects devices from scratches. A single USB-C cable (included, 1.5m, 45W power adapter included) powers the entire station. Smart charging management detects each device and allocates power intelligently to optimise charging speed. LED indicator lights confirm charging status without being distracting at night. Dimensions: 220mm × 90mm × 7mm; weight 240g. Colour options: Tan, Black, and Slate Grey. Compatible with MagSafe accessories. Retail price: $99 USD. SKU: CCH-3IN1-001. Certified by Qi2 Alliance.",
+    "category": "Accessories",
+    "lastModified": "2024-07-15T00:00:00Z",
+    "url": "https://contoso.com/products/contososcharge"
+  },
+  {
+    "id": "prd-007",
+    "title": "ContosoVision AR Glasses",
+    "content": "ContosoVision is Contoso Corporation's augmented reality glasses for enterprise and developer users, offering a hands-free, spatial computing experience that overlays digital information onto the physical world. The waveguide display delivers a 47-degree diagonal field of view at 1280×960 per eye with full-colour 24bpp rendering. The Contoso Spatial Engine chip powers on-device AI for object recognition, hand tracking, voice commands, and real-time translation. Battery life: 3 hours of active mixed-reality use, 8 hours in lightweight notification mode; USB-C charging. Weight: 68g including battery pack; prescription lens inserts are available. Connectivity: Wi-Fi 6E, Bluetooth 5.4, USB-C, and optional tethering to a ContosoBook Pro for extended compute. Sensors: eight-camera SLAM for inside-out tracking, ToF depth sensor, IMU, ambient light, eye tracking. Microphone array with beam-forming for voice commands in noisy environments. ContosoVision runs ContosoOS Spatial and is compatible with the ContosoVision SDK for enterprise app development. Enterprise use cases include remote expert guidance (technician sees what expert sees), warehouse picking with hands-free instructions, and field service inspection with AR overlay of equipment manuals. ContosoVision is available to enterprise customers and registered developers; consumer release is targeted for late 2026. Developer Preview price: $1,499 USD. Contact enterprisesales@contoso.com for volume pricing. SKU: CVS-EP-001.",
+    "category": "AR/VR",
+    "lastModified": "2025-02-28T00:00:00Z",
+    "url": "https://contoso.com/products/contosovision"
+  },
+  {
+    "id": "prd-008",
+    "title": "ContosoEarBuds Pro",
+    "content": "ContosoEarBuds Pro are Contoso Corporation's flagship true wireless earbuds, engineered for all-day wear, exceptional call quality, and immersive audio. Each earbud houses a 10mm dynamic driver with Contoso Balanced Armature for extended high-frequency response. Hybrid Active Noise Cancellation reduces ambient noise by up to 30dB; Adaptive Transparency dynamically adjusts passthrough based on environment volume. Spatial audio with head tracking delivers an immersive listening experience with Dolby Atmos content. Battery life: 8 hours per charge, 32 hours total with the wireless charging case; 10-minute charge provides 1.5 hours of playback. The case supports both Qi wireless charging and USB-C wired charging. Bluetooth 5.3 with simultaneous dual-device connection; automatic ear detection pauses playback when removed. Fit: three sizes of silicone ear tips and two sizes of ear fin stabilisers included; IPX4 sweat and water resistance for both earbuds and case. Controls: touch-sensitive stems with customisable gestures via the ContosoSound app for playback, volume, ANC mode, and AI assistant activation. Call quality is enhanced by three-mic beamforming with wind noise suppression rated for 25 mph winds. Voice assistant compatible with Contoso AI, Siri, and Google Assistant. Codec support: AAC, SBC, aptX Adaptive. Colour options: Pearl White, Graphite, Rose, and Forest Green. Retail price: $229 USD. SKU: CEB-PRO-001.",
+    "category": "Audio",
+    "lastModified": "2024-11-12T00:00:00Z",
+    "url": "https://contoso.com/products/contosoearbuds-pro"
+  }
+]

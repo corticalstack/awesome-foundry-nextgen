@@ -1,0 +1,11 @@
+{
+  "id": "doc-006",
+  "doc_type": "mom",
+  "project_id": "proj-002",
+  "meeting_id": "mtg-004",
+  "title": "MoM – G5 Gate Review – Project Bolt – 2026-02-10",
+  "tags": ["G5", "gate-review", "supply-chain", "regulatory", "marketing"],
+  "created_at": "2026-02-10",
+  "approved": true,
+  "content": "Meeting: G5 Gate Review – Project Bolt\nDate: 10 February 2026\nChair: Rachel Kim\nAttendees: Rachel Kim (PM/OCM), Marco Rossi (R&D), Sarah Chen (Procurement), Tom Walsh (Quality), James Turner (Supply Chain)\n\nDECISIONS\n- G5 gate passed for UK and DE markets\n- France market G5 conditional — regulatory compliance documentation outstanding\n- 3PL warehouse capacity confirmed for UK and DE launch volumes\n- Single-source supplier risk for primary packaging component acknowledged — contingency supplier identification added as action\n\nACTIONS\n- James Turner (Supply Chain): Confirm 3PL warehouse capacity for UK and DE launch volumes by 17 February 2026\n- Tom Walsh (Quality): Submit G5 regulatory compliance documentation for France by 24 February 2026\n- Sarah Chen (Procurement): Identify alternative secondary supplier for primary packaging component by 05 March 2026\n- Carlos Mendez (Marketing): Finalise consumer launch campaign brief by 25 February 2026\n\nRISKS RAISED\n- Single-source supplier for primary packaging — no qualified backup, creating supply continuity risk\n- France regulatory submission overdue risk — if not submitted by 24 Feb, G6 entry blocked for FR\n\nNEXT STEPS\n- Rachel to schedule launch readiness review for 18 February\n- Supply chain risk register to be updated in ePPM"
+}

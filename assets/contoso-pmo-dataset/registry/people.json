@@ -1,0 +1,82 @@
+[
+  {
+    "id": "person-001",
+    "name": "Jane Smith",
+    "role": "project_manager",
+    "email": "jane.smith@company.com",
+    "teams_id": "jane.smith",
+    "function": "OCM"
+  },
+  {
+    "id": "person-002",
+    "name": "Marco Rossi",
+    "role": "team_member",
+    "email": "marco.rossi@company.com",
+    "teams_id": "marco.rossi",
+    "function": "R&D"
+  },
+  {
+    "id": "person-003",
+    "name": "Sarah Chen",
+    "role": "team_member",
+    "email": "sarah.chen@company.com",
+    "teams_id": "sarah.chen",
+    "function": "Procurement"
+  },
+  {
+    "id": "person-004",
+    "name": "Tom Walsh",
+    "role": "team_member",
+    "email": "tom.walsh@company.com",
+    "teams_id": "tom.walsh",
+    "function": "Quality & Compliance"
+  },
+  {
+    "id": "person-005",
+    "name": "Lisa Park",
+    "role": "team_member",
+    "email": "lisa.park@company.com",
+    "teams_id": "lisa.park",
+    "function": "Packaging"
+  },
+  {
+    "id": "person-006",
+    "name": "David Osei",
+    "role": "stakeholder",
+    "email": "david.osei@company.com",
+    "teams_id": "david.osei",
+    "function": "Categories"
+  },
+  {
+    "id": "person-007",
+    "name": "Rachel Kim",
+    "role": "project_manager",
+    "email": "rachel.kim@company.com",
+    "teams_id": "rachel.kim",
+    "function": "OCM"
+  },
+  {
+    "id": "person-008",
+    "name": "James Turner",
+    "role": "team_member",
+    "email": "james.turner@company.com",
+    "teams_id": "james.turner",
+    "function": "Global Supply Chain"
+  },
+  {
+    "id": "person-009",
+    "name": "Nina Patel",
+    "role": "team_member",
+    "email": "nina.patel@company.com",
+    "teams_id": "nina.patel",
+    "function": "R&D"
+  },
+  {
+    "id": "person-010",
+    "name": "Carlos Mendez",
+    "role": "stakeholder",
+    "email": "carlos.mendez@company.com",
+    "teams_id": "carlos.mendez",
+    "function": "Marketing"
+  }
+]

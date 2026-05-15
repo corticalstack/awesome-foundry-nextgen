@@ -1,0 +1,66 @@
+[
+  {
+    "id": "mtg-001",
+    "project_id": "proj-001",
+    "title": "G3 Gate Review – Project Aurora",
+    "date": "2026-02-20",
+    "attendees": ["person-001", "person-002", "person-003", "person-004", "person-006"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-002",
+    "project_id": "proj-001",
+    "title": "Weekly Standup W8 – Project Aurora",
+    "date": "2026-02-26",
+    "attendees": ["person-001", "person-002", "person-003", "person-004", "person-005"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-003",
+    "project_id": "proj-001",
+    "title": "Aurora Scope Review – Fragrance Variant",
+    "date": "2026-03-04",
+    "attendees": ["person-001", "person-005", "person-006", "person-010"],
+    "status": "scheduled"
+  },
+  {
+    "id": "mtg-004",
+    "project_id": "proj-002",
+    "title": "G5 Gate Review – Project Bolt",
+    "date": "2026-02-10",
+    "attendees": ["person-007", "person-002", "person-003", "person-004", "person-008"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-005",
+    "project_id": "proj-002",
+    "title": "Bolt Launch Readiness Review",
+    "date": "2026-02-18",
+    "attendees": ["person-007", "person-008", "person-003", "person-010"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-006",
+    "project_id": "proj-002",
+    "title": "Bolt Risk Review – Supply Chain",
+    "date": "2026-02-24",
+    "attendees": ["person-007", "person-008", "person-003"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-007",
+    "project_id": "proj-003",
+    "title": "G7 Lessons Learned – Project Crest",
+    "date": "2025-11-12",
+    "attendees": ["person-001", "person-002", "person-004", "person-005", "person-009"],
+    "status": "completed"
+  },
+  {
+    "id": "mtg-008",
+    "project_id": "proj-001",
+    "title": "Aurora G4 Readiness Prep",
+    "date": "2026-03-12",
+    "attendees": ["person-001", "person-002", "person-003", "person-004", "person-005"],
+    "status": "scheduled"
+  }
+]

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Microsoft Foundry documentation
+    url: https://learn.microsoft.com/en-us/azure/ai-foundry/
+    about: For questions about Foundry itself rather than these labs.
+  - name: Azure support
+    url: https://azure.microsoft.com/en-us/support/
+    about: For issues with your own Azure deployments or quotas.

@@ -1,0 +1,11 @@
+{
+  "id": "doc-009",
+  "doc_type": "lesson",
+  "project_id": "proj-003",
+  "meeting_id": "mtg-007",
+  "title": "Lesson: Late regulatory submission delayed FR market launch – Project Crest",
+  "tags": ["G5", "risk", "Quality & Compliance", "regulatory", "France"],
+  "created_at": "2025-11-12",
+  "approved": true,
+  "content": "Project: Crest | Gate: G5 | Function: Quality & Compliance | Risk: Yes\n\nWHAT HAPPENED\nOn Project Crest, the France regulatory compliance submission was missed at G5 due to a misunderstanding between the Quality team and the local regulatory affairs contact in France. The submission was assumed to have been delegated but was not formally assigned in ePPM. The gap was only discovered at the G6 gate review, by which time the FR market launch had to be delayed by six weeks.\n\nIMPACT\n- France market launch delayed six weeks, from July to mid-August 2025\n- Incremental holding cost of ~€30K for finished goods awaiting market release\n- Brand plan resequenced, reducing initial in-store presence\n\nLESSON\nRegulatory submissions for each target market must be explicitly assigned to a named owner in ePPM as a tracked task at G3, not at G5. The G5 gate entry criteria should include evidence of submission receipt for all target markets, not just confirmation that submission has been initiated.\n\nRECOMMENDATION\nUpdate BLAST standards: add market-by-market regulatory submission tracking as a mandatory G4 action. Gate keeper to verify submission receipts at G5 entry."
+}

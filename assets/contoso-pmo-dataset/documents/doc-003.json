@@ -1,0 +1,11 @@
+{
+  "id": "doc-003",
+  "doc_type": "plan",
+  "project_id": "proj-001",
+  "meeting_id": null,
+  "title": "Project Aurora – Master Project Plan v2",
+  "tags": ["G3", "plan", "milestones", "WBS", "scope"],
+  "created_at": "2026-01-15",
+  "approved": true,
+  "content": "Project: Aurora | Version: 2 | Owner: Jane Smith | Last Updated: 15 January 2026\n\nSCOPE\n- Single SKU launch: Aurora 250ml (revised from 240ml at G3)\n- Markets: UK, France, Germany\n- Variants: Original only (fragrance variant under commercial review — decision at G4)\n\nMILESTONES\n- G2 Completed: 10 January 2026\n- G3 Target: 20 February 2026 | Status: Conditionally passed\n- G4 Target: 15 April 2026\n- G5 Target: 01 July 2026\n- G6 Target: 01 September 2026\n- G7 / Launch Target: 01 October 2026\n\nWORK BREAKDOWN STRUCTURE\n1. Formulation & R&D\n   1.1 Formula stability testing (owner: Marco Rossi, due: 05 Mar)\n   1.2 Formula sign-off (owner: Marco Rossi, due: 20 Mar)\n2. Procurement & Supply Chain\n   2.1 Supplier lead time confirmation (owner: Sarah Chen, due: 03 Mar)\n   2.2 Purchase orders issued (owner: Sarah Chen, due: 01 Apr)\n3. Packaging\n   3.1 Dieline update for 250ml (owner: Lisa Park, due: 10 Mar)\n   3.2 Artwork finalisation (owner: Lisa Park, due: 25 Mar)\n4. Quality & Compliance\n   4.1 G3 compliance sign-off (owner: Tom Walsh, due: 07 Mar)\n   4.2 Regulatory submissions FR/DE (owner: Tom Walsh, due: 15 Mar)\n5. Project Management\n   5.1 Governance board update (owner: Jane Smith, due: 28 Feb)\n   5.2 G4 readiness review (owner: Jane Smith, due: 12 Mar)\n\nKEY DEPENDENCIES\n- 1.2 depends on 1.1\n- 4.1 depends on 1.1\n- 3.1 depends on 2.1\n- 3.2 depends on 3.1\n\nBUDGET\n- Approved budget: €1.2M\n- Committed to date: €340K\n- Forecast at completion: €1.18M"
+}

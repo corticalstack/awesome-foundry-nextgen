@@ -1,0 +1,11 @@
+{
+  "id": "doc-007",
+  "doc_type": "mom",
+  "project_id": "proj-002",
+  "meeting_id": "mtg-006",
+  "title": "MoM – Bolt Risk Review – Supply Chain – 2026-02-24",
+  "tags": ["risk", "supply-chain", "supplier", "G5", "Procurement"],
+  "created_at": "2026-02-24",
+  "approved": true,
+  "content": "Meeting: Bolt Risk Review – Supply Chain\nDate: 24 February 2026\nChair: Rachel Kim\nAttendees: Rachel Kim (PM/OCM), James Turner (Supply Chain), Sarah Chen (Procurement)\n\nCONTEXT\nMeeting called to address single-source supplier risk for Bolt primary packaging component flagged at G5 gate review.\n\nDISCUSSION\n- Current supplier (SupplierA) has confirmed capacity for launch volume but cannot guarantee continuity beyond Q3 2026 due to their own capacity constraints\n- No qualified backup supplier currently exists in the approved supplier list\n- Lead time to qualify a new supplier estimated at 8–10 weeks\n- If no contingency supplier is in place before G6, launch supply continuity cannot be assured\n\nDECISIONS\n- Sarah Chen to identify and initiate qualification of at least one alternative supplier by 05 March\n- James Turner to update supply chain risk register in ePPM once alternative supplier shortlist is confirmed\n- Rachel to escalate to governance board if no alternative supplier is identified by 05 March\n\nACTIONS\n- Sarah Chen (Procurement): Identify alternative secondary supplier for Bolt packaging component and submit shortlist by 05 March 2026\n- James Turner (Supply Chain): Update supply chain risk register in ePPM with latest Bolt supplier status — dependent on Sarah's shortlist\n\nRISK UPDATE\n- Risk severity: HIGH — potential to delay launch or limit supply post-launch if not resolved before G6"
+}

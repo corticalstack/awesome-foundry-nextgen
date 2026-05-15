@@ -1,0 +1,26 @@
+[
+  {
+    "id": "dl-001",
+    "project_id": "proj-001",
+    "name": "Aurora Core Team",
+    "member_ids": ["person-001", "person-002", "person-003", "person-004", "person-005"]
+  },
+  {
+    "id": "dl-002",
+    "project_id": "proj-001",
+    "name": "Aurora G3 Stakeholders",
+    "member_ids": ["person-001", "person-002", "person-003", "person-004", "person-006"]
+  },
+  {
+    "id": "dl-003",
+    "project_id": "proj-002",
+    "name": "Bolt Core Team",
+    "member_ids": ["person-007", "person-002", "person-003", "person-004", "person-008"]
+  },
+  {
+    "id": "dl-004",
+    "project_id": "proj-002",
+    "name": "Bolt Launch Stakeholders",
+    "member_ids": ["person-007", "person-008", "person-003", "person-010", "person-006"]
+  }
+]

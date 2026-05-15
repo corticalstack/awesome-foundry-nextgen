@@ -1,0 +1,122 @@
+[
+  {
+    "client_id": "cli-001",
+    "as_of": "2025-09-01",
+    "objective": "Long-term capital preservation with moderate growth, ESG-aligned",
+    "target_allocation_pct": {
+      "equities": 45.0,
+      "fixed_income": 35.0,
+      "alternatives": 12.0,
+      "cash": 8.0
+    },
+    "regional_targets_pct": {
+      "switzerland": 25.0,
+      "europe_ex_ch": 30.0,
+      "north_america": 28.0,
+      "asia_pacific": 12.0,
+      "emerging_markets": 5.0
+    },
+    "esg_floor_score": 7.0,
+    "exclusions": ["tobacco", "controversial_weapons", "thermal_coal"],
+    "max_single_position_pct": 5.0,
+    "rebalance_band_pp": 3.0,
+    "review_frequency_months": 6,
+    "notes": "Family is engaged on climate; daughter wants to add an impact-investing sleeve at next review."
+  },
+  {
+    "client_id": "cli-002",
+    "as_of": "2025-07-15",
+    "objective": "Generate stable distributable income for grant-making (CHF 1.4m/yr target)",
+    "target_allocation_pct": {
+      "equities": 25.0,
+      "fixed_income": 60.0,
+      "alternatives": 5.0,
+      "cash": 10.0
+    },
+    "regional_targets_pct": {
+      "switzerland": 40.0,
+      "europe_ex_ch": 35.0,
+      "north_america": 20.0,
+      "asia_pacific": 5.0,
+      "emerging_markets": 0.0
+    },
+    "esg_floor_score": 6.0,
+    "exclusions": ["tobacco", "controversial_weapons", "fossil_fuel_extraction"],
+    "max_single_position_pct": 4.0,
+    "rebalance_band_pp": 2.5,
+    "review_frequency_months": 12,
+    "notes": "Foundation board is rate-cut sensitive; CHF income visibility is the headline metric."
+  },
+  {
+    "client_id": "cli-003",
+    "as_of": "2025-11-10",
+    "objective": "Long-term real growth with permitted illiquid sleeve up to 20%",
+    "target_allocation_pct": {
+      "equities": 50.0,
+      "fixed_income": 20.0,
+      "alternatives": 25.0,
+      "cash": 5.0
+    },
+    "regional_targets_pct": {
+      "switzerland": 10.0,
+      "europe_ex_ch": 30.0,
+      "north_america": 38.0,
+      "asia_pacific": 15.0,
+      "emerging_markets": 7.0
+    },
+    "esg_floor_score": 5.5,
+    "exclusions": ["controversial_weapons"],
+    "max_single_position_pct": 7.0,
+    "rebalance_band_pp": 4.0,
+    "review_frequency_months": 6,
+    "notes": "Family has explicit appetite for AI/infrastructure thematic exposure; PE sleeve can drift to 25% before flag."
+  },
+  {
+    "client_id": "cli-004",
+    "as_of": "2024-08-01",
+    "objective": "Diversify post-exit concentrated position into long-duration growth",
+    "target_allocation_pct": {
+      "equities": 60.0,
+      "fixed_income": 15.0,
+      "alternatives": 20.0,
+      "cash": 5.0
+    },
+    "regional_targets_pct": {
+      "switzerland": 5.0,
+      "europe_ex_ch": 20.0,
+      "north_america": 55.0,
+      "asia_pacific": 15.0,
+      "emerging_markets": 5.0
+    },
+    "esg_floor_score": 5.0,
+    "exclusions": ["controversial_weapons"],
+    "max_single_position_pct": 10.0,
+    "rebalance_band_pp": 5.0,
+    "review_frequency_months": 6,
+    "notes": "Legacy founder stake (15% of AUM) excluded from rebalancing decisions until lock-up ends 2027-Q3."
+  },
+  {
+    "client_id": "cli-005",
+    "as_of": "2025-04-01",
+    "objective": "Liability-driven investing — cover projected pension cashflows 2026-2055",
+    "target_allocation_pct": {
+      "equities": 30.0,
+      "fixed_income": 60.0,
+      "alternatives": 7.0,
+      "cash": 3.0
+    },
+    "regional_targets_pct": {
+      "switzerland": 55.0,
+      "europe_ex_ch": 25.0,
+      "north_america": 15.0,
+      "asia_pacific": 5.0,
+      "emerging_markets": 0.0
+    },
+    "esg_floor_score": 6.5,
+    "exclusions": ["tobacco", "controversial_weapons", "thermal_coal"],
+    "max_single_position_pct": 3.0,
+    "rebalance_band_pp": 2.0,
+    "review_frequency_months": 3,
+    "notes": "Duration target: 12 years. Coverage ratio currently 108%. Trustee chair sensitive to FINMA Circular 2024/2 sustainability disclosure."
+  }
+]

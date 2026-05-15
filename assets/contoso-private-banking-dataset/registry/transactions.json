@@ -1,0 +1,30 @@
+[
+  {"id": "txn-001", "client_id": "cli-001", "trade_date": "2026-05-02", "settle_date": "2026-05-06", "type": "buy", "isin": "XX0000000005", "quantity": 3000, "price": 210.40, "currency": "USD", "amount_chf": 562000, "intent": "thematic_top_up"},
+  {"id": "txn-002", "client_id": "cli-001", "trade_date": "2026-04-18", "settle_date": "2026-04-22", "type": "subscription", "isin": null, "quantity": null, "price": null, "currency": "CHF", "amount_chf": 1500000, "intent": "client_funding"},
+  {"id": "txn-003", "client_id": "cli-001", "trade_date": "2026-04-04", "settle_date": "2026-04-08", "type": "distribution", "isin": "XX0000000001", "quantity": null, "price": null, "currency": "EUR", "amount_chf": 38500, "intent": "income_distribution"},
+  {"id": "txn-004", "client_id": "cli-001", "trade_date": "2026-03-12", "settle_date": "2026-03-16", "type": "sell", "isin": "XX0000000012", "quantity": 8000, "price": 100.00, "currency": "CHF", "amount_chf": 800000, "intent": "rebalance_cash_drawdown"},
+  {"id": "txn-005", "client_id": "cli-001", "trade_date": "2026-02-25", "settle_date": "2026-02-27", "type": "buy", "isin": "XX0000000013", "quantity": 5000, "price": 116.20, "currency": "EUR", "amount_chf": 580000, "intent": "esg_top_up"},
+
+  {"id": "txn-006", "client_id": "cli-002", "trade_date": "2026-05-04", "settle_date": "2026-05-06", "type": "distribution", "isin": "XX0000000007", "quantity": null, "price": null, "currency": "CHF", "amount_chf": 425000, "intent": "income_distribution_to_grants"},
+  {"id": "txn-007", "client_id": "cli-002", "trade_date": "2026-04-22", "settle_date": "2026-04-24", "type": "buy", "isin": "XX0000000006", "quantity": 8000, "price": 99.40, "currency": "EUR", "amount_chf": 762000, "intent": "income_top_up"},
+  {"id": "txn-008", "client_id": "cli-002", "trade_date": "2026-03-30", "settle_date": "2026-04-01", "type": "redemption", "isin": null, "quantity": null, "price": null, "currency": "CHF", "amount_chf": 700000, "intent": "grant_disbursement"},
+  {"id": "txn-009", "client_id": "cli-002", "trade_date": "2026-02-15", "settle_date": "2026-02-17", "type": "buy", "isin": "XX0000000012", "quantity": 5000, "price": 100.00, "currency": "CHF", "amount_chf": 500000, "intent": "liquidity_buffer_build"},
+
+  {"id": "txn-010", "client_id": "cli-003", "trade_date": "2026-05-06", "settle_date": "2026-05-08", "type": "buy", "isin": "XX0000000005", "quantity": 5000, "price": 213.10, "currency": "USD", "amount_chf": 948000, "intent": "thematic_ai_addition"},
+  {"id": "txn-011", "client_id": "cli-003", "trade_date": "2026-04-28", "settle_date": "2026-04-30", "type": "capital_call", "isin": "XX0000000008", "quantity": null, "price": null, "currency": "USD", "amount_chf": 1820000, "intent": "private_equity_capital_call"},
+  {"id": "txn-012", "client_id": "cli-003", "trade_date": "2026-04-15", "settle_date": "2026-04-17", "type": "sell", "isin": "XX0000000004", "quantity": 12000, "price": 96.40, "currency": "USD", "amount_chf": 1029000, "intent": "em_underweight_trim"},
+  {"id": "txn-013", "client_id": "cli-003", "trade_date": "2026-03-20", "settle_date": "2026-03-24", "type": "subscription", "isin": null, "quantity": null, "price": null, "currency": "EUR", "amount_chf": 4800000, "intent": "client_funding_realised_pe"},
+  {"id": "txn-014", "client_id": "cli-003", "trade_date": "2026-03-05", "settle_date": "2026-03-09", "type": "buy", "isin": "XX0000000009", "quantity": 4500, "price": 130.20, "currency": "EUR", "amount_chf": 562000, "intent": "infrastructure_top_up"},
+
+  {"id": "txn-015", "client_id": "cli-004", "trade_date": "2026-05-08", "settle_date": "2026-05-12", "type": "buy", "isin": "XX0000000010", "quantity": 4000, "price": 186.50, "currency": "USD", "amount_chf": 664000, "intent": "diversification_post_exit"},
+  {"id": "txn-016", "client_id": "cli-004", "trade_date": "2026-04-25", "settle_date": "2026-04-29", "type": "buy", "isin": "XX0000000011", "quantity": 8000, "price": 77.10, "currency": "USD", "amount_chf": 549000, "intent": "regional_apac_addition"},
+  {"id": "txn-017", "client_id": "cli-004", "trade_date": "2026-04-02", "settle_date": "2026-04-04", "type": "subscription", "isin": null, "quantity": null, "price": null, "currency": "USD", "amount_chf": 2200000, "intent": "client_funding_dividend_recap"},
+  {"id": "txn-018", "client_id": "cli-004", "trade_date": "2026-03-18", "settle_date": "2026-03-22", "type": "capital_call", "isin": "XX0000000008", "quantity": null, "price": null, "currency": "USD", "amount_chf": 590000, "intent": "private_equity_capital_call"},
+  {"id": "txn-019", "client_id": "cli-004", "trade_date": "2026-02-28", "settle_date": "2026-03-04", "type": "buy", "isin": "XX0000000005", "quantity": 2500, "price": 199.40, "currency": "USD", "amount_chf": 444000, "intent": "thematic_ai_addition"},
+
+  {"id": "txn-020", "client_id": "cli-005", "trade_date": "2026-05-05", "settle_date": "2026-05-07", "type": "buy", "isin": "XX0000000007", "quantity": 25000, "price": 105.60, "currency": "CHF", "amount_chf": 2640000, "intent": "ldi_duration_extension"},
+  {"id": "txn-021", "client_id": "cli-005", "trade_date": "2026-04-12", "settle_date": "2026-04-16", "type": "distribution", "isin": "XX0000000001", "quantity": null, "price": null, "currency": "EUR", "amount_chf": 287000, "intent": "income_distribution"},
+  {"id": "txn-022", "client_id": "cli-005", "trade_date": "2026-04-02", "settle_date": "2026-04-04", "type": "sell", "isin": "XX0000000010", "quantity": 5000, "price": 184.20, "currency": "USD", "amount_chf": 820000, "intent": "rebalance_equity_overweight_trim"},
+  {"id": "txn-023", "client_id": "cli-005", "trade_date": "2026-03-15", "settle_date": "2026-03-19", "type": "buy", "isin": "XX0000000006", "quantity": 18000, "price": 99.30, "currency": "EUR", "amount_chf": 1716000, "intent": "credit_top_up"},
+  {"id": "txn-024", "client_id": "cli-005", "trade_date": "2026-02-22", "settle_date": "2026-02-24", "type": "buy", "isin": "XX0000000009", "quantity": 8500, "price": 130.10, "currency": "EUR", "amount_chf": 1062000, "intent": "infrastructure_renewables"}
+]

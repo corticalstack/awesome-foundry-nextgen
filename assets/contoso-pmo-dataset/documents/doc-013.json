@@ -1,0 +1,11 @@
+{
+  "id": "doc-013",
+  "doc_type": "chat",
+  "project_id": "proj-001",
+  "meeting_id": null,
+  "title": "Teams Chat: Aurora packaging dieline delay discussion",
+  "tags": ["packaging", "dieline", "delay", "supplier"],
+  "created_at": "2026-02-27",
+  "approved": true,
+  "content": "Channel: Project Aurora – Core Team\nDate: 27 February 2026\n\n[09:14] Lisa Park: Hi team — quick heads up on the dieline. I've started the update for the 250ml fill weight but I'm blocked waiting on Sarah's supplier lead time confirmation. The spec affects the base diameter and I can't finalise the dieline without it.\n\n[09:22] Sarah Chen: Hi Lisa — I chased the supplier again this morning. They've promised a response by end of day today. I'll forward it as soon as it comes in.\n\n[09:35] Jane Smith: Thanks both. Lisa — can you do a draft dieline based on the expected spec so we're not starting from scratch once Sarah has the confirmation? Even a provisional version would help us stay on track for the 10 March deadline.\n\n[09:41] Lisa Park: Good idea Jane. I'll do a provisional version today based on 250ml standard tolerances. Will flag any assumptions clearly so it's easy to update once supplier confirms.\n\n[10:02] Sarah Chen: Supplier confirmed — lead time is 6 weeks from PO. That puts us at risk of missing G4 if PO isn't raised by 20 March. James — does that work from a supply chain planning perspective?\n\n[10:18] James Turner: That's tight. I'd want PO raised no later than 17 March to give us any buffer. Sarah can you confirm the full spec today so Procurement can issue?\n\n[10:25] Sarah Chen: Yes — will send full spec to Lisa and James this afternoon once I've cross-checked against the G3 pack."
+}

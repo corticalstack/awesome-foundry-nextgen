@@ -1,0 +1,66 @@
+[
+  {
+    "id": "hr-001",
+    "title": "Remote Work Policy",
+    "content": "Contoso Corporation's Remote Work Policy enables employees to work from approved locations outside the primary office, subject to manager approval and role eligibility. Employees must maintain a secure, distraction-free workspace with reliable internet connectivity of at least 25 Mbps. Core hours of 10:00 AM to 3:00 PM in the employee's local time zone are required for synchronous collaboration. Remote workers must attend all scheduled team meetings via video and keep their calendar up to date. Equipment such as laptops and peripherals is provided by Contoso IT, and employees are responsible for its care and safe return upon separation. Personal use of company equipment is prohibited. Data security requirements apply equally to remote and in-office employees; VPN use is mandatory when accessing internal systems. Employees may work remotely up to five days per week with manager approval, or on a hybrid basis combining in-office and remote days. New employees are expected to be on-site for their first 30 days to complete onboarding. Contoso reserves the right to revoke remote work privileges if performance, collaboration, or security requirements are not met. Requests to work remotely from international locations require prior approval from HR and Legal due to tax and compliance implications. The policy is reviewed annually and may be updated to reflect business needs.",
+    "category": "Work Arrangements",
+    "lastModified": "2024-11-01T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/policies/remote-work"
+  },
+  {
+    "id": "hr-002",
+    "title": "Employee Benefits Guide",
+    "content": "Contoso Corporation offers a comprehensive benefits package designed to support employee health, financial security, and work-life balance. Medical coverage includes three plan tiers: a high-deductible health plan with HSA, a standard PPO, and a premium PPO. Dental coverage includes preventive, basic, and major services with orthodontia available for dependents. Vision care covers annual exams, frames or contacts, and LASIK discounts. Contoso matches 401(k) contributions up to 6% of eligible compensation, with immediate vesting on company match. Employees may also participate in the Employee Stock Purchase Plan at a 15% discount. Life insurance is provided at two times annual salary at no cost; supplemental coverage up to eight times salary is available for purchase. Short-term disability covers 60% of salary for up to 12 weeks; long-term disability covers 60% for extended periods. The Employee Assistance Program offers confidential counseling, legal advice, and financial planning services at no cost. Commuter benefits allow pre-tax deductions for transit and parking expenses up to IRS limits. Contoso provides a $1,200 annual wellness reimbursement for gym memberships, fitness equipment, and wellness apps. Fertility and family-planning benefits include coverage for IVF and adoption assistance up to $10,000. Open enrollment occurs each November for plans effective January 1. Benefits questions should be directed to the People Operations team at benefits@contoso.com.",
+    "category": "Benefits",
+    "lastModified": "2024-10-15T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/benefits/guide"
+  },
+  {
+    "id": "hr-003",
+    "title": "Paid Time Off Policy",
+    "content": "Contoso Corporation's Paid Time Off (PTO) policy provides employees with flexible time away from work for vacation, personal needs, and illness. Full-time employees accrue PTO at the following rates based on tenure: 0–2 years: 15 days per year (1.25 days/month); 3–5 years: 20 days per year (1.67 days/month); 6+ years: 25 days per year (2.08 days/month). Part-time employees accrue PTO on a prorated basis. PTO begins accruing on the first day of employment, but employees must complete 90 days before taking a PTO day. Unused PTO may be carried over up to a maximum of 30 days; any balance above 30 days is forfeited at year-end. Upon separation, accrued unused PTO up to the carry-over cap is paid out. PTO requests must be submitted in Workday with at least two weeks' notice for absences of three or more consecutive days. Managers may deny PTO requests during peak business periods. Sick time is drawn from the PTO balance; employees who exhaust PTO for illness may apply for short-term disability. Contoso also provides 11 company holidays per year plus one floating holiday. Bereavement leave of up to five days is provided for immediate family members and is separate from PTO. Parental leave is governed by a separate Parental Leave Policy. Questions about accruals should be directed to People Operations.",
+    "category": "Time Off",
+    "lastModified": "2025-01-10T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/policies/pto"
+  },
+  {
+    "id": "hr-004",
+    "title": "New Employee Onboarding Guide",
+    "content": "Welcome to Contoso Corporation! This onboarding guide will help you navigate your first 90 days. Before your start date, complete the pre-boarding checklist in Workday: upload identification documents for I-9 verification, set up your Contoso email account, and review the Employee Handbook. On Day 1, report to your designated office location at 9:00 AM to meet your onboarding buddy and receive your equipment. IT will provision your laptop, badge, and software access; standard provisioning takes 24–48 hours for specialty systems. Week 1 focuses on company orientation, including sessions on Contoso's mission and values, organizational structure, security training, and mandatory compliance courses in the Learning Portal. You will also meet your manager to align on 30-60-90 day goals. Weeks 2–4 involve role-specific training, team introductions, and shadowing key stakeholders. Your onboarding buddy is available for informal questions. At 30 days, complete a check-in with your manager to review progress and identify any gaps. At 60 days, a formal review aligns your goals with team objectives. At 90 days, you will have a comprehensive review with your manager and HR business partner. All onboarding tasks are tracked in Workday; completion of mandatory training within 30 days is required. Reach out to onboarding@contoso.com with any questions.",
+    "category": "Onboarding",
+    "lastModified": "2025-02-01T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/onboarding/guide"
+  },
+  {
+    "id": "hr-005",
+    "title": "Performance Review Process",
+    "content": "Contoso Corporation's performance review process is designed to support continuous development and align individual contributions with company goals. Reviews occur twice per year: a mid-year check-in in July and an annual review in December. The annual review drives compensation decisions effective January 1. The process begins with self-assessment: employees complete a structured reflection in Workday covering achievements against goals, competency demonstration, and development areas. Managers then complete an assessment, calibrate ratings within their team, and participate in a cross-functional calibration session facilitated by HR to ensure consistency. Ratings are on a five-point scale: Exceptional, Exceeds Expectations, Meets Expectations, Developing, and Unsatisfactory. Employees rated Unsatisfactory are placed on a Performance Improvement Plan (PIP) with 60-day check-ins. Merit increases are tied to the annual rating; budget guidelines are communicated to managers in November. The mid-year check-in is developmental and does not drive compensation; it focuses on goal progress, feedback exchange, and course corrections. 360-degree feedback is collected for employees at Senior Manager level and above. All performance documentation is retained for three years. Managers are encouraged to provide continuous feedback throughout the year via Workday's Anytime Feedback feature. Employees wishing to discuss their review outcome should first speak with their manager, then with their HR business partner.",
+    "category": "Performance",
+    "lastModified": "2024-12-01T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/performance/process"
+  },
+  {
+    "id": "hr-006",
+    "title": "Pay Equity Statement",
+    "content": "Contoso Corporation is committed to pay equity and conducts annual compensation analyses to identify and remediate unjustified pay disparities. Our pay philosophy is to target the 50th percentile of market for base salary in each role and geography, with total compensation including bonus and equity targeting the 65th percentile for high performers. Compensation is determined by role, level, geographic location, and individual performance rating. Contoso uses a job architecture with defined salary bands for every role; bands are reviewed annually against market surveys from Radford, Willis Towers Watson, and Mercer. Gender, race, and other protected characteristics play no role in compensation decisions. The most recent annual pay equity analysis conducted in Q3 2024 identified a pay gap of less than 1% across gender and racial groups after controlling for role, level, and location; identified outliers received targeted adjustments. Contoso publishes an annual Diversity, Equity, and Inclusion report that includes pay equity findings. Employees have the right to discuss their compensation with colleagues. If an employee believes they are being compensated inequitably, they should raise the concern with their HR business partner; all complaints are investigated confidentially. Contoso's pay equity commitments are governed by the Total Rewards team and reviewed by the Board Compensation Committee annually.",
+    "category": "Compensation",
+    "lastModified": "2024-09-15T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/compensation/pay-equity"
+  },
+  {
+    "id": "hr-007",
+    "title": "Professional Development Program",
+    "content": "Contoso Corporation's Professional Development Program (PDP) empowers employees to grow their skills, advance their careers, and contribute more effectively to the business. Each employee receives an annual Learning & Development budget of $3,000 for approved training, conferences, certifications, and educational courses. Requests exceeding $1,000 require manager and HR approval. The Contoso Learning Portal hosts over 5,000 on-demand courses covering technical skills, leadership development, and business acumen. Employees are encouraged to dedicate at least 40 hours per year to structured learning. Tuition reimbursement is available for job-related degree programs: up to $10,000 per year for undergraduate and $15,000 per year for graduate programs, with a two-year service commitment after completion. Contoso offers an internal mentoring program matching employees with senior leaders for six-month engagements. Stretch assignments and cross-functional project participation are encouraged as development opportunities. The Career Compass framework provides role-specific competency models and progression criteria for every job family. Employees discuss development goals with their manager quarterly. The PDP team organizes an annual Learning Week with keynotes, workshops, and hackathons open to all employees. Employees should work with their manager to create an Individual Development Plan (IDP) in Workday. Contact pdp@contoso.com for program information.",
+    "category": "Development",
+    "lastModified": "2025-01-15T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/development/pdp"
+  },
+  {
+    "id": "hr-008",
+    "title": "Company Holiday Calendar 2025",
+    "content": "Contoso Corporation observes the following 11 company holidays in 2025, in addition to one floating holiday that employees may use at their discretion with manager approval. New Year's Day: January 1 (Wednesday). Martin Luther King Jr. Day: January 20 (Monday). Presidents' Day: February 17 (Monday). Memorial Day: May 26 (Monday). Juneteenth National Independence Day: June 19 (Thursday). Independence Day: July 4 (Friday). Labor Day: September 1 (Monday). Indigenous Peoples' Day: October 13 (Monday). Veterans Day: November 11 (Tuesday). Thanksgiving Day: November 27 (Thursday). Christmas Day: December 25 (Thursday). The floating holiday may be used for any reason and does not carry over to the following year; it must be taken before December 31, 2025. When a holiday falls on a weekend, the observed day is the preceding Friday or following Monday as communicated by People Operations. Employees in countries outside the United States follow the holiday schedule applicable to their country of employment as published by their regional HR team. Holiday schedules for 2026 will be published by October 2025.",
+    "category": "Time Off",
+    "lastModified": "2024-12-10T00:00:00Z",
+    "url": "https://contoso.sharepoint.com/sites/hr/time-off/holiday-calendar-2025"
+  }
+]

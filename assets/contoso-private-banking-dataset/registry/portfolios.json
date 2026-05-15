@@ -1,0 +1,71 @@
+[
+  {
+    "client_id": "cli-001",
+    "as_of": "2026-05-09",
+    "positions": [
+      {"position_id": "pos-001-a", "isin": "XX0000000002", "quantity": 130000, "cost_basis_per_unit": 142.10, "acquired": "2022-06-15"},
+      {"position_id": "pos-001-b", "isin": "XX0000000010", "quantity": 72000, "cost_basis_per_unit": 162.50, "acquired": "2023-01-20"},
+      {"position_id": "pos-001-c", "isin": "XX0000000013", "quantity": 93000, "cost_basis_per_unit": 118.40, "acquired": "2024-03-10"},
+      {"position_id": "pos-001-d", "isin": "XX0000000005", "quantity": 18000, "cost_basis_per_unit": 168.20, "acquired": "2025-02-14"},
+      {"position_id": "pos-001-e", "isin": "XX0000000007", "quantity": 175000, "cost_basis_per_unit": 104.50, "acquired": "2021-09-01"},
+      {"position_id": "pos-001-f", "isin": "XX0000000006", "quantity": 110000, "cost_basis_per_unit": 100.20, "acquired": "2023-11-08"},
+      {"position_id": "pos-001-g", "isin": "XX0000000009", "quantity": 78000, "cost_basis_per_unit": 121.40, "acquired": "2024-08-22"},
+      {"position_id": "pos-001-h", "isin": "XX0000000012", "quantity": 45000, "cost_basis_per_unit": 100.00, "acquired": "2026-01-05"}
+    ]
+  },
+  {
+    "client_id": "cli-002",
+    "as_of": "2026-05-09",
+    "positions": [
+      {"position_id": "pos-002-a", "isin": "XX0000000007", "quantity": 100000, "cost_basis_per_unit": 103.20, "acquired": "2019-04-01"},
+      {"position_id": "pos-002-b", "isin": "XX0000000001", "quantity": 95000, "cost_basis_per_unit": 99.80, "acquired": "2020-10-15"},
+      {"position_id": "pos-002-c", "isin": "XX0000000006", "quantity": 60000, "cost_basis_per_unit": 98.50, "acquired": "2022-02-20"},
+      {"position_id": "pos-002-d", "isin": "XX0000000002", "quantity": 80000, "cost_basis_per_unit": 138.00, "acquired": "2021-06-12"},
+      {"position_id": "pos-002-e", "isin": "XX0000000001", "quantity": 45000, "cost_basis_per_unit": 100.20, "acquired": "2023-09-04"},
+      {"position_id": "pos-002-f", "isin": "XX0000000009", "quantity": 14500, "cost_basis_per_unit": 124.00, "acquired": "2024-05-30"},
+      {"position_id": "pos-002-g", "isin": "XX0000000012", "quantity": 39000, "cost_basis_per_unit": 100.00, "acquired": "2026-02-15"}
+    ]
+  },
+  {
+    "client_id": "cli-003",
+    "as_of": "2026-05-09",
+    "positions": [
+      {"position_id": "pos-003-a", "isin": "XX0000000010", "quantity": 245000, "cost_basis_per_unit": 158.90, "acquired": "2020-03-15"},
+      {"position_id": "pos-003-b", "isin": "XX0000000005", "quantity": 95000, "cost_basis_per_unit": 145.30, "acquired": "2024-06-10"},
+      {"position_id": "pos-003-c", "isin": "XX0000000011", "quantity": 280000, "cost_basis_per_unit": 82.10, "acquired": "2021-11-22"},
+      {"position_id": "pos-003-d", "isin": "XX0000000004", "quantity": 130000, "cost_basis_per_unit": 102.40, "acquired": "2022-04-05"},
+      {"position_id": "pos-003-e", "isin": "XX0000000008", "quantity": 22000, "cost_basis_per_unit": 1000.00, "acquired": "2018-09-01"},
+      {"position_id": "pos-003-f", "isin": "XX0000000014", "quantity": 18000, "cost_basis_per_unit": 950.00, "acquired": "2019-12-15"},
+      {"position_id": "pos-003-g", "isin": "XX0000000009", "quantity": 95000, "cost_basis_per_unit": 119.80, "acquired": "2023-07-18"},
+      {"position_id": "pos-003-h", "isin": "XX0000000006", "quantity": 240000, "cost_basis_per_unit": 99.40, "acquired": "2022-08-08"},
+      {"position_id": "pos-003-i", "isin": "XX0000000012", "quantity": 65000, "cost_basis_per_unit": 100.00, "acquired": "2026-03-12"}
+    ]
+  },
+  {
+    "client_id": "cli-004",
+    "as_of": "2026-05-09",
+    "positions": [
+      {"position_id": "pos-004-a", "isin": "XX0000000015", "quantity": 25500, "cost_basis_per_unit": 200.00, "acquired": "2024-07-10", "notes": "Legacy founder stake; lock-up until 2027-09-30"},
+      {"position_id": "pos-004-b", "isin": "XX0000000010", "quantity": 175000, "cost_basis_per_unit": 168.20, "acquired": "2024-09-15"},
+      {"position_id": "pos-004-c", "isin": "XX0000000005", "quantity": 60000, "cost_basis_per_unit": 178.00, "acquired": "2024-12-01"},
+      {"position_id": "pos-004-d", "isin": "XX0000000011", "quantity": 130000, "cost_basis_per_unit": 78.40, "acquired": "2025-02-22"},
+      {"position_id": "pos-004-e", "isin": "XX0000000008", "quantity": 11500, "cost_basis_per_unit": 1180.00, "acquired": "2024-08-30"},
+      {"position_id": "pos-004-f", "isin": "XX0000000001", "quantity": 80000, "cost_basis_per_unit": 100.50, "acquired": "2025-04-04"},
+      {"position_id": "pos-004-g", "isin": "XX0000000010", "quantity": 18000, "cost_basis_per_unit": 168.40, "acquired": "2025-06-18"},
+      {"position_id": "pos-004-h", "isin": "XX0000000012", "quantity": 25000, "cost_basis_per_unit": 100.00, "acquired": "2026-04-01"}
+    ]
+  },
+  {
+    "client_id": "cli-005",
+    "as_of": "2026-05-09",
+    "positions": [
+      {"position_id": "pos-005-a", "isin": "XX0000000007", "quantity": 780000, "cost_basis_per_unit": 102.10, "acquired": "2018-05-15"},
+      {"position_id": "pos-005-b", "isin": "XX0000000006", "quantity": 410000, "cost_basis_per_unit": 99.20, "acquired": "2020-09-30"},
+      {"position_id": "pos-005-c", "isin": "XX0000000001", "quantity": 270000, "cost_basis_per_unit": 100.10, "acquired": "2021-04-12"},
+      {"position_id": "pos-005-d", "isin": "XX0000000002", "quantity": 220000, "cost_basis_per_unit": 138.80, "acquired": "2019-08-22"},
+      {"position_id": "pos-005-e", "isin": "XX0000000010", "quantity": 230000, "cost_basis_per_unit": 162.40, "acquired": "2022-06-15"},
+      {"position_id": "pos-005-g", "isin": "XX0000000009", "quantity": 110000, "cost_basis_per_unit": 122.40, "acquired": "2024-04-20"},
+      {"position_id": "pos-005-h", "isin": "XX0000000012", "quantity": 70000, "cost_basis_per_unit": 100.00, "acquired": "2026-03-22"}
+    ]
+  }
+]

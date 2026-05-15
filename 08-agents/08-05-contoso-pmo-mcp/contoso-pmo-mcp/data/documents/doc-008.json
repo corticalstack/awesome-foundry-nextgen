@@ -1,0 +1,11 @@
+{
+  "id": "doc-008",
+  "doc_type": "status_report",
+  "project_id": "proj-002",
+  "meeting_id": null,
+  "title": "Project Bolt – Monthly Status Report – February 2026",
+  "tags": ["G5", "status", "risks", "milestones"],
+  "created_at": "2026-02-01",
+  "approved": true,
+  "content": "Project: Bolt | Report Period: February 2026 | Owner: Rachel Kim\n\nOVERALL STATUS: AMBER\n\nMILESTONE SUMMARY\n- G5 Completed: 10 February 2026 (UK + DE pass, FR conditional)\n- G6 Target: 01 May 2026 — AT RISK (FR regulatory and supplier contingency outstanding)\n- G7 / Launch Target: 01 August 2026 — ON TRACK if G6 conditions resolved by end of March\n\nKEY ACHIEVEMENTS THIS PERIOD\n- G5 gate passed for UK and DE markets\n- 3PL warehouse capacity confirmed for UK and DE\n- R&D formula fully signed off\n\nISSUES AND RISKS\n1. France regulatory documentation overdue (Tom Walsh) — if not submitted within 5 days, G6 FR entry blocked\n2. Single-source supplier risk for primary packaging — backup supplier qualification in progress (Sarah Chen, due 05 March)\n3. Consumer launch campaign brief overdue (Carlos Mendez) — risk of compressed marketing activation window\n\nOPEN ACTIONS: 5 | OVERDUE ACTIONS: 2 | COMPLETED ACTIONS: 8\n\nNEXT PERIOD PRIORITIES\n- Resolve FR regulatory submission\n- Confirm backup supplier qualification\n- Lock marketing campaign brief\n- Prepare G6 gate entry pack"
+}

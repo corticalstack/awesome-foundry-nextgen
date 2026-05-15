@@ -1,0 +1,7 @@
+[
+  {"id": "res-001", "doc_type": "fund_factsheet", "title": "Contoso Sustainable Income Fund — May 2026 factsheet", "isin": "XX0000000001", "tags": ["fixed_income", "esg", "income"], "published": "2026-05-01"},
+  {"id": "res-002", "doc_type": "fund_factsheet", "title": "Contoso Climate Solutions Equity — Q1 2026 review", "isin": "XX0000000013", "tags": ["equities", "esg", "climate", "thematic"], "published": "2026-04-15"},
+  {"id": "res-003", "doc_type": "thematic_note", "title": "AI infrastructure capex cycle — implications for Contoso AI & Infrastructure Thematic", "isin": "XX0000000005", "tags": ["equities", "thematic", "ai"], "published": "2026-04-30"},
+  {"id": "res-004", "doc_type": "fund_factsheet", "title": "Contoso Private Equity Secondaries IV — Q1 2026 update", "isin": "XX0000000008", "tags": ["alternatives", "private_equity"], "published": "2026-04-20"},
+  {"id": "res-005", "doc_type": "manager_view", "title": "European infrastructure investment landscape — house view May 2026", "isin": "XX0000000009", "tags": ["alternatives", "infrastructure", "europe", "renewables"], "published": "2026-05-02"}
+]

@@ -1,0 +1,11 @@
+{
+  "id": "doc-014",
+  "doc_type": "status_report",
+  "project_id": "proj-001",
+  "meeting_id": null,
+  "title": "Project Aurora – Monthly Status Report – February 2026",
+  "tags": ["G3", "status", "risks", "milestones"],
+  "created_at": "2026-02-01",
+  "approved": true,
+  "content": "Project: Aurora | Report Period: February 2026 | Owner: Jane Smith\n\nOVERALL STATUS: AMBER\n\nMILESTONE SUMMARY\n- G2 Completed: 10 January 2026 (on time)\n- G3 Target: 20 February 2026 — CONDITIONAL PASS (formula stability and supplier lead times outstanding)\n- G4 Target: 15 April 2026 — AT RISK if G3 conditions not resolved by 07 March\n- Launch Target: 01 October 2026 — ON TRACK subject to G4 resolution\n\nKEY ACHIEVEMENTS THIS PERIOD\n- G3 gate review completed, conditional pass achieved\n- Fill weight confirmed at 250ml — cost-per-unit target met\n- All G3 gate entry documentation submitted and approved\n\nISSUES AND RISKS\n1. Formula stability data not yet complete (Marco Rossi, due 05 March) — blocks quality sign-off\n2. Supplier lead time confirmation outstanding (Sarah Chen, due 03 March) — blocks packaging dieline and PO\n3. Fragrance variant scope change requested by Categories — impact assessment pending, governance board decision required\n4. G3 governance board update slide overdue (Jane Smith) — to be completed immediately\n\nOPEN ACTIONS: 5 | OVERDUE ACTIONS: 1 | COMPLETED ACTIONS: 3\n\nNEXT PERIOD PRIORITIES\n- Resolve all G3 conditional items by 07 March\n- Complete fragrance variant impact assessment\n- Prepare for G4 readiness review on 12 March\n- Update ePPM with all current task statuses"
+}

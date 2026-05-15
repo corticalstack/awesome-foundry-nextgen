@@ -1,0 +1,62 @@
+[
+  {
+    "id": "risk-001",
+    "project_id": "proj-001",
+    "source_type": "task",
+    "source_id": "task-002",
+    "description": "Supplier lead times for primary packaging components may extend beyond G4 milestone, potentially delaying launch by 3–4 weeks",
+    "gate": "G3",
+    "function": "Procurement",
+    "flagged_at": "2026-02-20"
+  },
+  {
+    "id": "risk-002",
+    "project_id": "proj-001",
+    "source_type": "document",
+    "source_id": "doc-001",
+    "description": "Formula stability data incomplete at G3 — if not resolved before G4, quality sign-off will be blocked and gate entry criteria not met",
+    "gate": "G3",
+    "function": "R&D",
+    "flagged_at": "2026-02-20"
+  },
+  {
+    "id": "risk-003",
+    "project_id": "proj-001",
+    "source_type": "document",
+    "source_id": "doc-004",
+    "description": "Fragrance variant scope re-addition not yet impact-assessed by R&D or Packaging — may affect G4 timeline and resource allocation",
+    "gate": "G3",
+    "function": "OCM",
+    "flagged_at": "2026-02-26"
+  },
+  {
+    "id": "risk-004",
+    "project_id": "proj-002",
+    "source_type": "task",
+    "source_id": "task-009",
+    "description": "French regulatory compliance documentation overdue — if not submitted within 5 working days, G6 gate entry will be blocked for FR market",
+    "gate": "G5",
+    "function": "Quality & Compliance",
+    "flagged_at": "2026-02-24"
+  },
+  {
+    "id": "risk-005",
+    "project_id": "proj-002",
+    "source_type": "document",
+    "source_id": "doc-007",
+    "description": "Single-source supplier dependency for Bolt primary packaging component identified — no backup supplier qualified, creating supply continuity risk at launch",
+    "gate": "G5",
+    "function": "Procurement",
+    "flagged_at": "2026-02-18"
+  },
+  {
+    "id": "risk-006",
+    "project_id": "proj-002",
+    "source_type": "task",
+    "source_id": "task-010",
+    "description": "Consumer launch campaign brief overdue — delay may compress marketing activation timeline ahead of G6, reducing campaign effectiveness at launch",
+    "gate": "G5",
+    "function": "Marketing",
+    "flagged_at": "2026-02-25"
+  }
+]
