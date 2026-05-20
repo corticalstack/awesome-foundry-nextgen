@@ -13,8 +13,8 @@ You can see the primary navigation tabs along the top right, orientated around j
 - **Home**: getting users back to the entry point or back to where they were with recent work.
 - [**Discover**](../02-foundry-portal-discover-page/02-00-foundry-portal-discover-page.md): Netflix-style discovery space. Model and capability catalog (search driven)
 - [**Build**](../03-foundry-portal-build-page/03-00-foundry-portal-build-page.md): Create agents, apps, and workflows
-- [**Operate**](04-operate.md): Admin and decision-maker view across subscriptions and projects
-- [**Docs**](05-docs.md): integrated documentation experience meant to keep users *in context*
+- **Operate**: Admin and decision-maker view across subscriptions and projects
+- **Docs**: integrated documentation experience meant to keep users *in context*
 
 
 New arrivals include highlighting the latest launched models.
