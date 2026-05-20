@@ -27,6 +27,13 @@
 # Azure marketing/pricing pages, heavy JS that times out from CI runners
 ^https?://azure\.microsoft\.com/.*pricing/
 
+# APT package-repository roots captured in notebook stdout (apt-get install output).
+# Repository roots are not browseable web pages and return 404 to the link checker.
+^https?://deb\.debian\.org
+^https?://security\.debian\.org
+^https?://archive\.ubuntu\.com
+^https?://security\.ubuntu\.com
+
 # URL templates with {placeholder} markers (not real URLs - meant for reader substitution).
 # Lychee tests the regex against the URL-encoded form, so match both literal {name} and %7Bname%7D.
 \{[a-zA-Z_-]+\}
