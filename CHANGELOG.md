@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-05-20
+
+Documentation pass over chapters 00-04 to improve consistency, navigability, and accuracy.
+
+### Added
+
+- Next-page navigation links across the entire reading flow (00 → 01 → 02 → 03 → 04), and through every chapter 04 subpage.
+- "What is a control plane?" intro section in 04-00 for readers unfamiliar with the term.
+- Side-by-side comparison table for the four built-in Foundry RBAC roles in 04-01, with a separate role-definition-ID lookup table.
+- Cross-references from every page that mentions RBAC roles back to the canonical definitions in 04-01.
+- Disclaimer and placeholder reference table in 04-09 so deep-link templates are usable from any reader's deployment.
+
+### Changed
+
+- Aligned H1/H2 sentence-case headings with filename slugs across all chapter index pages and chapter 04 subpages. Proper nouns and acronyms preserved.
+- Updated Foundry RBAC role names from the legacy `Azure AI X` form to the current `Foundry X` form (User, Owner, Account Owner, Project Manager) to match Microsoft's recent platform-wide rename.
+- Restructured 04-00 control-plane page: dropped opaque "Section 5X" numbering and reordered reference sections to match the four-pillar narrative.
+- Restructured 04-04 cost page: introduced a proper H1, demoted stale `#` section dividers to `##`, folded orphan intro prose into a coherent intro paragraph.
+- Consolidated "Related Resources" sections across chapter 04 into "Resources" with a uniform shape (primary-source link folded in as the first bullet).
+- Bumped SDK package versions in 04-03 to current registry releases: Python `azure-ai-projects` 2.1.0 stable, JS `@azure/ai-projects` 2.1.1 stable, .NET `Azure.AI.Projects` 2.0.1 stable (`Azure.AI.Projects.OpenAI` 2.0.0-beta.1 preview), Java `azure-ai-projects` 2.1.0-beta.1.
+- Templated 04-09 cheat sheet URLs: replaced personal deployment IDs with placeholder markers (`{tenant}`, `{rg}`, `{resource}`, `{project}`, etc.).
+- Updated 04-02 to link to canonical sources: Azure OpenAI model availability list and Azure OpenAI quota increase request form.
+
+### Renamed
+
+- `04-foundry-control-plane/04-06-publish-agents.md` → `04-06-publish-agents-teams-m365-copilot.md` to reflect the file's scope. Cross-references in 04-00 and 04-05 updated.
+
+### Fixed
+
+- Multiple broken or stale Microsoft Learn URLs across chapter 04 Resources sections (`?view=foundry-classic` URLs that resolve to classic-only content; 404s removed).
+- Locale-missing Pricing reference URLs in 04-04 (`/pricing/details/search/` and `/pricing/calculator/`) - added the `/en-us/` segment so they resolve directly.
+- Broken `main.ipynb` link in 04-00 Related examples (replaced with the existing `14-01-red-team-basics.ipynb`).
+- Typo `tooll` → `tool` in 04-09 cheat sheet.
+
+### Removed
+
+- Deprecated Prompt Flow / Azure ML compute row from the 04-04 Storage and compute table.
+- Classic-only Microsoft Learn articles from 04-01 Resources (the three articles that explicitly state "applies only to Foundry classic portal").
+
 ## [0.1.0] — 2026-05-15
 
 Initial public release of the **Awesome Foundry Nextgen** lab series.
@@ -34,4 +73,5 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.2.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.2.0
 [0.1.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.1.0

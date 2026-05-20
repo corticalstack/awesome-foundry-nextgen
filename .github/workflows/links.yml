@@ -31,7 +31,7 @@ jobs:
             --accept 200,206,429
             --exclude-path .git
             --exclude-path assets
-            --exclude '^https?://(localhost|127\.0\.0\.1|.*\.azure-api\.net|.*\.cognitiveservices\.azure\.com|.*\.search\.windows\.net|.*\.services\.ai\.azure\.com)'
+            --exclude-file .lycheeignore
             './**/*.md'
             './**/*.ipynb'
           fail: true

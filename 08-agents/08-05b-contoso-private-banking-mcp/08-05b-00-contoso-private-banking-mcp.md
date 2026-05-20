@@ -68,7 +68,7 @@ This lab implements the seven principles from Anthropic's [Writing tools for AI 
 
 ## Synthetic Contoso Private Investments dataset
 
-Five fictional clients spanning the standard Swiss private-bank persona set (per the [private-banking-workshop-agenda](../../docs/private-banking-workshop-agenda.md) §12 build list):
+Five fictional clients spanning the standard Swiss private-bank persona set:
 
 | Client | Segment | Base | AUM CHF | Notable | Drift / flag |
 |---|---|---|---|---|---|
@@ -78,7 +78,7 @@ Five fictional clients spanning the standard Swiss private-bank persona set (per
 | `cli-004` Müller Entrepreneurial Wealth | Post-Liquidity Entrepreneur | USD | 68.2M | Concentrated legacy stake (locked) | Müller Holding AG at 12.18% > 10% cap (concentration flag) |
 | `cli-005` Riedi Pension Plan | Institutional Pension | CHF | 234.5M | LDI mandate, FI-heavy | Largely in-line; FINMA Circular 2024/2 packs due |
 
-All ISINs use the documentation prefix `XX0000…`; all personas are fictional. See [open-source readiness checklist](../../docs/private-banking-workshop-agenda.md#15-open-source-readiness).
+All ISINs use the documentation prefix `XX0000…`; all personas are fictional.
 
 ## Getting started
 
@@ -147,6 +147,5 @@ Expected: **58 passed** (48 unit tests + 10 workflow evals).
 ## References
 
 - Anthropic, [Writing tools for AI agents](https://www.anthropic.com/engineering/writing-tools-for-agents) — the design checklist this lab implements
-- [Private Banking Workshop Agenda](../../docs/private-banking-workshop-agenda.md) — workshop module 4 protagonist (Aria the wealth-team RM assistant)
 - [08-05 Contoso PMO MCP](../08-05-contoso-pmo-mcp/) — the endpoint-style counterpart (37 CRUD tools)
 - [08-08 Human-in-the-loop](../08-08-human-in-the-loop/) — pattern for adding write tools with `require_approval`

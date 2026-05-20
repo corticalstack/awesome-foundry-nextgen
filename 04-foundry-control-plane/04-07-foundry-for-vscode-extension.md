@@ -1,12 +1,10 @@
-# Foundry for Visual Studio Code Extension
+# Foundry for VS Code extension
 
 The Foundry for VS Code extension integrates Azure AI Foundry capabilities directly into the Visual Studio Code editor. It provides access to the model catalog, model playground, agent builders, and Foundry project management without leaving the IDE.
 
-**Primary source:** [Work with the Microsoft Foundry for Visual Studio Code extension](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/get-started-projects-vs-code)
-
 ---
 
-## What the Extension Does
+## What the extension does
 
 | Capability | Description |
 |------------|-------------|
@@ -25,9 +23,9 @@ The extension does not provide full parity with the Foundry portal. Features suc
 
 - An Azure subscription (free account eligible)
 - [Visual Studio Code](https://code.visualstudio.com/Download) installed
-- Appropriate RBAC permissions:
-  - **Azure AI User** — minimum for development (call models, work with agents)
-  - **Azure AI Project Manager** — for creating and managing Foundry projects
+- Appropriate RBAC permissions (see [Built-in Foundry roles](04-01-foundry-enterprise-provisioning.md#built-in-foundry-roles) for definitions):
+  - **Foundry User** - minimum for development (call models, work with agents)
+  - **Foundry Project Manager** - for creating and managing Foundry projects
 - Quota headroom to deploy new models (or an existing deployed chat model)
 
 ---
@@ -74,7 +72,7 @@ Use the Command Palette (`F1`) and search "Foundry" for a full list of available
 
 ---
 
-## Extension Interface
+## Extension interface
 
 The extension organises resources into three sections in the sidebar:
 
@@ -86,7 +84,7 @@ The extension organises resources into three sections in the sidebar:
 
 ---
 
-## Working with Models
+## Working with models
 
 ### Browse the model catalog
 
@@ -135,7 +133,7 @@ Features:
 
 ---
 
-## Creating a New Foundry Project
+## Creating a new Foundry project
 
 1. Select the plus icon next to **Resources** in the sidebar
 2. Choose or create a resource group:
@@ -155,7 +153,7 @@ Tip: Right-click a project name to copy the project endpoint or API key.
 
 ---
 
-## Limitations vs Full Portal
+## Limitations vs full portal
 
 | Capability | Extension | Portal (ai.azure.com) |
 |------------|-----------|----------------------|
@@ -182,7 +180,7 @@ Tip: Right-click a project name to copy the project endpoint or API key.
 
 ---
 
-## Cleaning Up Resources
+## Cleaning up resources
 
 ### Delete a deployed model
 
@@ -200,8 +198,13 @@ Tip: Right-click a project name to copy the project endpoint or API key.
 
 ---
 
-## Related Resources
+## Resources
 
+- [Work with the Microsoft Foundry for VS Code extension (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/get-started-projects-vs-code)
 - [Foundry for VS Code extension on the Marketplace](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.vscode-ai-foundry)
 - [Foundry SDK overview](04-03-foundry-api-and-sdks.md)
 - [Role-based access control for Foundry](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-foundry)
+
+---
+
+[Next: Control Plane customer conversation →](04-08-control-plane-customer-conversation.md)

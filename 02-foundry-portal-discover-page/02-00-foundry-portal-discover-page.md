@@ -1,27 +1,28 @@
-The *discover* page is a Netflix-style discovery space for models and agents. It has a Models and capabilities catalog which can be search driven.
+# Foundry portal discover page
+The *discover* page is a Netflix-style discovery space for models and agents. It has a models and capabilities catalog which can be search driven.
 
 ![alt text](../docs/screenshots/discover_1.png)
 
 # Overview
-A mix of all our assets, including:
-- **featured models** including the most popular
-- **explore models from different providers** and collections
+A mix of all our Foundry assets, including:
+- **featured models** including the most popular.
+- **explore models from different providers** and collections.
 - **model leaderboard** to check models when thinking about optimising for quality, safety, throughput, and cost.
 - **compare models** by selecting more than one from the leaderboard, then clicking *compare models* to get a side-by-side view.
-- featured tools
+- **featured tools**
+
+# Models View
+Allows you to:
+- Look at all the models.
+- Search for models.
+- Select a model and look at the model card.
+- Model recommendation (which other models other users are using).
+- Deploy models, including quick deploy (global standard).
 
 ![alt text](../docs/screenshots/discover_2.png)
 
-# Models
-Allows you to:
-- Look at all the models
-- Searching for models
-- Select a model and look at the model card
-- Model recommendation (which other models other users are using)
-- Deploy models, including quick deploy (global standard)
-
-# Tools
-Foundry Tools is the place to discover and manage tools you use with agents and workflows in Microsoft Foundry.
+# Tools View
+Foundry Tools is the place to discover and manage tools you use with agents and workflows in Microsoft Foundry. Foundry provides both Foundry Tools (a curated public catalog of tools for building agents) and private tool catalogs (organization-scoped, for tools only visible within your organization).
 
 You can use Foundry Tools to:
 - Discover tools such as Model Context Protocol (MCP) servers and built-in tools.
@@ -32,10 +33,7 @@ Note: to use Foundry tools, you need:
 - Access to a Foundry project in the Foundry portal.
 - Permission to view and manage tools in that project.
 
-
-Lists tools including local and remote MCP servers.
-
-# Key Concepts
+## Key concepts
 
 | Term | Meaning |
 |---|---|
@@ -47,23 +45,18 @@ Lists tools including local and remote MCP servers.
 | Local MCP server | An MCP server you host yourself, then connect to Foundry by providing its remote endpoint. |
 | Custom tool | A tool you add by providing your own endpoint or specification (for example, an MCP endpoint, an OpenAPI spec, or Agent-to-Agent (A2A) endpoints). |
 
-## Foundry Tools and private tools catalog
-Foundry provides both Foundry Tools and private tool catalogs.
+## Tool types
 
-Foundry Tools includes a curated list of tools available for building agents. If you need tools that are only visible within your organization, create a private tool catalog.
-
-## Find the right tools in Foundry Tools
-
-### Tool Types
 Foundry Tools includes three types of tool catalog entries:
 
-- **Remote MCP server**: The MCP server publisher has already hosted the server and provided a static or dynamic MCP server endpoint. Foundry developers need to follow the configuration guidance to provide the appropriate information to finish the setup.
+| Type | Description |
+|---|---|
+| **Remote MCP server** | The MCP server publisher has already hosted the server and provided a static or dynamic MCP server endpoint. Foundry developers follow the configuration guidance to provide the appropriate information and finish the setup. |
+| **Local MCP server** | The publisher doesn't host the server. You host it, then connect it to Foundry by providing its endpoint. To build and register your own server, see [Build and register a Model Context Protocol (MCP) server](https://learn.microsoft.com/en-us/azure/foundry/mcp/build-your-own-mcp-server). To connect an MCP endpoint to an agent, see [Connect to Model Context Protocol servers](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python). |
+| **Custom** | These MCP servers are converted from Azure Logic App Connectors. Foundry developers need additional [configuration](https://aka.ms/FoundryCustomTool) to convert them to remote MCP servers. |
 
-- **Local MCP server**: The publisher doesn't host the server. You host it, then connect it to Foundry by providing its endpoint. To build and register your own server, see [Build and register a Model Context Protocol (MCP) server](https://ai.azure.com/nextgen/r/Alq6lAxKRD2IJkZkd-KFDw,rg-jpb-foundry-core,,proj-foundry-jpb-core-resource,proj-foundry-jpb-core/docs/mcp/build-your-own-mcp-server). To connect an MCP endpoint to an agent, see [Connect to Model Context Protocol servers](https://ai.azure.com/nextgen/r/Alq6lAxKRD2IJkZkd-KFDw,rg-jpb-foundry-core,,proj-foundry-jpb-core-resource,proj-foundry-jpb-core/docs/agents/how-to/tools/model-context-protocol).
+## Filters
 
-- **Custom**: These MCP servers are converted from Azure Logic App Connectors. Foundry developers need additional [configuration](https://aka.ms/FoundryCustomTool) to convert to remote MCP servers.
-
-### Filter and search
 Foundry Tools provides the following filters to help you find the right tools for your agents:
 
 | Filter | Description |
@@ -76,8 +69,6 @@ Foundry Tools provides the following filters to help you find the right tools fo
 # Featured solution templates
 
 Solution templates are step-by-step, production-ready AI application templates you can review, clone into your own environment, or open directly on GitHub. Each template is deployed via the Azure Developer CLI (`azd up`) and combines Foundry Agent Service, Azure OpenAI, and supporting Azure services.
-
-You are responsible for assessing all associated risks, and for complying with all applicable laws and safety standards when using these templates. See the transparency documents for [Agent Service](https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-use-of-ai-overview) and [Agent Framework](https://azure.microsoft.com/en-us/blog/introducing-microsoft-agent-framework/).
 
 ## Available templates
 
@@ -96,5 +87,9 @@ You are responsible for assessing all associated risks, and for complying with a
 
 ## Resources
 
-- [AI App Templates overview](https://learn.microsoft.com/en-us/azure/developer/ai/intelligent-app-templates) — full browsable gallery on Microsoft Learn
-- [Azure AI Solution Accelerators list](https://github.com/Azure/ai-solution-accelerators-list) — index of all accelerators on GitHub
+- [AI App Templates overview](https://learn.microsoft.com/en-us/azure/developer/ai/intelligent-app-templates) - full browsable gallery on Microsoft Learn
+- [Azure AI Solution Accelerators list](https://github.com/Azure/ai-solution-accelerators-list) - index of all accelerators on GitHub
+
+---
+
+[Next: Foundry portal build page →](../03-foundry-portal-build-page/03-00-foundry-portal-build-page.md)

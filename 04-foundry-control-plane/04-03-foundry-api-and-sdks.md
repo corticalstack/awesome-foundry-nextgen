@@ -2,11 +2,9 @@
 
 The Microsoft Foundry SDK provides language-specific client libraries for interacting with Foundry projects, running agents, executing evaluations, and managing connections. The SDK surface is built on top of Azure REST APIs and supports keyless authentication via `DefaultAzureCredential`.
 
-**Primary source:** [Get started with Microsoft Foundry SDKs and Endpoints](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/sdk-overview)
-
 ---
 
-## SDK Selection
+## SDK selection
 
 Choose the SDK based on your use case:
 
@@ -37,7 +35,7 @@ This matches the `ALPHA_FOUNDRY_PROJECT_ENDPOINT` pattern used in this repositor
 
 | SDK Version | Portal | Status | Package |
 |-------------|--------|--------|---------|
-| 2.x | Foundry (new) | Stable | `azure-ai-projects>=2.0.0` |
+| 2.1.0 | Foundry (new) | Stable | `azure-ai-projects>=2.0.0` |
 | 1.x | Foundry (classic) | Stable | `azure-ai-projects==1.0.0` |
 
 ```bash
@@ -48,22 +46,23 @@ pip install "azure-ai-projects>=2.0.0"
 
 | SDK Version | Portal | Status | Package |
 |-------------|--------|--------|---------|
-| 2.0.0-beta.4 | Foundry (new) | Preview | `@azure/ai-projects` (prerelease) |
+| 2.1.1 | Foundry (new) | Stable | `@azure/ai-projects` |
 | 1.0.1 | Foundry classic | Stable | `@azure/ai-projects` |
 
 ```bash
-npm install @azure/ai-projects@beta @azure/identity dotenv
+npm install @azure/ai-projects @azure/identity dotenv
 ```
 
 **.NET**
 
 | SDK Version | Portal | Status | Package |
 |-------------|--------|--------|---------|
-| 1.2.0-beta.5 | Foundry (new) | Preview | `Azure.AI.Projects`, `Azure.AI.Projects.Openai` |
+| 2.0.1 | Foundry (new) | Stable | `Azure.AI.Projects` |
+| 2.0.0-beta.1 | Foundry (new) | Preview | `Azure.AI.Projects.OpenAI` |
 | 1.x (GA) | Foundry classic | Stable | `Azure.AI.Projects` |
 
 ```bash
-dotnet add package Azure.AI.Projects --prerelease
+dotnet add package Azure.AI.Projects
 dotnet add package Azure.AI.Projects.OpenAI --prerelease
 dotnet add package Azure.Identity
 ```
@@ -72,7 +71,7 @@ dotnet add package Azure.Identity
 
 | SDK Version | Portal | Status | Package |
 |-------------|--------|--------|---------|
-| 1.0.0-beta.3 | Foundry (new) | Preview | `azure-ai-projects`, `azure-ai-agents` |
+| 2.1.0-beta.1 | Foundry (new) | Preview | `azure-ai-projects`, `azure-ai-agents` |
 
 ---
 
@@ -88,9 +87,11 @@ API keys work on the `/openai/v1` endpoint (pass as `api_key`). The Foundry proj
 
 | Role | Minimum permissions |
 |------|---------------------|
-| Azure AI User | Development access; can call models and agents |
-| Azure AI Project Manager | Can manage Foundry projects |
+| Foundry User | Development access; can call models and agents |
+| Foundry Project Manager | Can manage Foundry projects |
 | Contributor / Owner | Subscription-level provisioning |
+
+See [Built-in Foundry roles](04-01-foundry-enterprise-provisioning.md#built-in-foundry-roles) for full role definitions and permissions.
 
 ---
 
@@ -98,8 +99,8 @@ API keys work on the `/openai/v1` endpoint (pass as `api_key`). The Foundry proj
 
 The Foundry SDK provides two client patterns:
 
-- **Project client** (`AIProjectClient`) — for Foundry-native operations: listing connections, retrieving project properties, enabling tracing
-- **OpenAI-compatible client** — for Foundry functionality built on OpenAI concepts (Responses API, agents, evaluations, fine-tuning). Served on the `/openai` route of the project endpoint.
+- **Project client** (`AIProjectClient`) - for Foundry-native operations: listing connections, retrieving project properties, enabling tracing
+- **OpenAI-compatible client**: for Foundry functionality built on OpenAI concepts (Responses API, agents, evaluations, fine-tuning). Served on the `/openai` route of the project endpoint.
 
 ---
 
@@ -165,7 +166,7 @@ AIProjectClient projectClient = new(
 
 ---
 
-## What You Can Do with the Foundry SDK
+## What you can do with the Foundry SDK
 
 - Call Foundry models and Azure OpenAI deployments via the Responses API
 - Create and manage agents via the Foundry Agent Service
@@ -204,7 +205,7 @@ print(response.output_text)
 
 ---
 
-## Agent Framework (Local Orchestration)
+## Agent Framework (local orchestration)
 
 The Microsoft Agent Framework is an open-source SDK for building multi-agent systems in .NET and Python with a cloud-agnostic interface. It is paired with the Foundry SDK when agents need to run against Foundry models.
 
@@ -247,16 +248,20 @@ Foundry Tools SDKs (formerly Azure AI Services / Cognitive Services) provide cli
 
 | Issue | Resolution |
 |-------|-----------|
-| `DefaultAzureCredential failed to retrieve a token` | Run `az login`; confirm Azure AI User role on the Foundry project |
+| `DefaultAzureCredential failed to retrieve a token` | Run `az login`; confirm Foundry User role on the Foundry project |
 | `Connection refused` or `404 Not Found` | Verify endpoint format matches `https://<resource-name>.services.ai.azure.com/api/projects/<project-name>` |
 | `AttributeError` or `ModuleNotFoundError` | Run `pip show azure-ai-projects` to verify version; 2.x SDK requires the Foundry (new) portal; 1.x requires Foundry classic |
 | Model not found | Confirm deployment name matches the model deployment in the Foundry portal |
 
 ---
 
-## Related Resources
+## Resources
 
 - [Azure AI Foundry REST API reference](https://learn.microsoft.com/en-us/rest/api/aifoundry/)
 - [Foundry SDK overview](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/develop/sdk-overview)
 - [azure-ai-projects on PyPI](https://pypi.org/project/azure-ai-projects/)
 - [Microsoft Agent Framework overview](https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview)
+
+---
+
+[Next: Foundry costs →](04-04-foundry-costs.md)

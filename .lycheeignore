@@ -1,0 +1,28 @@
+# Lychee link-check exclusion patterns. One regex per line. # for comments.
+# See https://github.com/lycheeverse/lychee
+
+# Loopback and other localhost-style references in code samples
+^https?://(localhost|127\.0\.0\.1)
+
+# Internal-only Azure hostnames that resolve inside a VNet but not on the public internet
+^https?://(apim-foundry|aif-core)(/.*)?$
+
+# Azure resource hostnames used by SDKs as auth scopes / endpoints, not browseable pages
+^https?://.*\.azure-api\.net
+^https?://.*\.cognitiveservices\.azure\.com
+^https?://cognitiveservices\.azure\.com
+^https?://.*\.search\.windows\.net
+^https?://.*\.services\.ai\.azure\.com
+^https?://management\.azure\.com(/|/\.default)?$
+
+# Author-deployed Azure Functions used by demo notebooks (may be deleted or slow)
+^https?://func-[a-z0-9-]+\.azurewebsites\.net
+
+# Sites that block unauthenticated automated checkers
+^https?://portal\.azure\.com
+
+# Azure marketing/pricing pages, heavy JS that times out from CI runners
+^https?://azure\.microsoft\.com/.*pricing/
+
+# URL templates with {placeholder} markers (not real URLs - meant for reader substitution)
+\{[a-zA-Z_-]+\}
