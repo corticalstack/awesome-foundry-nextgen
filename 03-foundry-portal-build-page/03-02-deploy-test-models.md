@@ -1,50 +1,47 @@
-# How to create a new model
-You can use the Foundry UI to deploy a model in a Foundry project for inference. Models like gpt-4.1-mini for text responses, and gpt-image-1.5 for text to image.
+# Deploy and test models
 
-After you deploy a Foundry Model, you can interact with it in the Foundry Playground and use it from code.
+You can use the Foundry UI to deploy a model in a Foundry project for inference - models for text responses or image generation. After you deploy a Foundry Model, you can interact with it in the Foundry Playground and use it from code.
 
-To deploy a model you need the Cognitive Services Contributor role or equivalent permissions on the Foundry resource to create and manage deployments. 
+## Prerequisites
 
-When you deploy a model, you can choose *default settings* to default to a global standard deployment with default quota, or customize the deployment to select your own sku, quota, and guardrails.
+- The Cognitive Services Contributor role (or equivalent) on the Foundry resource, to create and manage deployments.
+- For Foundry Models from partners and community (such as the Llama or Anthropic series), an Azure Marketplace subscription. Foundry Models sold directly by Azure (such as OpenAI gpt models) don't require this.
 
-Note for Foundry Models from partners and community, like the Llama series, you need to subscribe to Azure Marketplace. 
+## Deployment options
 
-For Foundry Models sold directly by Azure, such as the Azure OpenAI model gpt-4o-mini, you don't subscribe to Azure Marketplace.
+When you deploy a model you can choose **default settings** for a global standard deployment with default quota, or customise the deployment to select your own SKU, quota, and guardrails.
 
-Note each model supports different deployment types, providing different data residency or throughput guarantees.
+Note: each model supports different deployment types, providing different data residency or throughput guarantees.
 
-# Regional availability and quota limits of a model
-For Foundry Models, the default quota varies by model and region. Certain models might only be available in some regions, see [here](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure).
+## Regional availability and quota
 
+For Foundry Models, default quota varies by model and region. Certain models are only available in some regions - see [Models sold directly by Azure](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure).
 
-# Test the deployment in the playground
+## Model deployment tabs
 
-You can interact with the new model in the Foundry portal by using the playground. The playground is a web-based interface that lets you interact with the model in real-time. Use the playground to test the model with different prompts and see the model's responses.
+Once deployed, a model has three tabs you can switch between.
 
-## Model Deployment tabs
+### Playground Tab
 
-### Playground
-The first tab is the playground which allows you to select the model from the drop down. You can also adjust the model parameters like number of past messages included, max tokens, and temperature.
+The Playground lets you select the model from a drop-down and adjust parameters such as past messages included, max tokens, and temperature. You can also add a system prompt, for example:
 
-Here you can add a system prompt like *You are an AI assistant that helps people find information*.
+> You are an AI assistant that helps people find information.
 
 #### Adding tools
-You can connect tools to your model, to extend what your model can work with, like retrieving information from sharepoint, adding a code interpretor to create a bar graph from excel data, or web search to ground the model in the latest online information.
+
+Connect tools to your model to extend what it can work with - retrieving information from SharePoint, adding a code interpreter to create a bar graph from Excel data, or web search to ground the model in the latest online information.
 
 ![alt text](../docs/screenshots/model-web-search-grounding-tool.png)
 
-#### Adding knowledge and memory
-You need to create an agent for adding knowledge and memory. The agent will use the current model and configuration.
+### Details Tab
 
-
-# Details View
 - Shows the model target URI and API key (if enabled).
-- Model name and deployment type, provisioning state
-- TPM (Tokens Per Minute) and RPM (Requests Per Minute) rate limits
+- Model name, deployment type, and provisioning state.
+- TPM (tokens per minute) and RPM (requests per minute) rate limits.
 
+### Monitor Tab
 
-# Monitor View
-By time window (e.g., custom date range, last day, last 7 days, last month), metrics for:
+By time window (custom date range, last day, last 7 days, last month), shows metrics for:
 
 - Total requests
 - Total token count
@@ -53,10 +50,12 @@ By time window (e.g., custom date range, last day, last 7 days, last month), met
 - Output token count
 - Time to first byte
 
-Note you can use Ask AI for some canned queries on metrics.
+Note: you can use Ask AI for canned queries on these metrics.
 
+## Resources
 
-# Resources
-[Deploy a Foundry model with code](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/how-to/create-model-deployments?view=foundry&pivots=programming-language-cli)
+- [Deploy a Foundry model with code](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/how-to/create-model-deployments?view=foundry&pivots=programming-language-cli)
 
+---
 
+[Next: Foundry Control Plane →](../04-foundry-control-plane/04-00-control-plane.md)

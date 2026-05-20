@@ -1,12 +1,10 @@
-# Publish Agents to Microsoft Teams and Microsoft 365 Copilot
+# Publish agents to Teams and M365 Copilot
 
 Publishing a Foundry agent makes it available via Microsoft Teams and Microsoft 365 Copilot. The publish flow creates an agent application backed by Azure Bot Service and an Entra app registration, assigns it a stable endpoint, and packages it for distribution to individuals or the entire organisation.
 
-**Primary source:** [Publish agents to Microsoft 365 Copilot and Microsoft Teams — Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/publish-copilot)
-
 ---
 
-## What Publishing Does
+## What publishing does
 
 Publishing creates an **agent application** with a stable endpoint. The agent application:
 
@@ -23,9 +21,9 @@ After publishing, the agent uses the agent application identity for authenticati
 
 - Access to the Microsoft Foundry portal ([ai.azure.com](https://ai.azure.com))
 - A Foundry project with a tested agent version
-- RBAC role assignments:
-  - **Azure AI Project Manager** on the Foundry project scope — required to publish agents
-  - **Azure AI User** on the agent application scope — required to invoke the published agent
+- RBAC role assignments (see [Built-in Foundry roles](04-01-foundry-enterprise-provisioning.md#built-in-foundry-roles) for definitions):
+  - **Foundry Project Manager** on the Foundry project scope - required to publish agents
+  - **Foundry User** on the agent application scope - required to invoke the published agent
 - An Azure subscription where you can create Azure Bot Service resources and Microsoft Entra ID app registrations
 - Agent thoroughly tested in the Foundry portal before publishing
 - `Microsoft.BotService` resource provider registered in the subscription
@@ -38,10 +36,10 @@ az provider register --namespace Microsoft.BotService
 
 ---
 
-## Step 1: Publish the Agent as an Agent Application
+## Step 1: Publish the agent as an agent application
 
 1. In the Foundry portal, select your agent version
-2. Select **Publish** — a publishing dialog opens with distribution options
+2. Select **Publish** - a publishing dialog opens with distribution options
 3. An agent application is created with a stable endpoint
 
 ---
@@ -69,14 +67,14 @@ az provider register --namespace Microsoft.BotService
 
 Placeholder HTTPS URLs are acceptable for individual developers and testing purposes.
 
-5. Select **Prepare Agent** — packaging typically takes **1–2 minutes**
+5. Select **Prepare Agent** - packaging typically takes **1-2 minutes**
 6. When ready, choose either:
-   - **Download the package** — test locally before publishing
-   - **Continue the in-product publishing flow** — publish directly to Teams and M365 Copilot
+   - **Download the package** - test locally before publishing
+   - **Continue the in-product publishing flow** - publish directly to Teams and M365 Copilot
 
 ---
 
-## Step 3: Choose a Publish Scope
+## Step 3: Choose a publish scope
 
 | Scope | Visibility | Admin approval required | Best for |
 |-------|------------|------------------------|---------|
@@ -99,7 +97,7 @@ Placeholder HTTPS URLs are acceptable for individual developers and testing purp
 
 ---
 
-## Testing the Package Locally
+## Testing the package locally
 
 1. Download the `.zip` package
 2. In Microsoft Teams:
@@ -116,7 +114,7 @@ Placeholder HTTPS URLs are acceptable for individual developers and testing purp
 
 ---
 
-## Current Limitations
+## Current limitations
 
 All limitations listed below are temporary with fixes in progress per the documentation.
 
@@ -142,7 +140,7 @@ All limitations listed below are temporary with fixes in progress per the docume
 
 ---
 
-## Frequently Asked Questions
+## Frequently asked questions
 
 **Q: If I publish to Organisation (tenant) scope, where do I approve the agent?**
 In the [Microsoft 365 admin center](https://admin.cloud.microsoft/?#/agents/all/requested). Once approved by an admin, the agent appears under **Built by your org** in the agent store.
@@ -155,8 +153,13 @@ Updating an agent version requires re-publishing. Each published version creates
 
 ---
 
-## Related Resources
+## Resources
 
+- [Publish agents to Microsoft 365 Copilot and Microsoft Teams (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/publish-copilot)
 - [Role-based access control in the Foundry portal](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-foundry)
 - [Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview)
-- [Microsoft 365 admin center — Agents](https://admin.cloud.microsoft/?#/agents/all/requested)
+- [Microsoft 365 admin center - Agents](https://admin.cloud.microsoft/?#/agents/all/requested)
+
+---
+
+[Next: Foundry for VS Code extension →](04-07-foundry-for-vscode-extension.md)

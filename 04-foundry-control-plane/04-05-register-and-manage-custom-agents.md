@@ -1,14 +1,12 @@
-# Register and Manage Custom Agents in the Foundry Control Plane
+# Register and manage custom agents
 
-The Foundry Control Plane supports registering agents that run outside of the Foundry Agent Service — including agents hosted on Azure compute, other cloud environments, or on-premises infrastructure. Registration routes traffic through the AI Gateway (Azure API Management), enabling observability and lifecycle operations without modifying the agent's existing implementation.
-
-**Primary source:** [Register and Manage Custom Agents — Microsoft Learn](https://learn.microsoft.com/en-us/azure/ai-foundry/control-plane/register-custom-agent)
+The Foundry Control Plane supports registering agents that run outside of the Foundry Agent Service - including agents hosted on Azure compute, other cloud environments, or on-premises infrastructure. Registration routes traffic through the AI Gateway (Azure API Management), enabling observability and lifecycle operations without modifying the agent's existing implementation.
 
 > **Note:** This capability is available only in the **Foundry (new)** portal (`ai.azure.com` with the New Foundry toggle enabled).
 
 ---
 
-## What "Custom Agent" Means
+## What "custom agent" means
 
 A custom agent is any agent not built and hosted natively in the Foundry Agent Service. This includes:
 
@@ -32,7 +30,7 @@ After registration, Foundry generates a new proxy URL backed by API Management. 
 
 ---
 
-## Registration Architecture
+## Registration architecture
 
 ```
 Client → AI Gateway (APIM proxy URL) → Custom Agent Endpoint
@@ -46,7 +44,7 @@ The original agent endpoint is not exposed directly to clients after registratio
 
 ---
 
-## Step 1: Prepare Your Foundry Project
+## Step 1: Prepare your Foundry project
 
 ### Verify AI Gateway configuration
 
@@ -68,7 +66,7 @@ The original agent endpoint is not exposed directly to clients after registratio
 
 ---
 
-## Step 2: Register the Agent
+## Step 2: Register the agent
 
 1. Navigate to **Operate** → **Overview**
 2. Select **Register agent**
@@ -78,7 +76,7 @@ The original agent endpoint is not exposed directly to clients after registratio
 
 | Property | Description | Required |
 |----------|-------------|----------|
-| **Agent URL** | The endpoint where the agent runs and receives requests. For agents using the OpenAI Chat Completions API, enter `https://<host>/v1/` without `/chat/completions` — clients append the path. | Yes |
+| **Agent URL** | The endpoint where the agent runs and receives requests. For agents using the OpenAI Chat Completions API, enter `https://<host>/v1/` without `/chat/completions` - clients append the path. | Yes |
 | **Protocol** | Communication protocol: `HTTP` (general) or `A2A` (Agent-to-Agent protocol). | Yes |
 | **A2A agent card URL** | Path to the agent card JSON spec. Default: `/.well-known/agent-card.json`. | No |
 | **OpenTelemetry Agent ID** | The agent ID used to emit traces, found in the `gen_ai.agents.id` OTel attribute on spans with `operation="create_agent"`. If not specified, Foundry uses **Agent name** to find traces in Application Insights. | No |
@@ -99,7 +97,7 @@ The original agent endpoint is not exposed directly to clients after registratio
 
 ---
 
-## Step 3: Connect Clients to the Registered Agent
+## Step 3: Connect clients to the registered agent
 
 After registration, Foundry generates a new proxy URL via APIM. Update all clients to use this URL.
 
@@ -130,7 +128,7 @@ async def stream_run():
 
 ---
 
-## Block and Unblock the Agent
+## Block and unblock the agent
 
 Foundry cannot start or stop the underlying infrastructure for custom agents. It can, however, block or allow incoming requests via the gateway.
 
@@ -148,7 +146,7 @@ After blocking, **Status** changes to **Blocked**. The agent's infrastructure co
 
 ---
 
-## Observability: Enabling Diagnostic Data
+## Observability: enabling diagnostic data
 
 The Control Plane uses OpenTelemetry to understand agent activity. With Application Insights configured, Foundry logs all requests by default and computes:
 
@@ -196,7 +194,7 @@ For agents that support OpenTelemetry but not Application Insights natively, dep
 
 ---
 
-## Troubleshooting Traces
+## Troubleshooting traces
 
 If traces are not appearing in the Control Plane:
 
@@ -209,9 +207,14 @@ If traces are not appearing in the Control Plane:
 
 ---
 
-## Related Resources
+## Resources
 
+- [Register and manage custom agents (Microsoft Learn)](https://learn.microsoft.com/en-us/azure/ai-foundry/control-plane/register-custom-agent)
 - [Foundry Control Plane overview](04-00-control-plane.md)
 - [OpenTelemetry semantic conventions for generative AI](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
 - [Configure Azure Monitor OpenTelemetry](https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-configuration)
 - [langchain-azure-ai on PyPI](https://pypi.org/project/langchain-azure-ai/)
+
+---
+
+[Next: Publish agents to Teams and M365 Copilot →](04-06-publish-agents-teams-m365-copilot.md)

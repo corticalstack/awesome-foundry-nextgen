@@ -1,12 +1,10 @@
-# Foundry Region Availability
+# Region availability
 
 Microsoft Foundry brings together Azure AI capabilities that were previously only available as standalone Azure services. Feature availability varies by region. This document lists the Azure regions where Foundry projects can be created, the features with region-specific constraints, and guidance for selecting a region.
 
-**Primary source:** [Feature availability across cloud regions — Microsoft Foundry](https://learn.microsoft.com/en-us/azure/ai-foundry/reference/region-support)
-
 ---
 
-## Regions Supporting Foundry Projects
+## Regions supporting Foundry projects
 
 The following Azure regions support the creation of Foundry projects (as of 2026-04):
 
@@ -29,7 +27,7 @@ The following Azure regions support the creation of Foundry projects (as of 2026
 | North Central US | West US |
 | North Europe | West US 3 |
 
-† Sovereign cloud (Azure Government) — see [Sovereign Cloud Availability](#sovereign-cloud-availability) below.
+† Sovereign cloud (Azure Government) - see [Sovereign cloud availability](#sovereign-cloud-availability) below.
 
 > **Note:** Switzerland West is not listed as a supported Foundry region. Azure has a Switzerland West datacenter, but the Foundry region-support page only enumerates Switzerland North, so projects can't be created there. If data residency in Switzerland is the driver, Switzerland North is the only option for Foundry today.
 
@@ -37,7 +35,7 @@ This list reflects the documentation snapshot at the primary source URL above. V
 
 ---
 
-## Feature Availability by Region
+## Feature availability by region
 
 Not all Foundry features are available in every supported region. The following table links to the authoritative regional availability pages for each feature:
 
@@ -50,7 +48,7 @@ Not all Foundry features are available in every supported region. The following 
 
 ---
 
-## Global vs Regional Model Deployments
+## Global vs regional model deployments
 
 Azure OpenAI offers two deployment types that affect regional availability:
 
@@ -63,17 +61,17 @@ For workloads with data residency requirements, use regional deployments and sel
 
 ---
 
-## Region Selection Guidance
+## Region selection guidance
 
 Consider the following factors when selecting a region for a Foundry project:
 
 ### Model availability
 
-Check the Azure OpenAI model availability list for the target region before committing. Not all models (including GPT-4o, o3, Phi-4) are available in all regions. The Azure OpenAI quota and limits page is the authoritative source.
+Check the [Azure OpenAI model availability list](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure) for the target region before committing. Not all models are available in all regions. The Azure OpenAI quota and limits page is the authoritative source.
 
 ### Quota availability
 
-Azure OpenAI quotas are allocated per region, per subscription, and per model or deployment type. A region that supports a model may still have insufficient quota for your expected token throughput. Request quota increases via the Azure portal before production rollout.
+Azure OpenAI quotas are allocated per region, per subscription, and per model or deployment type. A region that supports a model may still have insufficient quota for your expected token throughput. Submit an [Azure OpenAI quota increase request](https://aka.ms/oai/stuquotarequest) before production rollout.
 
 ### Dependent services
 
@@ -93,7 +91,7 @@ Select a region geographically close to your end users or compute workloads to m
 
 ---
 
-## Sovereign Cloud Availability
+## Sovereign cloud availability
 
 Foundry is available in **Azure Government** for US government entities and their partners. The portal URL differs from the public cloud:
 
@@ -116,13 +114,13 @@ Several Foundry features are **not** supported in Azure Government regions:
 - Deploy Web App
 - VS Code Extension
 
-Supported features include Azure OpenAI in Foundry Models, Foundry Tools (Speech, Language, Translator, Vision, Document, Content Safety), the model catalog (subject to [machine learning cloud parity](https://learn.microsoft.com/en-us/azure/machine-learning/reference-machine-learning-cloud-parity)), Prompt flow, Tracing (preview), and Guardrails & Controls.
+Supported features include Azure OpenAI in Foundry Models, Foundry Tools (Speech, Language, Translator, Vision, Document, Content Safety), the model catalog (subject to [machine learning cloud parity](https://learn.microsoft.com/en-us/azure/machine-learning/reference-machine-learning-cloud-parity)), Tracing, Guardrails, and Controls.
 
 For a full comparison, see [Compare Azure Government and global Azure](https://learn.microsoft.com/en-us/azure/azure-government/compare-azure-government-global-azure).
 
 ---
 
-## Pre-Production Checklist
+## Pre-production checklist
 
 Before deploying a Foundry project to production in a selected region:
 
@@ -134,7 +132,7 @@ Before deploying a Foundry project to production in a selected region:
 
 ---
 
-## Troubleshooting Region Issues
+## Troubleshooting region issues
 
 | Issue | Resolution |
 |-------|-----------|
@@ -146,8 +144,15 @@ Before deploying a Foundry project to production in a selected region:
 
 ---
 
-## Related Resources
+## Resources
 
+- [Feature availability across cloud regions (Microsoft Foundry)](https://learn.microsoft.com/en-us/azure/ai-foundry/reference/region-support)
 - [Azure global infrastructure products by region](https://azure.microsoft.com/global-infrastructure/services/)
+- [Foundry Models sold by Azure (model availability list)](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure)
 - [Azure OpenAI quotas and limits](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/quotas-limits)
+- [Azure OpenAI quota increase request form](https://aka.ms/oai/stuquotarequest)
 - [Foundry Agent Service limits and quotas](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/limits-quotas-regions)
+
+---
+
+[Next: Foundry API and SDKs →](04-03-foundry-api-and-sdks.md)
