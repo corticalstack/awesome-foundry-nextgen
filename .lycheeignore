@@ -5,24 +5,29 @@
 ^https?://(localhost|127\.0\.0\.1)
 
 # Internal-only Azure hostnames that resolve inside a VNet but not on the public internet
-^https?://(apim-foundry|aif-core)(/.*)?$
+^https?://(apim-foundry|aif-core|aif-cu|aif-spoke-multi|iq-search)(/.*)?$
 
 # Azure resource hostnames used by SDKs as auth scopes / endpoints, not browseable pages
 ^https?://.*\.azure-api\.net
 ^https?://.*\.cognitiveservices\.azure\.com
 ^https?://cognitiveservices\.azure\.com
 ^https?://.*\.search\.windows\.net
+^https?://search\.azure\.com(/.*)?$
 ^https?://.*\.services\.ai\.azure\.com
-^https?://management\.azure\.com(/|/\.default)?$
+^https?://management\.azure\.com(/|/\.default/?)?$
 
 # Author-deployed Azure Functions used by demo notebooks (may be deleted or slow)
 ^https?://func-[a-z0-9-]+\.azurewebsites\.net
 
-# Sites that block unauthenticated automated checkers
+# Sites that block unauthenticated automated checkers or have HTTP/2 quirks
 ^https?://portal\.azure\.com
+^https?://platform\.openai\.com
+^https?://msrc\.microsoft\.com
 
 # Azure marketing/pricing pages, heavy JS that times out from CI runners
 ^https?://azure\.microsoft\.com/.*pricing/
 
-# URL templates with {placeholder} markers (not real URLs - meant for reader substitution)
+# URL templates with {placeholder} markers (not real URLs - meant for reader substitution).
+# Lychee tests the regex against the URL-encoded form, so match both literal {name} and %7Bname%7D.
 \{[a-zA-Z_-]+\}
+%7B[a-zA-Z_-]+%7D
