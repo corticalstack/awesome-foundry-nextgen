@@ -1,0 +1,28 @@
+# gitleaks configuration for awesome-foundry-nextgen
+#
+# Extends the default gitleaks rules (genuine secrets: API keys, tokens,
+# connection strings) with a repo-specific rule that catches Azure
+# subscription IDs leaked in URLs or resource paths - the main category of
+# environment identifier that turns up in committed notebook outputs.
+#
+# Enforced locally via the pre-commit hook (see .pre-commit-config.yaml), which
+# scans only staged changes. To scan the whole working tree manually:
+#   docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.1 dir /repo
+
+title = "awesome-foundry-nextgen"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "azure-subscription-id-in-path"
+description = "Azure subscription ID in a URL or resource path (likely leaked from a notebook output or portal deep link)"
+regex = '''(?i)subscription(?:s|id)[/=]([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'''
+tags = ["azure", "subscription-id"]
+
+[allowlist]
+description = "Documented placeholder values that are safe to commit"
+regexes = [
+  # canonical all-zeros example subscription ID used throughout Azure docs
+  '''0{8}-0{4}-0{4}-0{4}-0{12}''',
+]
