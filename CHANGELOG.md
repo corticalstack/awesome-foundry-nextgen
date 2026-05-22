@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-22
+
+Section 05 (project pattern setup) cleanup, plus repo-wide secret-scanning tooling.
+
+### Added
+
+- gitleaks pre-commit hook (`.pre-commit-config.yaml` + `.gitleaks.toml`) with a custom, context-scoped Azure subscription-ID rule on top of the default secret rules. Runs via Docker on staged changes only.
+- Notebook output hygiene policy in `CONTRIBUTING.md`: keep outputs but scrub environment identifiers, plus local-setup steps and PR-checklist items.
+- Next-page navigation links through section 05 (05-00 to 05-01 to 05-02).
+
+### Changed
+
+- Cleaned up section 05 across all files (05-00 through 05-04, both notebooks and Bicep): sentence-case headings aligned with filenames, with vestigial section numbering removed.
+- Updated Foundry RBAC role names to the current naming (Foundry User / Project Manager / Account Owner / Owner) with a rename note and cross-reference to 04-01.
+- Replaced brittle `Lab N` cross-references with stable capability names (Foundry IQ, Foundry IQ Multi-Agent, Contoso PMO KB, Agent Observability, Content Understanding, Memory API). This also corrected several that pointed at the wrong section (for example "Lab 09 Foundry IQ Multi-Agent" is actually section 11; "Lab 07-05 Agent Observability" is 08-07).
+- Scrubbed environment identifiers from committed notebook outputs (subscription IDs, Entra principal/object IDs, local home paths) to placeholders, while keeping the demonstration outputs and the deterministic resource-name suffix.
+
+### Fixed
+
+- Architecture diagram (05-01): removed dead `H2`/`H4` node references from the mermaid `class` statement that broke stricter renderers.
+- Corrected a wrong governance-policy notebook path in 05-01 (`06-01-deploy-governance-policy.ipynb`).
+
 ## [0.2.0] - 2026-05-20
 
 Documentation pass over chapters 00-04 to improve consistency, navigability, and accuracy.
@@ -73,5 +95,6 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.3.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.3.0
 [0.2.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.2.0
 [0.1.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.1.0
