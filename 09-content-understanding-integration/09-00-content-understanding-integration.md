@@ -1,8 +1,8 @@
-# 08 – Content Understanding Integration
+# Content understanding integration
 
 Demonstrates integrating **Azure AI Content Understanding (CU)** into the hub/spoke
 AI Foundry architecture via the APIM gateway. Rather than calling the CU service
-directly, all CU traffic flows through the core APIM — giving operators centralised
+directly, all CU traffic flows through the core APIM - giving operators centralised
 rate limiting, quota enforcement, correlation tracing, and managed-identity backend
 auth.
 
@@ -19,7 +19,7 @@ In this lab that account is `aif-cu-{suffix}`, deployed into `rg-foundry-cu-{suf
 The APIM `/cu` API proxies to this endpoint via managed identity.
 
 The account also hosts local deployments of `gpt-4.1-mini` and
-`text-embedding-3-large` — these are required by CU field extraction analyzers,
+`text-embedding-3-large` - these are required by CU field extraction analyzers,
 which call them internally when extracting structured fields from documents. Without
 these local deployments on the same account, field extraction analyzers will fail.
 
@@ -46,24 +46,24 @@ aif-cu-{suffix}  (AI Services account)
 
 | Phase | Notebook | Actions |
 |---|---|---|
-| 0 – Deploy | `08-01-deploy-setup.ipynb` | Provisions `rg-foundry-cu-{suffix}`, `aif-cu-{suffix}`, model deployments, `cu-project`, APIM `/cu` API, RBAC; writes `CU_*` env vars to `.env` |
-| 1 – Analyze | `08-02-cu-analyze.ipynb` | Lists available analyzers; submits the Apollo 14 Mission Report PDF via `prebuilt-layout`; polls for results; displays extracted markdown |
+| 0 - Deploy | `08-01-deploy-setup.ipynb` | Provisions `rg-foundry-cu-{suffix}`, `aif-cu-{suffix}`, model deployments, `cu-project`, APIM `/cu` API, RBAC; writes `CU_*` env vars to `.env` |
+| 1 - Analyze | `08-02-cu-analyze.ipynb` | Lists available analyzers; submits the Apollo 14 Mission Report PDF via `prebuilt-layout`; polls for results; displays extracted markdown |
 
 ## Infrastructure deployed
 
 | Resource | Type | Resource group |
 |---|---|---|
-| `rg-foundry-cu-{suffix}` | Resource Group | New — dedicated CU RG |
+| `rg-foundry-cu-{suffix}` | Resource Group | New - dedicated CU RG |
 | `aif-cu-{suffix}` | AI Services account (Foundry) | `rg-foundry-cu-{suffix}` |
 | `gpt-4.1-mini` | Model deployment (GlobalStandard, 10K TPM) | On `aif-cu-{suffix}` |
 | `text-embedding-3-large` | Model deployment (Standard, 50K TPM) | On `aif-cu-{suffix}` |
 | `cu-project` | Foundry project | Child of `aif-cu-{suffix}` |
 | `landing-zone-apim` | Project connection (ApiManagement) | On `cu-project` |
-| `content-understanding-api` | APIM API (`/cu`, 7 operations) | Core RG — `apim-foundry-{suffix}` |
+| `content-understanding-api` | APIM API (`/cu`, 7 operations) | Core RG - `apim-foundry-{suffix}` |
 | `foundry-gateway-cu` | APIM subscription (scoped to `content-understanding-api`) | Core RG |
-| RBAC — deployer | Azure AI Developer on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
-| RBAC — `cu-project` MI | Azure AI Developer on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
-| RBAC — APIM MI | Cognitive Services User on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
+| RBAC - deployer | Azure AI Developer on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
+| RBAC - `cu-project` MI | Azure AI Developer on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
+| RBAC - APIM MI | Cognitive Services User on `aif-cu-{suffix}` | `rg-foundry-cu-{suffix}` |
 
 ## APIM governance policy (`/cu` API)
 
@@ -73,7 +73,7 @@ The APIM API applies the following inbound policies to all CU traffic:
 - **Quota:** 1,000 calls per day per subscription
 - **Correlation ID:** `X-Correlation-Id` header injected for tracing
 - **API version:** `api-version=2025-11-01` added if absent
-- **Backend auth:** `authentication-managed-identity` — APIM MI authenticates to CU using Entra ID
+- **Backend auth:** `authentication-managed-identity` - APIM MI authenticates to CU using Entra ID
 - **CORS:** all origins allowed (browser-accessible)
 - **Response tagging:** `X-AI-Gateway: foundry-landing-zone-cu-1.0`
 
@@ -86,10 +86,10 @@ See the policy below at the API level:
 
 ### 1. Prerequisites
 
-- **Lab 1A complete** — `GATEWAY_URL` must be in `.env`
-- **Lab 1C complete** — `MULTI_ACCOUNT` must be in `.env`
-- **Azure CLI** — run `az login` with Contributor + User Access Administrator
-- **Python environment** — run `uv sync` from repo root; select `.venv` kernel
+- **Core gateway deployed** - `GATEWAY_URL` must be in `.env`
+- **Multi-project deployed** - `MULTI_ACCOUNT` must be in `.env`
+- **Azure CLI** - run `az login` with Contributor + User Access Administrator
+- **Python environment** - run `uv sync` from repo root; select `.venv` kernel
 
 ### 2. Run the notebooks in order
 
@@ -124,7 +124,7 @@ Content Understanding field extraction analyzers depend on `gpt-4.1-mini` and
 `text-embedding-3-large` being deployed locally on the same AI Services account.
 The `deny-model-deployments` Azure Policy **must not** be assigned to
 `rg-foundry-cu-{suffix}`. The hub/spoke architecture normally enforces this policy
-on spoke RGs — the CU RG is the intentional exception.
+on spoke RGs - the CU RG is the intentional exception.
 
 ### Two-resource-group deployment
 The APIM API (`apim-cu-api.bicep`) is deployed into the **hub** RG, while the CU
@@ -134,7 +134,7 @@ orchestrates both deployments in sequence.
 ### Operation-Location URL rewriting required
 After submitting an analysis (`POST /analyzers/{id}:analyze`), the CU service returns
 an `Operation-Location` polling URL that points directly to
-`cognitiveservices.azure.com` — bypassing APIM. The notebook rewrites this URL to
+`cognitiveservices.azure.com` - bypassing APIM. The notebook rewrites this URL to
 route through the APIM `/cu` gateway before polling, preserving governance controls.
 
 ### CU defaults must be patched post-deployment
@@ -177,3 +177,7 @@ Azure AI Content Understanding is not yet surfaced through the `azure-ai-project
 SDK. All CU calls use `urllib.request` (standard library) with the APIM key directly.
 `DefaultAzureCredential` is only used for the deployment verification step (listing
 project connections), not for CU analyze/poll calls.
+
+---
+
+[Next: Deploy the Content Understanding spoke →](09-01-deploy-setup.ipynb)

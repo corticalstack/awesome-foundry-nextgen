@@ -1,5 +1,5 @@
 // ============================================================================
-// Lab 10: Content Understanding API on existing core APIM
+// Content Understanding API on existing core APIM
 // Adds the /cu API with 7 operations and a governance policy to the APIM
 // instance in rg-foundry-core-{suffix}.
 // Deployed to the core resource group by 10-00-deploy-setup.ipynb.
@@ -34,7 +34,7 @@ resource cuApi 'Microsoft.ApiManagement/service/apis@2023-09-01-preview' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Operations (7 total — same set as the original Lab 10 APIM definition)
+// Operations (7 total - same set as the original APIM definition)
 // ─────────────────────────────────────────────────────────────────────────────
 resource analyzeOperation 'Microsoft.ApiManagement/service/apis/operations@2023-09-01-preview' = {
   parent: cuApi
@@ -134,7 +134,7 @@ resource patchDefaultsOperation 'Microsoft.ApiManagement/service/apis/operations
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// API-level policy — governance controls (preserved verbatim)
+// API-level policy - governance controls (preserved verbatim)
 // ─────────────────────────────────────────────────────────────────────────────
 resource cuApiPolicy 'Microsoft.ApiManagement/service/apis/policies@2023-09-01-preview' = {
   parent: cuApi
