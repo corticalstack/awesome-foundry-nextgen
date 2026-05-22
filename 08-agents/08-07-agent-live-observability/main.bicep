@@ -1,5 +1,5 @@
 // ============================================================================
-// Lab 07-05: Agent Observability — subscription-scoped entry point.
+// Agent observability - subscription-scoped entry point.
 //
 // Deploys observability infrastructure in two places:
 //   - spoke RG (rg-foundry-multi-{suffix}): Log Analytics, App Insights,
@@ -7,7 +7,7 @@
 //     APIM connection, RBAC.
 //   - admin RG (rg-foundry-core-{suffix}): AppInsights connection on the
 //     core account pointing at the same App Insights resource, plus the
-//     Azure AI User role assignment on the admin project's managed
+//     Foundry User role assignment on the admin project's managed
 //     identity (required by the Portal Monitor tab and continuous-eval).
 //
 // The split exists because Foundry account-level connections must be
@@ -45,7 +45,7 @@ param apimName string
 param apimSubscriptionKey string
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Spoke module — App Insights, Log Analytics, obs-project, spoke connection
+// Spoke module - App Insights, Log Analytics, obs-project, spoke connection
 // ─────────────────────────────────────────────────────────────────────────────
 module spoke 'modules/spoke.bicep' = {
   name: 'obs-spoke-deploy'
@@ -60,7 +60,7 @@ module spoke 'modules/spoke.bicep' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Admin module — core-account AppInsights connection + admin-project IAM
+// Admin module - core-account AppInsights connection + admin-project IAM
 // ─────────────────────────────────────────────────────────────────────────────
 module admin 'modules/admin.bicep' = {
   name: 'obs-admin-deploy'
@@ -74,7 +74,7 @@ module admin 'modules/admin.bicep' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Outputs — re-expose what the notebook needs to write to .env
+// Outputs - re-expose what the notebook needs to write to .env
 // ─────────────────────────────────────────────────────────────────────────────
 output projectName string = spoke.outputs.projectName
 output projectEndpoint string = spoke.outputs.projectEndpoint

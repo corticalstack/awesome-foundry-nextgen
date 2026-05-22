@@ -72,7 +72,7 @@ def display_row_results(rows: list, columns: list | None = None):
         print("No row results available")
         return
 
-    # Default score columns — SDK >=1.13.1 uses "{metric}_result" keys in rows
+    # Default score columns - SDK >=1.13.1 uses "{metric}_result" keys in rows
     if columns is None:
         columns = ["coherence", "fluency", "relevance", "groundedness", "similarity"]
 
@@ -188,7 +188,7 @@ def analyze_evaluation_results(result: dict):
         recommendations.append("- Reduce hallucinations by improving retrieval or adding guardrails")
     similarity_avg = _get_metric("similarity")
     if similarity_avg and similarity_avg < 3:
-        recommendations.append("- Responses diverge significantly from expected answers — review knowledge base")
+        recommendations.append("- Responses diverge significantly from expected answers - review knowledge base")
 
     if recommendations:
         display(Markdown("#### Recommendations\n" + "\n".join(recommendations)))

@@ -1,4 +1,4 @@
-# 08-05 – Contoso PMO KB MCP Server
+# Contoso PMO KB MCP server
 
 Demonstrates building a self-hosted **37-tool custom MCP (Model Context Protocol) server** on Azure Functions backed by a JSON knowledge base, and connecting it to a Foundry agent on the **admin project** via the **versioned-agent API** (`PromptAgentDefinition` + `create_version`). The knowledge base covers projects, people, meetings, tasks, risks, documents, and distribution lists for a fictional consumer product launch environment.
 
@@ -26,11 +26,11 @@ Single-notebook deployment + agent setup ([`08-05-01-contoso-pmo-agent-setup.ipy
 
 | Phase | Actions |
 |---|---|
-| 1 – Build | Writes `host.json` and `requirements.txt`; verifies `function_app.py` and `kb.py`; bundles `assets/contoso-pmo-dataset/` into `contoso-pmo-mcp/data/` |
-| 2 – Deploy | Provisions a resource group, storage account (Entra ID only), and Flex Consumption function app via `az` CLI; assigns storage roles; sets `DATA_DIR=data` |
-| 3 – Package & deploy | Zips `contoso-pmo-mcp/` (including bundled knowledge base) and zip-deploys to the function app |
-| 4 – Retrieve | Reads back the `mcp_extension` system key and constructs the authenticated SSE endpoint URL |
-| 5 – Agent | Creates `contoso-pmo-agent` on `project-admin-{suffix}` via `project_client.agents.create_version` + `PromptAgentDefinition` with the MCP tool dict (`require_approval='never'` baked in); reuse-or-create idempotent via `list_versions` |
+| 1 - Build | Writes `host.json` and `requirements.txt`; verifies `function_app.py` and `kb.py`; bundles `assets/contoso-pmo-dataset/` into `contoso-pmo-mcp/data/` |
+| 2 - Deploy | Provisions a resource group, storage account (Entra ID only), and Flex Consumption function app via `az` CLI; assigns storage roles; sets `DATA_DIR=data` |
+| 3 - Package & deploy | Zips `contoso-pmo-mcp/` (including bundled knowledge base) and zip-deploys to the function app |
+| 4 - Retrieve | Reads back the `mcp_extension` system key and constructs the authenticated SSE endpoint URL |
+| 5 - Agent | Creates `contoso-pmo-agent` on `project-admin-{suffix}` via `project_client.agents.create_version` + `PromptAgentDefinition` with the MCP tool dict (`require_approval='never'` baked in); reuse-or-create idempotent via `list_versions` |
 
 Two follow-on notebooks consume the agent:
 
@@ -70,15 +70,15 @@ Optional overrides:
 | `CONTOSO_PMO_MCP_LOCATION` | `swedencentral` |
 | `CONTOSO_PMO_FUNC_APP_NAME` | `func-contoso-pmo-mcp-{md5(sub-id+rg)[:6]}` |
 
-The admin endpoint is `https://aif-core-{suffix}.services.ai.azure.com/api/projects/project-admin-{suffix}` — same pattern as the offline-evaluation and continuous-evaluation labs.
+The admin endpoint is `https://aif-core-{suffix}.services.ai.azure.com/api/projects/project-admin-{suffix}` - same pattern as the offline-evaluation and continuous-evaluation labs.
 
 ### 4. Run the notebooks
 
 | Order | Notebook |
 |---|---|
-| 1 | [`08-05-01-contoso-pmo-agent-setup.ipynb`](08-05-01-contoso-pmo-agent-setup.ipynb) — deploy MCP server + create agent |
-| 2 (optional) | [`08-05-02-contoso-pmo-agent-queries.ipynb`](08-05-02-contoso-pmo-agent-queries.ipynb) — interactive queries |
-| 3 (optional) | [`08-05-03-contoso-pmo-tool-catalog.ipynb`](08-05-03-contoso-pmo-tool-catalog.ipynb) — Tool Catalog registration |
+| 1 | [`08-05-01-contoso-pmo-agent-setup.ipynb`](08-05-01-contoso-pmo-agent-setup.ipynb) - deploy MCP server + create agent |
+| 2 (optional) | [`08-05-02-contoso-pmo-agent-queries.ipynb`](08-05-02-contoso-pmo-agent-queries.ipynb) - interactive queries |
+| 3 (optional) | [`08-05-03-contoso-pmo-tool-catalog.ipynb`](08-05-03-contoso-pmo-tool-catalog.ipynb) - Tool Catalog registration |
 
 ## Requirements
 
@@ -100,8 +100,12 @@ The admin endpoint is `https://aif-core-{suffix}.services.ai.azure.com/api/proje
 
 ## Notes
 
-- **Data layer:** The knowledge base consists of plain JSON files in `assets/contoso-pmo-dataset/` (registry and documents sub-directories). No database or Azure Storage is used — reads and writes go directly to the JSON files.
-- **Write persistence in Azure:** Azure Functions Flex Consumption mounts the deployed zip read-only. On first write, `kb.py` lazily copies the bundled data to `/tmp/contoso-pmo-data/` and redirects all mutations there. Writes persist within the instance lifetime but are lost on cold starts — this is sufficient for demo use.
+- **Data layer:** The knowledge base consists of plain JSON files in `assets/contoso-pmo-dataset/` (registry and documents sub-directories). No database or Azure Storage is used - reads and writes go directly to the JSON files.
+- **Write persistence in Azure:** Azure Functions Flex Consumption mounts the deployed zip read-only. On first write, `kb.py` lazily copies the bundled data to `/tmp/contoso-pmo-data/` and redirects all mutations there. Writes persist within the instance lifetime but are lost on cold starts - this is sufficient for demo use.
 - **Standard GA extension bundle:** The `mcpToolTrigger` binding is included in the standard `Microsoft.Azure.Functions.ExtensionBundle` ([4.0.0, 5.0.0)). No beta or Experimental bundle is required.
 - **Managed identity storage:** The function app uses managed identity (not shared keys) for storage authentication, following Entra ID-only best practices.
-- **Keyless Foundry auth:** The agent talks to admin via `DefaultAzureCredential` — no APIM, no shared key. The only `code=` query parameter is on the MCP SSE URL itself (the `mcp_extension` Azure Functions system key), which authenticates the **agent → MCP server** path, not the **agent → model** path.
+- **Keyless Foundry auth:** The agent talks to admin via `DefaultAzureCredential` - no APIM, no shared key. The only `code=` query parameter is on the MCP SSE URL itself (the `mcp_extension` Azure Functions system key), which authenticates the **agent → MCP server** path, not the **agent → model** path.
+
+---
+
+[Next: Contoso PMO agent setup →](08-05-01-contoso-pmo-agent-setup.ipynb)

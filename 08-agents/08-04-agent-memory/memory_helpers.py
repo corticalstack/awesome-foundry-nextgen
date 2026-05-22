@@ -1,5 +1,5 @@
 """
-Memory API helpers for Lab 5: Agent Memory
+Memory API helpers for agent memory
 """
 import subprocess
 import time

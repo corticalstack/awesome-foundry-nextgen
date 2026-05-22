@@ -1,12 +1,12 @@
-"""Contoso Private Banking — intent-level MCP tool surface.
+"""Contoso Private Banking - intent-level MCP tool surface.
 
 Six tools (cpb_*) cover the RM morning-briefing workflow. Compare with
 ../08-05-contoso-pmo-mcp/contoso-pmo-mcp/function_app.py which has 37 endpoint-style
-tools — the contrast is the lesson.
+tools - the contrast is the lesson.
 
 Each tool wrapper just unpacks the call context and delegates to kb.py. All
 business logic, joins, drift math, citation stitching, and response shaping
-live in kb.py — that is the point. The agent gets one verb; the server does
+live in kb.py - that is the point. The agent gets one verb; the server does
 the work.
 """
 
@@ -22,9 +22,9 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 # ── Tool property descriptors ─────────────────────────────────────────────────
 
 _RESPONSE_FORMAT_DESC = (
-    "Response format. 'concise' (default) returns names/dates/amounts only — "
+    "Response format. 'concise' (default) returns names/dates/amounts only - "
     "best for synthesis prompts. 'detailed' adds position_id, isin, client_id, "
-    "and other identifiers — use when you need to chain a follow-up call."
+    "and other identifiers - use when you need to chain a follow-up call."
 )
 
 _prepare_briefing_props = json.dumps([
@@ -106,7 +106,7 @@ def _args(context) -> dict:
         "(asset class, regional, concentration, ESG floor), recent transactions "
         "(30d), CRM flags (90d), relevant research and commentary touching the "
         "client's holdings, and heuristic next-best-actions. This is the primary "
-        "intent — prefer it over composing cpb_get_client_context + "
+        "intent - prefer it over composing cpb_get_client_context + "
         "cpb_analyze_portfolio_drift + cpb_find_relevant_research yourself."
     ),
     toolProperties=_prepare_briefing_props,
@@ -127,7 +127,7 @@ def prepare_client_briefing(context) -> str:
     toolName='cpb_get_client_context',
     description=(
         "Get identity, segment, RM, base currency, IPS targets, and exclusions for "
-        "one client — without the briefing's portfolio synthesis. Use when you only "
+        "one client - without the briefing's portfolio synthesis. Use when you only "
         "need the basics (e.g. to look up the client's RM email or base currency)."
     ),
     toolProperties=_get_client_context_props,
@@ -214,7 +214,7 @@ def summarize_recent_activity(context) -> str:
     )
 
 
-# ── Intent tool 6: run_query (escape hatch — read-only) ───────────────────────
+# ── Intent tool 6: run_query (escape hatch - read-only) ───────────────────────
 @app.generic_trigger(
     arg_name='context',
     type='mcpToolTrigger',

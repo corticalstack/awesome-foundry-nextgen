@@ -1,4 +1,4 @@
-// Lab 07-03: Hosted Agents Infrastructure
+// Hosted agents infrastructure
 // Deploys an Azure Container Registry (ACR) into the existing Spoke Alpha resource group
 // (rg-foundry-spoke-alpha-{suffix}) and grants the existing spoke project identity AcrPull access.
 //
@@ -9,24 +9,24 @@
 
 targetScope = 'resourceGroup'
 
-@description('Short unique suffix — first 6 chars of SHA-256 of subscription ID, matching Lab 1A/1B naming.')
+@description('Short unique suffix - first 6 chars of SHA-256 of subscription ID, matching the core gateway and project spoke naming.')
 param suffix string
 
-@description('Team name — must match the spoke deployed by Lab 1B (default: alpha).')
+@description('Team name - must match the spoke deployed by the project spoke deployment (default: alpha).')
 param teamName string = 'alpha'
 
-@description('Location for ACR — matches the spoke resource group location.')
+@description('Location for ACR - matches the spoke resource group location.')
 param location string = 'eastus2'
 
 @description('Principal ID of the deployer for RBAC assignments.')
 param deployerPrincipalId string
 
-// Resource names — follow architecture naming conventions
+// Resource names - follow architecture naming conventions
 var acrName     = 'acr${teamName}${suffix}'     // ACR: lowercase alphanumeric only, globally unique
 var accountName = 'aif-spoke-${teamName}-${suffix}'
 var projectName = 'project-${teamName}-${suffix}'
 
-// Reference existing Spoke Alpha account and project (deployed by Lab 1B)
+// Reference existing Spoke Alpha account and project (deployed by the project spoke deployment)
 resource spokeAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' existing = {
   name: accountName
 }
@@ -36,7 +36,7 @@ resource spokeProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-
   name: projectName
 }
 
-// Azure Container Registry — stores hosted agent container images
+// Azure Container Registry - stores hosted agent container images
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: acrName
   location: location
