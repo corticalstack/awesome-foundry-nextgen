@@ -1,6 +1,6 @@
-# Lab 15: Fine-Tuning with Knowledge Distillation
+# Fine-tuning with knowledge distillation
 
-## Learning Objectives
+## Learning objectives
 
 By the end of this lab you will be able to:
 
@@ -39,13 +39,13 @@ APIM Gateway
   Local Inference Demo                ← adapter downloaded, runs offline (CPU/MPS/CUDA)
 ```
 
-**Teacher model note**: The lab is designed around `gpt-4.1-mini` (already deployed via the shared APIM gateway) as the teacher. DeepSeek-V3.2 can be substituted as teacher if it is routed through the same APIM gateway — simply set `CHAT_MODEL=DeepSeek-V3.2` in `.env`. The notebooks reference `os.getenv('CHAT_MODEL', 'gpt-4.1-mini')` so no code changes are required.
+**Teacher model note**: The lab is designed around `gpt-4.1-mini` (already deployed via the shared APIM gateway) as the teacher. DeepSeek-V3.2 can be substituted as teacher if it is routed through the same APIM gateway - simply set `CHAT_MODEL=DeepSeek-V3.2` in `.env`. The notebooks reference `os.getenv('CHAT_MODEL', 'gpt-4.1-mini')` so no code changes are required.
 
 **Regional note**: The ACA environment is always deployed to **Sweden Central** because GPU workload profiles (NC24-A100 `Consumption-GPU-NC24-A100`) are only available there. All other resources (storage account, Foundry project) use the resource group's default region.
 
 ---
 
-## Lab Structure
+## Lab structure
 
 | Notebook | Description |
 |---|---|
@@ -58,9 +58,9 @@ APIM Gateway
 
 ## Prerequisites
 
-1. **Lab 05 deployed** — the shared APIM gateway and hub account must be provisioned. `GATEWAY_URL` must resolve to your APIM endpoint.
+1. **Core gateway deployed** - the shared APIM gateway and hub account must be provisioned. `GATEWAY_URL` must resolve to your APIM endpoint.
 
-2. **`.env` populated** — add the following to your `.env` file (see [`.env.example`](../.env.example) for the full block):
+2. **`.env` populated** - add the following to your `.env` file (see [`.env.example`](../.env.example) for the full block):
 
    ```
    GATEWAY_URL=https://<apim-name>.azure-api.net/openai
@@ -73,14 +73,14 @@ APIM Gateway
    FINETUNE_ACA_ENVIRONMENT=acae-finetune-{suffix}
    ```
 
-3. **Azure CLI logged in** — run `az login` and ensure you have Contributor access to the resource group.
+3. **Azure CLI logged in** - run `az login` and ensure you have Contributor access to the resource group.
 
-4. **`uv` installed** — install dependencies with:
+4. **`uv` installed** - install dependencies with:
    ```bash
    uv sync
    ```
 
-5. **Bicep deployed** — deploy this lab's infrastructure into the existing multi-spoke resource group:
+5. **Bicep deployed** - deploy this lab's infrastructure into the existing multi-spoke resource group:
    ```bash
    az deployment group create \
      --resource-group rg-foundry-multi-{suffix} \
@@ -93,21 +93,25 @@ APIM Gateway
 
 ---
 
-## Expected Outcomes
+## Expected outcomes
 
 | Model | Accuracy |
 |---|---|
-| gpt-4.1-mini (teacher) | ~75–85% |
-| Phi-4-mini base | ~40–50% (reference: 45.7%) |
-| Phi-4-mini fine-tuned | ~55–65% |
+| gpt-4.1-mini (teacher) | ~75-85% |
+| Phi-4-mini base | ~40-50% (reference: 45.7%) |
+| Phi-4-mini fine-tuned | ~55-65% |
 
-The fine-tuned model is expected to improve on the base model by 5–15 percentage points on the ISS incident severity classification task. This gap arises from LoRA adapting the model weights to the domain-specific instruction format and severity definitions.
+The fine-tuned model is expected to improve on the base model by 5-15 percentage points on the ISS incident severity classification task. This gap arises from LoRA adapting the model weights to the domain-specific instruction format and severity definitions.
 
 ---
 
-## Out of Scope
+## Out of scope
 
-- **Quantization / Olive INT4 export** — post-training quantisation for edge deployment is not covered
-- **Pipeline automation** — notebooks are run manually; orchestration (Azure ML pipelines, Prefect, etc.) is not included
-- **ISS domain changes** — `iss_utils.py` is preserved as-is; adding new incident categories or changing the classification schema is outside scope
-- **Adding DeepSeek-V3.2 to APIM** — configuring the APIM backend for DeepSeek is tracked as optional future work in GitHub issue #21
+- **Quantization / Olive INT4 export** - post-training quantisation for edge deployment is not covered
+- **Pipeline automation** - notebooks are run manually; orchestration (Azure ML pipelines, Prefect, etc.) is not included
+- **ISS domain changes** - `iss_utils.py` is preserved as-is; adding new incident categories or changing the classification schema is outside scope
+- **Adding DeepSeek-V3.2 to APIM** - configuring the APIM backend for DeepSeek is tracked as optional future work in GitHub issue #21
+
+---
+
+[Next: Data preparation →](15-01-data-preparation.ipynb)
