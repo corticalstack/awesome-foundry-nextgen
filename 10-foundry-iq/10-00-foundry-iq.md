@@ -13,11 +13,11 @@ absorbs a new workload capability without additional infrastructure overhead.
 
 | Notebook | Purpose |
 |----------|---------|
-| `10-01-deploy-search-and-project.ipynb` | Deploys an Azure AI Search service and a new Foundry project (`iq-project`) into the existing multi-account resource group via Bicep. Creates a dedicated APIM subscription key for the IQ workload and writes all `IQ_*` env vars to `.env`. Run once before anything else. |
-| `10-02-index-and-ingest.ipynb` | Creates the `arxiv-nlp` vector + semantic search index (3,072-dim HNSW, integrated vectorizer, semantic configuration, `group_ids` security field) and uploads 3,000 NLP paper abstracts with pre-computed embeddings generated via the APIM gateway. |
-| `10-03-knowledge-base-setup.ipynb` | Builds the Foundry IQ object hierarchy on top of the search index: Knowledge Source → dual Knowledge Bases (minimal and low reasoning effort) → MCP connection → versioned agent. Includes inline KB validation and a security-trimming demonstration via `filterAddOn`. |
-| `10-04-search-patterns.ipynb` | Demonstrates the six raw Azure AI Search retrieval patterns in isolation - BM25, vector, hybrid RRF, semantic reranker, OData-filtered, and security-trimmed - to show what the Foundry IQ agentic pipeline does under the hood. |
-| `10-05-agent-iq-queries.ipynb` | Sends research queries to the versioned agent via the Responses API. The agent invokes the KB over MCP, triggering the full agentic retrieval pipeline (query decomposition → parallel sub-queries → semantic rerank → cited synthesis). Demonstrates multi-intent, temporal, cross-lingual, and out-of-scope query handling. |
+| [`10-01-deploy-search-and-project.ipynb`](10-01-deploy-search-and-project.ipynb) | Deploys an Azure AI Search service and a new Foundry project (`iq-project`) into the existing multi-account resource group via Bicep. Creates a dedicated APIM subscription key for the IQ workload and writes all `IQ_*` env vars to `.env`. Run once before anything else. |
+| [`10-02-index-and-ingest.ipynb`](10-02-index-and-ingest.ipynb) | Creates the `arxiv-nlp` vector + semantic search index (3,072-dim HNSW, integrated vectorizer, semantic configuration, `group_ids` security field) and uploads 3,000 NLP paper abstracts with pre-computed embeddings generated via the APIM gateway. |
+| [`10-03-knowledge-base-setup.ipynb`](10-03-knowledge-base-setup.ipynb) | Builds the Foundry IQ object hierarchy on top of the search index: Knowledge Source → dual Knowledge Bases (minimal and low reasoning effort) → MCP connection → versioned agent. Includes inline KB validation and a security-trimming demonstration via `filterAddOn`. |
+| [`10-04-search-patterns.ipynb`](10-04-search-patterns.ipynb) | Demonstrates the six raw Azure AI Search retrieval patterns in isolation - BM25, vector, hybrid RRF, semantic reranker, OData-filtered, and security-trimmed - to show what the Foundry IQ agentic pipeline does under the hood. |
+| [`10-05-agent-iq-queries.ipynb`](10-05-agent-iq-queries.ipynb) | Sends research queries to the versioned agent via the Responses API. The agent invokes the KB over MCP, triggering the full agentic retrieval pipeline (query decomposition → parallel sub-queries → semantic rerank → cited synthesis). Demonstrates multi-intent, temporal, cross-lingual, and out-of-scope query handling. |
 
 ## Run order
 
