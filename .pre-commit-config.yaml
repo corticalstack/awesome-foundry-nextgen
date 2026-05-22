@@ -1,0 +1,20 @@
+# Pre-commit hooks for awesome-foundry-nextgen.
+#
+# One-time setup per clone:
+#   pip install pre-commit   (or: uv tool install pre-commit)
+#   pre-commit install
+#
+# Run manually against everything already committed:
+#   pre-commit run --all-files
+#
+# The gitleaks hook scans only staged changes, so it blocks NEW secret or
+# identifier leaks without re-flagging un-scrubbed content elsewhere in the repo.
+# It uses the Docker image (Docker is the only prerequisite - no Go toolchain
+# needed) and the rules in .gitleaks.toml.
+#
+# See https://pre-commit.com and https://github.com/gitleaks/gitleaks
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks-docker

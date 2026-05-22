@@ -15,7 +15,7 @@ param projectCount int = 3
 @description('Team names for each project. Must have exactly projectCount entries.')
 param teamNames array = ['alpha', 'beta', 'gamma']
 
-@description('Suffix for resource names — passed from notebook to keep naming consistent across labs.')
+@description('Suffix for resource names - passed from notebook to keep naming consistent across labs.')
 param suffix string
 
 var aiAccountName = 'aif-spoke-multi-${suffix}'

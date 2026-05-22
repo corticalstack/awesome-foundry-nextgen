@@ -2,7 +2,7 @@ targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
 param deployerPrincipalId string
-@description('Short unique suffix for resource names — computed from subscription ID in the notebook.')
+@description('Short unique suffix for resource names - computed from subscription ID in the notebook.')
 param suffix string
 
 @description('Location for OSS hub deployment.')
@@ -54,7 +54,7 @@ resource embeddingModel 'Microsoft.CognitiveServices/accounts/deployments@2025-0
   dependsOn: [model]
 }
 
-// Admin project — hosts centrally-managed agents, evaluations, observability and load-gen
+// Admin project - hosts centrally-managed agents, evaluations, observability and load-gen
 // workloads (08-05 MCP, 08-06 offline eval, 08-07 live obs, 20-* load gen, 04-09 cheat sheet).
 // Lives natively on the core hub so it can use the gpt-4.1-mini and embedding deployments
 // directly without going through APIM (keyless, RBAC-only).
@@ -70,7 +70,7 @@ resource adminProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-
 }
 
 // =============================================================================
-// OSS HUB — open source/community models (westus3/australiaeast/swedencentral)
+// OSS HUB - open source/community models (westus3/australiaeast/swedencentral)
 // =============================================================================
 
 resource ossHub 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -101,7 +101,7 @@ resource ossHub 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 }
 
 // =============================================================================
-// RESEARCH HUB — reasoning/research models (norwayeast)
+// RESEARCH HUB - reasoning/research models (norwayeast)
 // =============================================================================
 
 resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
@@ -134,7 +134,7 @@ resource researchModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04
 
 // v2 tier (BasicV2/StandardV2/PremiumV2) required for BYO AI Gateway feature with Foundry Agents.
 // BasicV2 is sufficient for public Foundry resources. If the Foundry resource has public network
-// access disabled, switch to StandardV2 or PremiumV2 — only those support the private endpoint
+// access disabled, switch to StandardV2 or PremiumV2 - only those support the private endpoint
 // (or VNet injection on PremiumV2) needed to reach a private Foundry resource.
 // See: https://learn.microsoft.com/en-us/azure/foundry/configuration/enable-ai-api-management-gateway-portal
 resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
@@ -230,7 +230,7 @@ resource researchBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
   properties: {
     url: '${researchHub.properties.endpoint}openai'
     protocol: 'http'
-    description: 'Research hub — reasoning and research models'
+    description: 'Research hub - reasoning and research models'
   }
 }
 
@@ -241,7 +241,7 @@ resource ossBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-preview
   properties: {
     url: '${ossHub.properties.endpoint}openai'
     protocol: 'http'
-    description: 'OSS hub — open source and community models'
+    description: 'OSS hub - open source and community models'
   }
 }
 
@@ -274,7 +274,7 @@ resource chatOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-prev
   }
 }
 
-// Chat Completions — research hub (URL match on o3-deep-research routes here)
+// Chat Completions - research hub (URL match on o3-deep-research routes here)
 resource chatResearchOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
   parent: api
   name: 'chat-research'
@@ -295,7 +295,7 @@ resource chatResearchPolicy 'Microsoft.ApiManagement/service/apis/operations/pol
   }
 }
 
-// Chat Completions — OSS hub (URL match on Phi-4 routes here)
+// Chat Completions - OSS hub (URL match on Phi-4 routes here)
 resource chatOssOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
   parent: api
   name: 'chat-oss'
