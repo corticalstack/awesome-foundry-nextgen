@@ -1,4 +1,4 @@
-# Governance Policy: Deny Model Deployments in Spokes
+# Governance policy
 
 ## Why
 
@@ -6,7 +6,7 @@ In the hub/spoke architecture, all AI models are deployed centrally in the core 
 
 The sections below describe what the policy does, where it applies, and how to inspect it in the portal; the notebook listed here deploys it end-to-end.
 
-## Directory Contents
+## In this chapter
 
 | File | Description |
 |------|-------------|
@@ -14,19 +14,19 @@ The sections below describe what the policy does, where it applies, and how to i
 
 ---
 
-## What It Does
+## What it does
 
-Applies an Azure Policy (`deny-model-deployments`) to spoke resource groups that blocks any `Microsoft.CognitiveServices/accounts/deployments` resource creation. Spoke accounts can still **use** models via the APIM gateway — they just can't **deploy** new ones.
+Applies an Azure Policy (`deny-model-deployments`) to spoke resource groups that blocks any `Microsoft.CognitiveServices/accounts/deployments` resource creation. Spoke accounts can still **use** models via the APIM gateway - they just can't **deploy** new ones.
 
 ## Scope
 
 | Resource Group | Policy |
 |---|---|
-| `rg-foundry-core-*` | Exempt — models live here |
+| `rg-foundry-core-*` | Exempt - models live here |
 | `rg-foundry-spoke-alpha-*` | Blocked |
 | `rg-foundry-multi-*` | Blocked |
 
-## View in Portal
+## View in portal
 
 - **Definition**: Policy → Authoring → Definitions → Custom → `deny-model-deployments`
 
@@ -38,3 +38,7 @@ Applies an Azure Policy (`deny-model-deployments`) to spoke resource groups that
 - **Assignments**: Policy → Assignments, or navigate to a spoke RG → Policies
 
 ![alt text](../docs/screenshots/policy-assignment-to-spoke-rg.png)
+
+---
+
+[Next: Deploy governance policy →](06-01-deploy-governance-policy.ipynb)
