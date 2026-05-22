@@ -1,4 +1,4 @@
-"""Contoso PMO Knowledge Base — business logic layer.
+"""Contoso PMO Knowledge Base - business logic layer.
 
 All functions return JSON strings. Read operations use DATA_DIR directly.
 Write operations use _get_writable_dir() which lazily copies the bundled
@@ -11,7 +11,7 @@ import shutil
 from datetime import date
 from pathlib import Path
 
-# DATA_DIR — set via env var; defaults to assets/contoso-pmo-dataset relative to this file's location
+# DATA_DIR - set via env var; defaults to assets/contoso-pmo-dataset relative to this file's location
 DATA_DIR: Path = Path(os.environ.get(
     'DATA_DIR',
     str(Path(__file__).parent / '..' / '..' / '..' / 'assets' / 'contoso-pmo-dataset')

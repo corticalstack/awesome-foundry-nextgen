@@ -1,4 +1,4 @@
-"""Contoso Private Banking — intent-level knowledge base.
+"""Contoso Private Banking - intent-level knowledge base.
 
 Pedagogical contrast with 08-05-contoso-pmo-mcp/kb.py:
 
@@ -338,16 +338,16 @@ def _next_best_actions(client_id: str, drift: dict, crm: list[dict]) -> list[str
         if row['severity'] in ('over_band', 'material_breach'):
             direction = 'trim' if row['drift_pp'] > 0 else 'add'
             actions.append(
-                f"{row['bucket']} is {row['drift_pp']:+.1f}pp vs target — discuss {direction} at next review."
+                f"{row['bucket']} is {row['drift_pp']:+.1f}pp vs target - discuss {direction} at next review."
             )
     for f in drift['concentration_flags']:
         actions.append(
-            f"{f['instrument_name']} is {f['position_pct']:.1f}% of AUM (cap {f['max_allowed_pct']}%) — review concentration policy."
+            f"{f['instrument_name']} is {f['position_pct']:.1f}% of AUM (cap {f['max_allowed_pct']}%) - review concentration policy."
         )
     if drift['esg_floor_breach']:
         b = drift['esg_floor_breach']
         actions.append(
-            f"ESG composite {b['esg_weighted_score']} is below the {b['floor']} floor — discuss ESG-tilted reweighting."
+            f"ESG composite {b['esg_weighted_score']} is below the {b['floor']} floor - discuss ESG-tilted reweighting."
         )
     for e in crm:
         if e.get('follow_up_required'):
@@ -453,7 +453,7 @@ def cpb_prepare_client_briefing(
 
 
 def cpb_get_client_context(client_id: str, response_format: str = 'concise') -> str:
-    """Lightweight intent — identity + IPS + RM + segment, without portfolio synthesis.
+    """Lightweight intent - identity + IPS + RM + segment, without portfolio synthesis.
 
     Use when the agent needs the basics without paying for the briefing's compute.
     """
@@ -475,7 +475,7 @@ def cpb_get_client_context(client_id: str, response_format: str = 'concise') -> 
         },
         'ips': ips,
     }
-    summary = f"{client['name']} — {client['segment']}, base {client['base_currency']}, RM {client['rm']}, IPS as of {ips['as_of'] if ips else 'n/a'}."
+    summary = f"{client['name']} - {client['segment']}, base {client['base_currency']}, RM {client['rm']}, IPS as of {ips['as_of'] if ips else 'n/a'}."
     return _ok(_shape(data, response_format), summary,
                citations=[{'source': f'ips/{client_id}', 'as_of': ips['as_of'] if ips else None}],
                next_steps=[
@@ -684,7 +684,7 @@ def cpb_run_query(
       - List a registry collection: collection='clients' (or 'ips', 'portfolios',
         'transactions', 'crm_events', 'instruments').
       - List a document index: collection='research' (or 'market_commentary',
-        'regulatory') — returns the index without content.
+        'regulatory') - returns the index without content.
       - Fetch document content: collection='research', doc_id='res-001' (also
         'market_commentary' and 'regulatory').
       - Filter: pass filter_field + filter_value to keep only records where that

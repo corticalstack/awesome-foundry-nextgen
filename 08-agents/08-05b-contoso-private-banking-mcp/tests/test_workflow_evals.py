@@ -1,4 +1,4 @@
-"""Workflow-level evals — Anthropic's "evals on real workflows, not toy prompts" point.
+"""Workflow-level evals - Anthropic's "evals on real workflows, not toy prompts" point.
 
 Each row in workflow_evals.jsonl pairs a natural-language RM request with the
 intent tool the agent SHOULD call and the response fields the kb SHOULD return.

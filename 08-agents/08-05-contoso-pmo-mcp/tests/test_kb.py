@@ -1,4 +1,4 @@
-"""Unit tests for kb.py — Contoso PMO knowledge base business logic.
+"""Unit tests for kb.py - Contoso PMO knowledge base business logic.
 
 Read tests use the real assets/contoso-pmo-dataset/ fixture files via DATA_DIR env var.
 Write tests copy assets/contoso-pmo-dataset/ to tmp_path and patch kb.DATA_DIR.

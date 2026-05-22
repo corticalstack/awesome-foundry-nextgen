@@ -1,4 +1,4 @@
-"""Unit tests for kb.py — Contoso Private Banking intent-level knowledge base.
+"""Unit tests for kb.py - Contoso Private Banking intent-level knowledge base.
 
 All tests run against the real fixture data under
 assets/contoso-private-banking-dataset/. No Azure credentials required.

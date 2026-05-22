@@ -736,7 +736,7 @@ def list_risks(context) -> str:
     arg_name='context',
     type='mcpToolTrigger',
     toolName='search_risk_patterns',
-    description='Search for risk patterns across risk records and lesson content. Any significant keyword in the query triggers a match — pass topic keywords such as "supplier" or "regulatory" rather than full sentences.',
+    description='Search for risk patterns across risk records and lesson content. Any significant keyword in the query triggers a match - pass topic keywords such as "supplier" or "regulatory" rather than full sentences.',
     toolProperties=_search_risk_patterns_props,
 )
 def search_risk_patterns(context) -> str:
@@ -872,7 +872,7 @@ def get_person_tasks(context) -> str:
     arg_name='context',
     type='mcpToolTrigger',
     toolName='search_documents',
-    description='Search document content by keyword. Any significant word in the query can trigger a match — use specific terms such as "scope change", "variant", or "regulatory" rather than full sentences.',
+    description='Search document content by keyword. Any significant word in the query can trigger a match - use specific terms such as "scope change", "variant", or "regulatory" rather than full sentences.',
     toolProperties=_search_documents_props,
 )
 def search_documents(context) -> str:
