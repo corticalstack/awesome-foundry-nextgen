@@ -1,11 +1,11 @@
 // ============================================================================
-// Lab 10: Content Understanding Spoke
+// Content Understanding spoke
 // Deploys a dedicated AI Services account (aif-cu-{suffix}) with a cu-project
 // Foundry project, an APIM connection, local model deployments for CU field
 // extraction, and RBAC for the deployer and project managed identity.
 //
 // NOTE: rg-foundry-cu-{suffix} must NOT be assigned the deny-model-deployments
-// policy — local model deployments are intentional for CU field extraction.
+// policy - local model deployments are intentional for CU field extraction.
 // ============================================================================
 targetScope = 'resourceGroup'
 
@@ -21,7 +21,7 @@ var accountName = 'aif-cu-${suffix}'
 var projectName = 'cu-project'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI Services account — dedicated CU account with local model deployments
+// AI Services account - dedicated CU account with local model deployments
 // ─────────────────────────────────────────────────────────────────────────────
 resource cuAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   name: accountName
@@ -38,7 +38,7 @@ resource cuAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Local model deployments (required for CU field extraction analyzers)
-// Deploy sequentially — embedding depends on chat model completing first
+// Deploy sequentially - embedding depends on chat model completing first
 // ─────────────────────────────────────────────────────────────────────────────
 resource chatDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: cuAccount
@@ -72,7 +72,7 @@ resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Foundry project — cu-project
+// Foundry project - cu-project
 // ─────────────────────────────────────────────────────────────────────────────
 resource cuProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: cuAccount
@@ -80,7 +80,7 @@ resource cuProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-pre
   location: location
   identity: { type: 'SystemAssigned' }
   properties: {
-    description: 'Content Understanding Lab — governed CU access via APIM gateway'
+    description: 'Content Understanding Lab - governed CU access via APIM gateway'
     displayName: 'Content Understanding Project'
   }
 }
@@ -106,7 +106,7 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RBAC: Deployer — Azure AI Developer on cuAccount
+// RBAC: Deployer - Azure AI Developer on cuAccount
 // ─────────────────────────────────────────────────────────────────────────────
 resource deployerAzureAIDeveloper 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(cuAccount.id, deployerPrincipalId, 'CU-AzureAIDeveloper')
@@ -119,7 +119,7 @@ resource deployerAzureAIDeveloper 'Microsoft.Authorization/roleAssignments@2022-
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RBAC: cu-project managed identity — Azure AI Developer on cuAccount
+// RBAC: cu-project managed identity - Azure AI Developer on cuAccount
 // ─────────────────────────────────────────────────────────────────────────────
 resource projectAzureAIDeveloper 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(cuAccount.id, cuProject.id, 'CU-ProjectAzureAIDeveloper')

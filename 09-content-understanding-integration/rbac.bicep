@@ -1,5 +1,5 @@
 // ============================================================================
-// Lab 10: CU RBAC — APIM managed identity → Cognitive Services User
+// CU RBAC - APIM managed identity → Cognitive Services User
 // Deployed separately to rg-foundry-cu-{suffix} by 10-00-deploy-setup.ipynb
 // after the APIM principal ID is known.
 // ============================================================================

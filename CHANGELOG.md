@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-05-22
+
+Section 09 (content understanding integration) cleanup.
+
+### Changed
+
+- Cleaned up section 09 across the overview, both notebooks, and the three Bicep files: sentence-case headings aligned with filenames, `Lab N` cross-references replaced with stable capability names, and a Next-page navigation link added.
+- Scrubbed environment identifiers from the deploy-setup notebook outputs (subscription ID, Entra principal/object ID, APIM managed-identity object ID, and a local home path) to placeholders.
+
+### Fixed
+
+- Corrected the overview H1, which was mislabelled "08" (this is section 09), and dropped a wrong "Lab 10" label in the Bicep comments.
+- Renamed `09-00-content-understanding-integation.md` to `09-00-content-understanding-integration.md` (filename typo; no inbound references).
+
 ## [0.5.1] - 2026-05-22
 
 ### Fixed
@@ -129,6 +143,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.6.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.6.0
 [0.5.1]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.1
 [0.5.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.0
 [0.4.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.4.0
