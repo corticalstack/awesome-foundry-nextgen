@@ -1,5 +1,5 @@
 """
-Display helpers for Lab 10: Foundry IQ
+Display helpers for Foundry IQ
 """
 import re
 import pandas as pd
@@ -82,7 +82,7 @@ def show_citation_cards(query: str, response_text: str):
 def show_kb_result_detail(result: dict, label: str = ""):
     """Display a KB retrieval result with references.
 
-    For EXTRACTIVE_DATA KBs the response text is a JSON array of chunks — each
+    For EXTRACTIVE_DATA KBs the response text is a JSON array of chunks - each
     chunk is rendered as a numbered card with its title (from ref_id → references
     lookup) and abstract snippet.  For synthesized (low/medium effort) responses
     the natural-language answer is rendered as prose.

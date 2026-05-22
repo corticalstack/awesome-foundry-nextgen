@@ -1,5 +1,5 @@
 """
-Foundry IQ helpers for Lab 10
+Foundry IQ helpers
 """
 import subprocess
 import requests

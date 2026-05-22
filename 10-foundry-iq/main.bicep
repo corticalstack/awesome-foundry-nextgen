@@ -1,9 +1,9 @@
 // ============================================================================
-// Lab 10: Foundry IQ Spoke
+// Foundry IQ spoke
 // Deployed into the existing rg-foundry-multi-{suffix} resource group.
 // Adds an Azure AI Search service and iq-project to the existing shared
 // AI Foundry account (aif-spoke-multi-{suffix}). No new Foundry account
-// is created — the 1:N multi-project pattern absorbs this workload.
+// is created - the 1:N multi-project pattern absorbs this workload.
 // All inference routes through the APIM gateway (no local model deployments).
 // ============================================================================
 targetScope = 'resourceGroup'
@@ -22,7 +22,7 @@ param apimSubscriptionKey string
 @description('Name of the existing shared AI Foundry account (aif-spoke-multi-{suffix}).')
 param existingAccountName string
 
-// Suffix is derived from the resource group — keeps search service name consistent
+// Suffix is derived from the resource group - keeps search service name consistent
 // with other resources in this RG (e.g. aif-spoke-multi-gvwiex -> suffix gvwiex).
 var suffix = substring(uniqueString(subscription().subscriptionId, resourceGroup().id), 0, 6)
 var searchName = 'iq-search-${suffix}'
@@ -53,7 +53,7 @@ resource search 'Microsoft.Search/searchServices@2024-06-01-preview' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// iq-project — child of the existing shared account
+// iq-project - child of the existing shared account
 // ─────────────────────────────────────────────────────────────────────────────
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: aiAccount
@@ -61,7 +61,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
   location: location
   identity: { type: 'SystemAssigned' }
   properties: {
-    description: 'Foundry IQ Lab — knowledge retrieval via APIM gateway'
+    description: 'Foundry IQ Lab - knowledge retrieval via APIM gateway'
     displayName: 'Foundry IQ Project'
   }
 }
@@ -92,7 +92,7 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
 // ─────────────────────────────────────────────────────────────────────────────
 
 // NOTE: Cognitive Services User on the shared AI Account is intentionally omitted.
-// The deployer already holds this role from earlier lab deployments (Lab 1C).
+// The deployer already holds this role from earlier deployments (the multi-project deployment).
 // ARM rejects duplicate role assignments (same principal + role + scope) even with
 // a different GUID, so adding it here causes DeploymentFailed: RoleAssignmentExists.
 
@@ -122,7 +122,7 @@ resource deployerSearchServiceContributor 'Microsoft.Authorization/roleAssignmen
 // RBAC: Project managed identity permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Azure AI User on the shared AI Account (required for agents)
+// Foundry User on the shared AI Account (required for agents)
 resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(aiAccount.id, project.id, 'IQ-AzureAIUser')
   scope: aiAccount
