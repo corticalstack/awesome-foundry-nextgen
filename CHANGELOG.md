@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-05-22
+
+Sections 13 (guardrails), 14 (red teaming), and 15 (fine-tuning) cleanup. This completes the systematic documentation pass over every section (00-15).
+
+### Changed
+
+- Cleaned up section 13 (guardrails), section 14 (red teaming), and section 15 (fine-tuning): sentence-case headings aligned with filenames and dropped `Lab NN` title prefixes.
+- Replaced brittle `Lab N` cross-references with stable capability names (core gateway / project spoke deployments, the basic scan), keeping the correct link targets.
+- RBAC role rename `Azure AI User` to `Foundry User` in notebook prose and Bicep comments.
+- Scrubbed the real subscription ID from a guardrails notebook output to a placeholder.
+- Added Next-page navigation links to the section overviews. The generated ARM template (`14-red-teaming/main.json`) was left untouched.
+
 ## [0.7.0] - 2026-05-22
 
 The Foundry IQ family (sections 10-12) cleanup: single-agent IQ, multi-agent IQ, and deep research.
@@ -155,6 +167,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.8.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.8.0
 [0.7.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.7.0
 [0.6.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.6.0
 [0.5.1]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.1

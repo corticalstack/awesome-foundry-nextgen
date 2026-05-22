@@ -1,5 +1,5 @@
 // ============================================================================
-// Lab 15: Fine-Tuning (Knowledge Distillation) Infrastructure
+// Fine-tuning (knowledge distillation) infrastructure
 // Deployed into the existing rg-foundry-multi-{suffix} resource group.
 // Adds a Storage Account, ACA Environment (swedencentral for GPU availability),
 // and a finetune-project to the existing shared AI Foundry account
@@ -18,7 +18,7 @@ param apimSubscriptionKey string
 @description('Name of the existing shared AI Foundry account (aif-spoke-multi-{suffix}).')
 param existingAccountName string
 
-// Suffix is derived from the resource group — keeps resource names consistent
+// Suffix is derived from the resource group - keeps resource names consistent
 // with other resources in this RG (e.g. aif-spoke-multi-gvwiex -> suffix gvwiex).
 var suffix = substring(uniqueString(subscription().subscriptionId, resourceGroup().id), 0, 6)
 var storageAccountName = 'issft${suffix}'
@@ -86,7 +86,7 @@ resource acaEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// finetune-project — child of the existing shared account
+// finetune-project - child of the existing shared account
 // ─────────────────────────────────────────────────────────────────────────────
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: aiAccount
@@ -94,7 +94,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
   location: location
   identity: { type: 'SystemAssigned' }
   properties: {
-    description: 'Fine-Tuning Lab 15 — knowledge distillation via ACA GPU + APIM gateway'
+    description: 'Fine-tuning knowledge distillation via ACA GPU + APIM gateway'
     displayName: 'Fine-Tune Project'
   }
 }
@@ -124,7 +124,7 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
 // RBAC: Deployer permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Storage Blob Data Contributor — deployer can upload/download training data
+// Storage Blob Data Contributor - deployer can upload/download training data
 resource deployerStorageContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(storageAccount.id, deployerPrincipalId, 'StorageBlobDataContributor')
   scope: storageAccount
@@ -139,7 +139,7 @@ resource deployerStorageContributor 'Microsoft.Authorization/roleAssignments@202
 // RBAC: Project managed identity permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Azure AI User on the shared AI Account (required for inference via APIM connection)
+// Foundry User on the shared AI Account (required for inference via APIM connection)
 resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(aiAccount.id, project.id, 'FT-AzureAIUser')
   scope: aiAccount
