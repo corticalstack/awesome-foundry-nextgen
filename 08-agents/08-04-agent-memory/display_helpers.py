@@ -1,5 +1,5 @@
 """
-Display helpers for Lab 5: Agent Memory
+Display helpers for agent memory
 """
 import pandas as pd
 from IPython.display import display, Markdown

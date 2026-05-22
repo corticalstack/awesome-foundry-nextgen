@@ -8,12 +8,12 @@ def main():
     project_endpoint = os.getenv("FOUNDRY_PROJECT_ENDPOINT") or os.getenv("PROJECT_ENDPOINT")
     # Model takes the form "<connection-name>/<deployment>" so Foundry resolves
     # it through the spoke project's APIM connection (the spoke has no local
-    # model deployments — all inference is via the core gateway).
+    # model deployments - all inference is via the core gateway).
     chat_model       = os.getenv("CHAT_MODEL", "core-alpha/gpt-4.1-mini")
 
     # FoundryChatClient routes through Foundry's per-project Responses API endpoint
     # using the container's managed identity. No outbound APIM call from the
-    # container — Foundry's hosted compute network can't reach arbitrary
+    # container - Foundry's hosted compute network can't reach arbitrary
     # *.azure-api.net hosts directly.
     chat_client = FoundryChatClient(
         project_endpoint=project_endpoint,
@@ -27,7 +27,7 @@ def main():
         name="contoso-wealth-expert-agent",
         id="contoso-wealth-expert-agent",
         instructions="""
-        You are Contoso Wealth's knowledge expert — an in-house assistant for
+        You are Contoso Wealth's knowledge expert - an in-house assistant for
         client-service teams at Contoso Wealth, the private banking and wealth
         management division of Contoso Private Investments.
 
@@ -49,23 +49,23 @@ def main():
            You can describe these services and funds by name:
 
            Service tiers (by minimum relationship size):
-           - Contoso Wealth Essentials — entry tier, CHF 500K minimum.
-           - Contoso Wealth Private — core relationship, CHF 2M minimum.
-           - Contoso Wealth Premium — UHNW tier, CHF 25M minimum.
-           - Contoso Family Office — full multi-generational family office,
+           - Contoso Wealth Essentials - entry tier, CHF 500K minimum.
+           - Contoso Wealth Private - core relationship, CHF 2M minimum.
+           - Contoso Wealth Premium - UHNW tier, CHF 25M minimum.
+           - Contoso Family Office - full multi-generational family office,
              CHF 100M minimum.
 
            Mandate types:
-           - Contoso Discretionary — bank manages the portfolio against an agreed IPS.
-           - Contoso Advisory — bank proposes; client confirms each trade.
-           - Contoso Custody — execution-only; no advice.
+           - Contoso Discretionary - bank manages the portfolio against an agreed IPS.
+           - Contoso Advisory - bank proposes; client confirms each trade.
+           - Contoso Custody - execution-only; no advice.
 
            In-house fund families:
-           - Contoso Core — passive, index-tracking funds across major asset classes.
-           - Contoso Active Equity — actively-managed equity strategies, regional and global.
-           - Contoso Income — fixed-income strategies, investment grade and high yield.
-           - Contoso Sustainable — ESG-screened versions of the above.
-           - Contoso Alternatives — hedge fund and private-market access for
+           - Contoso Core - passive, index-tracking funds across major asset classes.
+           - Contoso Active Equity - actively-managed equity strategies, regional and global.
+           - Contoso Income - fixed-income strategies, investment grade and high yield.
+           - Contoso Sustainable - ESG-screened versions of the above.
+           - Contoso Alternatives - hedge fund and private-market access for
              qualified investors.
 
            Thematic strategies:
