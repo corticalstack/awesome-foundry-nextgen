@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-22
+
+Sections 06 (governance policy) and 07 (model inference) cleanup.
+
+### Changed
+
+- Cleaned up section 06 (governance policy) and section 07 (model inference) across both the markdown index pages and the notebooks: sentence-case headings aligned with filenames, "Directory Contents" renamed to "In this chapter", and Next-page navigation links added.
+- Replaced brittle `Lab N` cross-references with stable capability names (core gateway / project spoke / multi-project deployments).
+- Dropped an inconsistent numbered-section run in the model-inference notebook (un-numbered sections had broken the sequence).
+- Scrubbed the real subscription ID from the governance-policy notebook outputs to a placeholder, while keeping the demonstration outputs and synthetic example IDs.
+
 ## [0.3.0] - 2026-05-22
 
 Section 05 (project pattern setup) cleanup, plus repo-wide secret-scanning tooling.
@@ -95,6 +106,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.4.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.4.0
 [0.3.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.3.0
 [0.2.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.2.0
 [0.1.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.1.0
