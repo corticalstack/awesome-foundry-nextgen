@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-22
+
+Section 08 (agents) cleanup - the largest section: versioned agents, code interpreter, hosted agents, agent memory, two MCP servers, offline evaluation, live observability, and human-in-the-loop.
+
+### Changed
+
+- Cleaned up all of section 08 across markdown, notebooks, Bicep, function apps, and helper modules: sentence-case headings aligned with filenames, demoted stray section-divider H1s to H2, and dropped broken/inconsistent section numbering from notebook headings. Numbered reference docs whose in-page tables of contents depend on the anchors kept their structure.
+- Replaced brittle `Lab N` cross-references with stable capability names throughout.
+- RBAC role rename `Azure AI User` to `Foundry User` in prose and Bicep comments. The one executable role assignment now uses the stable role-definition ID; the memory and observability Bicep already assigned by ID.
+- Added the missing 08-05 and 08-05b rows to the section index.
+- Scrubbed environment identifiers from committed notebook outputs and one generated data file (subscription IDs, Entra principal/object IDs, local home paths) to placeholders, while keeping demonstration outputs, synthetic example IDs, and model-generated agent answers verbatim.
+
+### Fixed
+
+- Corrected wrong-number titles and references: the tool-catalog notebook titled "Lab 09", the human-in-the-loop notebook titled "08-06" and its overview "08-07", and six notebooks that pointed at `04-foundry-project-pattern-setup` (the project pattern setup is section 05).
+- Removed two links to a workshop-agenda document that is not present in the repository.
+
 ## [0.4.0] - 2026-05-22
 
 Sections 06 (governance policy) and 07 (model inference) cleanup.
@@ -106,6 +123,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.5.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.0
 [0.4.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.4.0
 [0.3.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.3.0
 [0.2.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.2.0
