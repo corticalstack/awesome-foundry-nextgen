@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-05-22
+
+The Foundry IQ family (sections 10-12) cleanup: single-agent IQ, multi-agent IQ, and deep research.
+
+### Changed
+
+- Cleaned up section 10 (Foundry IQ), section 11 (Foundry IQ multi-agent), and section 12 (Foundry IQ deep research) across overviews, notebooks, helper modules, Bicep, sample data, and tests: sentence-case headings aligned with filenames, dropped `Lab NN` title prefixes, and removed bare notebook section numbering.
+- Replaced brittle `Lab N` cross-references with stable capability names throughout (core gateway / multi-project deployments, Foundry IQ, deploy steps), including the inconsistent `Lab 5C` / `Lab 1C` naming for the multi-project deployment and a wrong `Lab 04-05` label in Bicep.
+- RBAC role rename `Azure AI User` to `Foundry User` in Bicep comments (role assignments already use role-definition IDs).
+- Scrubbed environment identifiers from notebook outputs (subscription IDs, Entra principal/object IDs, local home paths) to placeholders, while keeping demonstration outputs and model-generated answers verbatim.
+- Added Next-page navigation links to the three overviews.
+
 ## [0.6.0] - 2026-05-22
 
 Section 09 (content understanding integration) cleanup.
@@ -143,6 +155,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.7.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.7.0
 [0.6.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.6.0
 [0.5.1]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.1
 [0.5.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.0
