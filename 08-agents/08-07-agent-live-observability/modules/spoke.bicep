@@ -1,8 +1,8 @@
 // ============================================================================
-// Lab 07 spoke-side observability
+// Spoke-side observability
 // Deployed into the existing rg-foundry-multi-{suffix} resource group.
 // Adds obs-project to the existing shared AI Foundry account
-// (aif-spoke-multi-{suffix}). No new Foundry account is created — the
+// (aif-spoke-multi-{suffix}). No new Foundry account is created - the
 // 1:N multi-project pattern absorbs this workload.
 // All inference routes through the APIM gateway (no local model deployments).
 // ============================================================================
@@ -16,7 +16,7 @@ param deployerPrincipalId string
 @description('Name of the existing shared AI Foundry account (aif-spoke-multi-{suffix})')
 param multiAccountName string
 
-@description('Name of the APIM service (e.g. apim-foundry-{suffix}) — used in APIM connection metadata')
+@description('Name of the APIM service (e.g. apim-foundry-{suffix}) - used in APIM connection metadata')
 param apimName string
 
 @secure()
@@ -70,7 +70,7 @@ resource aiAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' exi
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AppInsights connection — account-scoped so all projects can use it
+// AppInsights connection - account-scoped so all projects can use it
 // isSharedToAll: true makes it visible across all projects on this account
 // ─────────────────────────────────────────────────────────────────────────────
 resource appInsightsConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
@@ -92,7 +92,7 @@ resource appInsightsConnection 'Microsoft.CognitiveServices/accounts/connections
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// obs-project — child of the existing shared account
+// obs-project - child of the existing shared account
 // ─────────────────────────────────────────────────────────────────────────────
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: aiAccount
@@ -100,7 +100,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
   location: location
   identity: { type: 'SystemAssigned' }
   properties: {
-    description: 'Agent Observability Lab — OpenTelemetry tracing with Application Insights'
+    description: 'Agent Observability Lab - OpenTelemetry tracing with Application Insights'
     displayName: 'Agent Observability Project'
   }
 }
@@ -130,10 +130,10 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
 // RBAC Assignments
 // ─────────────────────────────────────────────────────────────────────────────
 // Note: deployer role assignments on the shared account (Cognitive Services User,
-// Azure AI User) are omitted — they are assigned as prerequisites by Lab 1C
+// Foundry User) are omitted - they are assigned as prerequisites by the multi-project deployment
 // (04-05-deploy-foundry-multi-project) and must already exist before this deploys.
 
-// 1. obs-project MI — Azure AI User on the shared account (required for agents)
+// 1. obs-project MI - Foundry User on the shared account (required for agents)
 resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(aiAccount.id, project.id, 'Obs-ProjectAzureAIUser')
   scope: aiAccount
@@ -144,7 +144,7 @@ resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01'
   }
 }
 
-// 2. obs-project MI — Cognitive Services OpenAI User on the shared account
+// 2. obs-project MI - Cognitive Services OpenAI User on the shared account
 resource projectOpenAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(aiAccount.id, project.id, 'Obs-ProjectOpenAIUser')
   scope: aiAccount
@@ -155,7 +155,7 @@ resource projectOpenAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' 
   }
 }
 
-// 3. Deployer — Log Analytics Reader on the LAW
+// 3. Deployer - Log Analytics Reader on the LAW
 resource deployerLogAnalyticsReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(logAnalytics.id, deployerPrincipalId, 'Obs-LogAnalyticsReader')
   scope: logAnalytics
@@ -166,7 +166,7 @@ resource deployerLogAnalyticsReader 'Microsoft.Authorization/roleAssignments@202
   }
 }
 
-// 4. Deployer — Application Insights Component Contributor on App Insights
+// 4. Deployer - Application Insights Component Contributor on App Insights
 resource deployerAppInsightsContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(appInsights.id, deployerPrincipalId, 'Obs-AppInsightsContributor')
   scope: appInsights
