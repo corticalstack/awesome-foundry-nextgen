@@ -6,16 +6,16 @@ param apimUrl string
 param chatModelName string = 'gpt-4.1-mini'
 @secure()
 param apimSubscriptionKey string
-@description('Short unique suffix for resource names — computed from subscription ID in the notebook.')
+@description('Short unique suffix for resource names - computed from subscription ID in the notebook.')
 param suffix string
-@description('Team identifier — used to namespace resources and env vars for multi-spoke deployments.')
+@description('Team identifier - used to namespace resources and env vars for multi-spoke deployments.')
 param teamName string
 
 // aif = Foundry account, proj = Foundry account project (CAF abbreviations)
 var spokeAccountName = 'aif-spoke-${teamName}-${suffix}'
 var projectName = 'project-${teamName}-${suffix}'
 
-// Spoke Foundry account — no model deployments, uses APIM gateway for all inference
+// Spoke Foundry account - no model deployments, uses APIM gateway for all inference
 resource spokeAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   name: spokeAccountName
   location: location
