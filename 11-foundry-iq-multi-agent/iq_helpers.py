@@ -1,5 +1,5 @@
 """
-Foundry IQ helpers for Lab 11 (Multi-Agent)
+Foundry IQ helpers (Multi-Agent)
 """
 import subprocess
 import requests

@@ -1,4 +1,4 @@
-"""Contoso HR Specialist Agent — Lab 11: Foundry IQ Multi-Agent.
+"""Contoso HR Specialist Agent.
 
 Answers questions about Contoso HR policies, benefits, PTO, onboarding,
 and employee programs by retrieving from the contoso-kb-hr knowledge base.
@@ -16,7 +16,7 @@ Answer the user's question accurately and concisely, citing the specific documen
 from the knowledge base to support your answer. If the knowledge base does not contain \
 relevant information, say so clearly rather than guessing.
 
-Respond in plain text — do not use markdown headings or bullet lists unless the question \
+Respond in plain text - do not use markdown headings or bullet lists unless the question \
 explicitly asks for a list."""
 
 

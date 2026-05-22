@@ -1,4 +1,4 @@
-"""Contoso Marketing Specialist Agent — Lab 11: Foundry IQ Multi-Agent.
+"""Contoso Marketing Specialist Agent.
 
 Answers questions about Contoso marketing campaigns, brand guidelines, social
 media strategy, email metrics, SEO, and competitor intelligence by retrieving
@@ -17,7 +17,7 @@ Answer the user's question accurately and concisely, citing the specific documen
 from the knowledge base to support your answer. If the knowledge base does not contain \
 relevant information, say so clearly rather than guessing.
 
-Respond in plain text — do not use markdown headings or bullet lists unless the question \
+Respond in plain text - do not use markdown headings or bullet lists unless the question \
 explicitly asks for a list."""
 
 

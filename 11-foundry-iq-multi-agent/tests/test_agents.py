@@ -1,4 +1,4 @@
-"""Tests for the Lab 11 multi-agent module.
+"""Tests for the multi-agent module.
 
 Fast tests (no live Azure calls) verify construction and graph topology.
 Live tests are guarded by CONTOSO_LIVE_TESTS=true and require .env populated
@@ -51,7 +51,7 @@ def test_orchestrator_module_importable():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Construction tests — no live calls, uses fake endpoints
+# Construction tests - no live calls, uses fake endpoints
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_hr_agent_constructs():
@@ -105,7 +105,7 @@ def test_workflow_builds():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Live tests — require CONTOSO_LIVE_TESTS=true and populated .env
+# Live tests - require CONTOSO_LIVE_TESTS=true and populated .env
 # ─────────────────────────────────────────────────────────────────────────────
 
 @pytest.mark.skipif(not LIVE, reason='Set CONTOSO_LIVE_TESTS=true to run live tests')

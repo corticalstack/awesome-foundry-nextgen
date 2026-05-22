@@ -1,4 +1,4 @@
-# Lab 11: Foundry IQ Multi-Agent
+# Foundry IQ multi-agent
 
 This lab demonstrates a **router + specialist multi-agent system** built on Azure AI
 Foundry. A lightweight orchestrator classifies each user query into one of three
@@ -9,7 +9,7 @@ its KB via `AzureAISearchContextProvider`.
 
 The lab also illustrates the **1:N multi-project pattern**: instead of provisioning a
 new Foundry account, it adds a new `contoso-project` to the existing shared
-`aif-spoke-multi-{suffix}` account from Lab 5C, demonstrating how a complete workload
+`aif-spoke-multi-{suffix}` account from the multi-project deployment, demonstrating how a complete workload
 (agents + KBs + dedicated search service) attaches to existing infrastructure.
 
 ## Notebooks
@@ -25,7 +25,7 @@ new Foundry account, it adds a new `contoso-project` to the existing shared
 ## Run order
 
 ```
-Lab 5C complete (aif-spoke-multi-{suffix}, MULTI_ACCOUNT in .env)
+Multi-project deployment complete (aif-spoke-multi-{suffix}, MULTI_ACCOUNT in .env)
   ↓
 11-01-deploy-setup          ← provision contoso-* resources, write .env
 11-02-index-and-ingest      ← create three search indexes, upload sample docs
@@ -37,8 +37,8 @@ Lab 5C complete (aif-spoke-multi-{suffix}, MULTI_ACCOUNT in .env)
 ## Architecture
 
 ```
-aif-spoke-multi-{suffix}     (existing shared AI Foundry account, from Lab 5C)
-  └── contoso-project         (new — added by this lab)
+aif-spoke-multi-{suffix}     (existing shared AI Foundry account, from the multi-project deployment)
+  └── contoso-project         (new - added by this lab)
         ├── contoso-apim-connection   → APIM gateway → gpt-4.1-mini
         ├── contoso-mcp-hr            → Foundry IQ KB MCP endpoint
         ├── contoso-mcp-marketing     → Foundry IQ KB MCP endpoint
@@ -83,13 +83,13 @@ The [Microsoft Agent Framework](https://learn.microsoft.com/en-us/agent-framewor
 `FoundryChatClient` chat client, and the `WorkflowBuilder` orchestration graph. This
 lab uses:
 
-- `Agent` — local agent wrapping a chat client + instructions + context providers
-- `FoundryChatClient` — calls the project's Responses API; model is named as
+- `Agent` - local agent wrapping a chat client + instructions + context providers
+- `FoundryChatClient` - calls the project's Responses API; model is named as
   `"<connection-name>/<deployment>"` so Foundry resolves through the named APIM
   connection (e.g. `contoso-apim-connection/gpt-4.1-mini`)
-- `AzureAISearchContextProvider` — injects KB-grounded context into each agent turn
+- `AzureAISearchContextProvider` - injects KB-grounded context into each agent turn
   in `'agentic'` mode against a named Foundry IQ Knowledge Base
-- `WorkflowBuilder` with `add_switch_case_edge_group` — runs the orchestrator, then
+- `WorkflowBuilder` with `add_switch_case_edge_group` - runs the orchestrator, then
   routes by `Case`/`Default` conditions over the classifier's text
 
 ### Foundry IQ in answer-synthesis mode
@@ -98,42 +98,46 @@ The three Knowledge Bases use `output_mode=ANSWER_SYNTHESIS` with `low` reasonin
 effort. Each KB call decomposes the question, retrieves from its dedicated index, then
 runs **one LLM pass** through `gpt-4.1-mini` (via APIM) to produce a grounded
 natural-language answer with citations. Standard SKU search is required for this
-mode — hence the dedicated `contoso-search-{suffix}` service (the Basic-SKU
-`iq-search-{suffix}` from Lab 10 cannot be used).
+mode - hence the dedicated `contoso-search-{suffix}` service (the Basic-SKU
+`iq-search-{suffix}` from Foundry IQ cannot be used).
 
 ### 1:N multi-project pattern
 
-This lab is a worked example of the pattern introduced in Lab 5C: a single AI Foundry
+This lab is a worked example of the pattern introduced by the multi-project deployment: a single AI Foundry
 account hosts multiple projects, each owning its own workload-specific resources
 (connections, MCP tools, RBAC scopes). The Bicep [`main.bicep`](main.bicep) references
 the existing account with `existing = { name: existingAccountName }` and adds the
-project as a child resource — no new account is created. Inference is isolated by a
+project as a child resource - no new account is created. Inference is isolated by a
 dedicated APIM subscription (`foundry-gateway-contoso`) so the Contoso workload has its
 own rate-limit bucket.
 
 ## Environment variables
 
-Lab 11 reads these from `.env`:
+This lab reads these from `.env`:
 
 | Variable | Source | Description |
 |----------|--------|-------------|
-| `MULTI_ACCOUNT` | Lab 5C | Existing shared Foundry account (`aif-spoke-multi-{suffix}`) |
-| `GATEWAY_URL` | Lab 5C | APIM gateway URL (`https://apim-foundry-{sfx}.azure-api.net/openai`) |
-| `ALPHA_GATEWAY_KEY` | Lab 5C | Bootstrap APIM subscription key for initial Bicep deploy |
-| `CHAT_MODEL` | Lab 5C | Chat model name (`gpt-4.1-mini`) |
-| `CONTOSO_FOUNDRY_PROJECT` | Lab 11-01 | New project name (`contoso-project`) |
-| `CONTOSO_FOUNDRY_PROJECT_ENDPOINT` | Lab 11-01 | Project endpoint URL |
-| `CONTOSO_APIM_CONNECTION` | Lab 11-01 | APIM connection name on the project |
-| `CONTOSO_SEARCH_ENDPOINT` | Lab 11-01 | Azure AI Search endpoint |
-| `CONTOSO_SEARCH_NAME` | Lab 11-01 | Search service name |
-| `CONTOSO_GATEWAY_KEY` | Lab 11-01 | Dedicated APIM subscription key for Contoso |
-| `CONTOSO_RESOURCE_GROUP` | Lab 11-01 | Multi-spoke resource group |
-| `AZURE_SUBSCRIPTION_ID` | Lab 11-01 | Subscription ID |
+| `MULTI_ACCOUNT` | Multi-project deployment | Existing shared Foundry account (`aif-spoke-multi-{suffix}`) |
+| `GATEWAY_URL` | Multi-project deployment | APIM gateway URL (`https://apim-foundry-{sfx}.azure-api.net/openai`) |
+| `ALPHA_GATEWAY_KEY` | Multi-project deployment | Bootstrap APIM subscription key for initial Bicep deploy |
+| `CHAT_MODEL` | Multi-project deployment | Chat model name (`gpt-4.1-mini`) |
+| `CONTOSO_FOUNDRY_PROJECT` | Deploy setup | New project name (`contoso-project`) |
+| `CONTOSO_FOUNDRY_PROJECT_ENDPOINT` | Deploy setup | Project endpoint URL |
+| `CONTOSO_APIM_CONNECTION` | Deploy setup | APIM connection name on the project |
+| `CONTOSO_SEARCH_ENDPOINT` | Deploy setup | Azure AI Search endpoint |
+| `CONTOSO_SEARCH_NAME` | Deploy setup | Search service name |
+| `CONTOSO_GATEWAY_KEY` | Deploy setup | Dedicated APIM subscription key for Contoso |
+| `CONTOSO_RESOURCE_GROUP` | Deploy setup | Multi-spoke resource group |
+| `AZURE_SUBSCRIPTION_ID` | Deploy setup | Subscription ID |
 
 ## Prerequisites
 
-1. **Lab 5C complete** — `aif-spoke-multi-{suffix}` and APIM gateway must exist with
+1. **Multi-project deployment complete** - `aif-spoke-multi-{suffix}` and APIM gateway must exist with
    `gpt-4.1-mini` and `text-embedding-3-large` deployments. `.env` must contain
    `MULTI_ACCOUNT`, `GATEWAY_URL`, `ALPHA_GATEWAY_KEY`, `CHAT_MODEL`.
-2. **Python environment** — run `uv sync` from the repo root; select the `.venv` kernel.
-3. **Azure CLI** — run `az login` before executing cells.
+2. **Python environment** - run `uv sync` from the repo root; select the `.venv` kernel.
+3. **Azure CLI** - run `az login` before executing cells.
+
+---
+
+[Next: Deploy the Contoso project →](11-01-deploy-setup.ipynb)

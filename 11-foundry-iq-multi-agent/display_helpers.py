@@ -1,12 +1,12 @@
 """
-Display helpers for Lab 11: Foundry IQ Multi-Agent
+Display helpers for Foundry IQ Multi-Agent
 
 Provides:
-  - show_success / show_error       — status feedback (shared pattern)
-  - show_kb_result_detail           — KB retrieval response display (Phase 3)
-  - show_routing_decision           — routing visualization (Phase 5/6)
-  - show_agent_response             — agent response with citations (Phase 5/6)
-  - show_multi_domain_summary       — side-by-side domain comparison (Phase 6)
+  - show_success / show_error       - status feedback (shared pattern)
+  - show_kb_result_detail           - KB retrieval response display (Phase 3)
+  - show_routing_decision           - routing visualization (Phase 5/6)
+  - show_agent_response             - agent response with citations (Phase 5/6)
+  - show_multi_domain_summary       - side-by-side domain comparison (Phase 6)
 """
 from IPython.display import display, Markdown, HTML
 

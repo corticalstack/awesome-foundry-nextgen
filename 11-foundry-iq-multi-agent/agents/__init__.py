@@ -1,4 +1,4 @@
-"""Contoso multi-agent module — Lab 11: Foundry IQ Multi-Agent."""
+"""Contoso multi-agent module."""
 
 from .hr_agent import create_hr_agent
 from .marketing_agent import create_marketing_agent

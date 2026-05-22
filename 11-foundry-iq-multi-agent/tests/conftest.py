@@ -1,4 +1,4 @@
-"""pytest configuration for Lab 11 tests — adds lab directory to sys.path."""
+"""pytest configuration for the multi-agent tests - adds the lab directory to sys.path."""
 import sys
 from pathlib import Path
 
