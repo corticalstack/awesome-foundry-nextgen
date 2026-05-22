@@ -1,7 +1,7 @@
 // ============================================================================
-// Lab 12: Deep Research backend
-// Deployed into the core resource group (same RG as Lab 05-02).
-// Idempotent — safe to run if Lab 05-02 has already deployed these resources.
+// Deep research backend
+// Deployed into the core resource group (same RG as the core gateway deployment).
+// Idempotent - safe to run if the core gateway deployment has already deployed these resources.
 //
 // Creates (if not already present):
 //   - aif-research-{suffix}  Norway East CognitiveServices account
@@ -19,7 +19,7 @@ param deployerPrincipalId string
 @description('Name of the existing APIM service in this resource group.')
 param existingApimName string
 
-// Suffix derived from subscription + RG (matches Lab 05-02 naming)
+// Suffix derived from subscription + RG (matches the core gateway naming)
 var suffix = substring(uniqueString(subscription().subscriptionId, resourceGroup().id), 0, 6)
 var researchHubName = 'aif-research-${suffix}'
 
@@ -36,7 +36,7 @@ resource api 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' existing 
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Norway East research hub — o3-deep-research is only available in norwayeast
+// Norway East research hub - o3-deep-research is only available in norwayeast
 // ─────────────────────────────────────────────────────────────────────────────
 resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   name: researchHubName
@@ -67,7 +67,7 @@ resource researchModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// APIM backend — points to research hub
+// APIM backend - points to research hub
 // ─────────────────────────────────────────────────────────────────────────────
 resource researchBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-preview' = {
   parent: apim
@@ -75,12 +75,12 @@ resource researchBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
   properties: {
     url: '${researchHub.properties.endpoint}openai'
     protocol: 'http'
-    description: 'Research hub — reasoning and research models (Norway East)'
+    description: 'Research hub - reasoning and research models (Norway East)'
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// APIM operation — specific URL match for o3-deep-research
+// APIM operation - specific URL match for o3-deep-research
 // Routes before the catch-all chat operation
 // ─────────────────────────────────────────────────────────────────────────────
 resource chatResearchOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
@@ -104,7 +104,7 @@ resource chatResearchPolicy 'Microsoft.ApiManagement/service/apis/operations/pol
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// APIM subscription — dedicated key for deep research workload
+// APIM subscription - dedicated key for deep research workload
 // ─────────────────────────────────────────────────────────────────────────────
 resource drSubscription 'Microsoft.ApiManagement/service/subscriptions@2024-06-01-preview' = {
   parent: apim

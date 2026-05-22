@@ -1,4 +1,4 @@
-"""Contoso Orchestrator Agent — Lab 11: Foundry IQ Multi-Agent.
+"""Contoso Orchestrator Agent.
 
 A lightweight classifier that routes user queries to the appropriate Contoso
 specialist agent (HR, Marketing, or Products) using WorkflowBuilder routing.
@@ -10,9 +10,9 @@ _INSTRUCTIONS = """\
 You are a query routing assistant for Contoso Corporation. Classify the user's question \
 into exactly one of three domains and respond with only the domain label:
 
-- HR          — questions about HR policies, benefits, PTO, onboarding, performance, compensation
-- MARKETING   — questions about campaigns, brand, social media, email marketing, SEO, competitors
-- PRODUCTS    — questions about Contoso products, specifications, features, pricing, availability
+- HR          - questions about HR policies, benefits, PTO, onboarding, performance, compensation
+- MARKETING   - questions about campaigns, brand, social media, email marketing, SEO, competitors
+- PRODUCTS    - questions about Contoso products, specifications, features, pricing, availability
 
 Respond with exactly one word: HR, MARKETING, or PRODUCTS.
 Do not include any explanation or punctuation."""
@@ -70,16 +70,16 @@ def build_contoso_workflow(
     Each specialist answers using its knowledge base and returns the grounded response.
 
     Args:
-        orchestrator:     Routing agent — classifies the query.
-        hr_agent:         HR specialist — answers from contoso-kb-hr.
-        marketing_agent:  Marketing specialist — answers from contoso-kb-marketing.
-        products_agent:   Products specialist — answers from contoso-kb-products (Default).
+        orchestrator:     Routing agent - classifies the query.
+        hr_agent:         HR specialist - answers from contoso-kb-hr.
+        marketing_agent:  Marketing specialist - answers from contoso-kb-marketing.
+        products_agent:   Products specialist - answers from contoso-kb-products (Default).
 
     Returns:
         Built Workflow ready to run.
     """
     # In a Workflow, case conditions receive an AgentExecutorResponse that wraps
-    # the underlying AgentResponse — the classifier's text lives on .agent_response.
+    # the underlying AgentResponse - the classifier's text lives on .agent_response.
     def _is_hr(response) -> bool:
         text = str(response.agent_response.text).upper()
         return 'HR' in text and 'MARKETING' not in text

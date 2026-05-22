@@ -1,13 +1,13 @@
 // ============================================================================
-// Lab 11: Foundry IQ Multi-Agent Spoke
+// Foundry IQ multi-agent spoke
 // Deployed into the existing rg-foundry-multi-{suffix} resource group.
 // Adds a Standard-SKU Azure AI Search service and contoso-project to the
 // existing shared AI Foundry account (aif-spoke-multi-{suffix}). No new
-// Foundry account is created — the 1:N multi-project pattern absorbs this
+// Foundry account is created - the 1:N multi-project pattern absorbs this
 // workload. Standard SKU is required for semantic search (answerSynthesis mode).
 // All inference routes through the APIM gateway (no local model deployments).
 // NOTE: Deployer Cognitive Services User on the AI Account is intentionally
-// omitted — already granted by Lab 04-05, duplicate would cause
+// omitted - already granted by an earlier deployment, duplicate would cause
 // DeploymentFailed: RoleAssignmentExists.
 // ============================================================================
 targetScope = 'resourceGroup'
@@ -26,7 +26,7 @@ param apimSubscriptionKey string
 @description('Name of the existing shared AI Foundry account (aif-spoke-multi-{suffix}).')
 param existingAccountName string
 
-// Suffix is derived from the resource group — keeps resource names consistent
+// Suffix is derived from the resource group - keeps resource names consistent
 // with other resources in this RG (e.g. aif-spoke-multi-gvwiex -> suffix gvwiex).
 var suffix = substring(uniqueString(subscription().subscriptionId, resourceGroup().id), 0, 6)
 var searchName = 'contoso-search-${suffix}'
@@ -40,7 +40,7 @@ resource aiAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' exi
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Azure AI Search — Standard SKU for semantic search / answerSynthesis mode
+// Azure AI Search - Standard SKU for semantic search / answerSynthesis mode
 // ─────────────────────────────────────────────────────────────────────────────
 resource search 'Microsoft.Search/searchServices@2024-06-01-preview' = {
   name: searchName
@@ -57,7 +57,7 @@ resource search 'Microsoft.Search/searchServices@2024-06-01-preview' = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// contoso-project — child of the existing shared account
+// contoso-project - child of the existing shared account
 // ─────────────────────────────────────────────────────────────────────────────
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: aiAccount
@@ -65,7 +65,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
   location: location
   identity: { type: 'SystemAssigned' }
   properties: {
-    description: 'Foundry IQ Multi-Agent Lab — three specialist agents (HR, Marketing, Products)'
+    description: 'Foundry IQ Multi-Agent Lab - three specialist agents (HR, Marketing, Products)'
     displayName: 'Contoso Project'
   }
 }
@@ -80,7 +80,7 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
     category: 'ApiManagement'
     target: apimUrl
     authType: 'ApiKey'
-    // isDefault must be true — Foundry agent runtime resolves model_deployment_name
+    // isDefault must be true - Foundry agent runtime resolves model_deployment_name
     // by searching local AI account deployments OR the default APIM connection on
     // the project. Without this, agents fail with "Failed to resolve model info for".
     isDefault: true
@@ -126,7 +126,7 @@ resource deployerSearchServiceContributor 'Microsoft.Authorization/roleAssignmen
 // RBAC: Project managed identity permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Azure AI User on the shared AI Account (53ca6127...) — required for agents
+// Foundry User on the shared AI Account (53ca6127...) - required for agents
 resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(aiAccount.id, project.id, 'Contoso-AzureAIUser')
   scope: aiAccount
@@ -137,7 +137,7 @@ resource projectAzureAIUser 'Microsoft.Authorization/roleAssignments@2022-04-01'
   }
 }
 
-// Search Index Data Reader on AI Search (1407120a...) — required for KB queries via MCP
+// Search Index Data Reader on AI Search (1407120a...) - required for KB queries via MCP
 resource projectSearchReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(search.id, project.id, 'ContosoSearchIndexDataReader')
   scope: search

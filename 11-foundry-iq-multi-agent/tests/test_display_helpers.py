@@ -1,4 +1,4 @@
-"""Tests for Lab 11 display_helpers module.
+"""Tests for the display_helpers module.
 
 Verifies that all display functions accept valid inputs without raising exceptions.
 Uses IPython.display mocking to avoid actual notebook output during testing.
