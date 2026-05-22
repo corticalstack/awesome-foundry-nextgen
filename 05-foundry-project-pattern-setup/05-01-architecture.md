@@ -384,7 +384,7 @@ flowchart TD
     class APIM apim
     class ALPHA_ACC,MULTI_ACC,MEM_ACC,CU_ACC account
     class ALPHA_PROJ,BETA_PROJ,DELTA_PROJ,GAMMA_PROJ,MEM_PROJ,IQ_PROJ,CONTOSO_PMO_PROJ,OBS_PROJ,CU_PROJ project
-    class H1,H2,H3,H4,R1,O1,MEM_M1,MEM_M2,CU_M1,CU_M2 model
+    class H1,H3,R1,O1,MEM_M1,MEM_M2,CU_M1,CU_M2 model
     class IQ_SEARCH search
     class APPI_OBS appi
 
