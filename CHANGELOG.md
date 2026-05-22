@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-05-22
+
+### Fixed
+
+- Corrected a wrong-number cross-section reference in 07-01: the `.env` prerequisite pointed at `04-foundry-project-pattern-setup`, but the project pattern setup is section 05 (section 04 is the control plane). A word-boundary-guarded repo-wide audit confirmed this was the only genuine instance; other apparent matches were substrings of valid `NN-MM-slug` filenames.
+
 ## [0.5.0] - 2026-05-22
 
 Section 08 (agents) cleanup - the largest section: versioned agents, code interpreter, hosted agents, agent memory, two MCP servers, offline evaluation, live observability, and human-in-the-loop.
@@ -123,6 +129,7 @@ Initial public release of the **Awesome Foundry Nextgen** lab series.
 - Contributor docs: [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md).
 
+[0.5.1]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.1
 [0.5.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.5.0
 [0.4.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.4.0
 [0.3.0]: https://github.com/corticalstack/awesome-foundry-nextgen/releases/tag/v0.3.0
