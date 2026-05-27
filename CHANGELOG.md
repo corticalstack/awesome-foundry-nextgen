@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.7] - 2026-05-27
+
+### Fixed
+
+- `13-guardrails/13-00-guardrails.md` portal-fallback section referenced a hard-coded resource name `aif-core-6fe574`. Users following the doc against their own deployment will have a different suffix. Replaced with `aif-core-{suffix}` to match the placeholder convention used everywhere else in prose.
+
+### Changed
+
+- Normalised a stale older deployment suffix `6fe574` to the current canonical demonstration suffix `c2676f` across cached notebook outputs in `09-content-understanding-integration/09-01-deploy-setup.ipynb` (11 occurrences), `09-content-understanding-integration/09-02-cu-analyze.ipynb` (2), and `10-foundry-iq/10-03-knowledge-base-setup.ipynb` (2). The two suffixes co-existed in different files because the cached outputs were captured from two different deployment generations; readers now see a single consistent suffix.
+
 ## [0.8.6] - 2026-05-27
 
 Tenant-identifier scrub of cached notebook outputs across sections 08 and 12, plus refreshed cached outputs for the deep-research notebooks.

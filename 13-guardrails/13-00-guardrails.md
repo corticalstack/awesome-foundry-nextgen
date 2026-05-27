@@ -69,7 +69,7 @@ Three notebooks plus this guide. Run them in sequence the first time; on repeat 
 
 If any of the SDK calls in `13-01` fail (typically because the calling identity lacks
 `Cognitive Services Contributor` on the Foundry account), do the same three things from
-the Azure portal under `aif-core-6fe574`:
+the Azure portal under `aif-core-{suffix}`:
 
 1. **Content filters → + Custom blocklist** - name `bank-demo-blocklist`. Add the entries
    listed in cell 4 of [13-01](13-01-configure-bank-guardrails.ipynb); flip the *regex*
