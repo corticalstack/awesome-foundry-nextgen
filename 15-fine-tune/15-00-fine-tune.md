@@ -77,8 +77,12 @@ APIM Gateway
 
 4. **`uv` installed** - install dependencies with:
    ```bash
-   uv sync
+   uv sync --group finetune
    ```
+
+   This section needs heavy ML dependencies (PyTorch, Hugging Face Transformers, PEFT) that are not in the base install. They live in the `finetune` dependency group in `pyproject.toml`. Plain `uv sync` will leave `torch` / `transformers` / `peft` / `matplotlib` / `azure-storage-blob` / `azure-ai-inference` missing and the notebooks will fail with `ModuleNotFoundError`. The `--group finetune` flag pulls them in.
+
+   > The base install was kept lean because the fine-tuning group adds ~3 GB (PyTorch + CUDA libs). Once you've synced the group it persists in `.venv`; you don't need the flag on subsequent `uv sync` calls.
 
 5. **Bicep deployed** - deploy this lab's infrastructure into the existing multi-spoke resource group:
    ```bash
