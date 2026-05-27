@@ -439,4 +439,4 @@ flowchart TD
 
 ---
 
-[Next: Deploy core gateway →](05-02-deploy-foundry-core-gateway/deploy-foundry-core-gateway.ipynb)
+[Next: Deploy core gateway →](05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb)
