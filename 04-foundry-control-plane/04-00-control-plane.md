@@ -274,8 +274,8 @@ Access the Control Plane via the **Operate** tab at [ai.azure.com](https://ai.az
 
 | Section | Area | Example |
 |---|---|---|
-| [05 Project pattern setup](../05-foundry-project-pattern-setup/05-00-project-setup.md) | Hub/spoke + AI Gateway | [deploy-foundry-core-gateway.ipynb](../05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/deploy-foundry-core-gateway.ipynb) |
-| [05 Project pattern setup](../05-foundry-project-pattern-setup/05-00-project-setup.md) | Multi-project topology | [deploy-foundry-multi-project.ipynb](../05-foundry-project-pattern-setup/05-04-deploy-foundry-multi-project/deploy-foundry-multi-project.ipynb) |
+| [05 Project pattern setup](../05-foundry-project-pattern-setup/05-00-project-setup.md) | Hub/spoke + AI Gateway | [05-02-01-deploy-foundry-core-gateway.ipynb](../05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb) |
+| [05 Project pattern setup](../05-foundry-project-pattern-setup/05-00-project-setup.md) | Multi-project topology | [05-04-01-deploy-foundry-multi-project.ipynb](../05-foundry-project-pattern-setup/05-04-deploy-foundry-multi-project/05-04-01-deploy-foundry-multi-project.ipynb) |
 | [06 Governance policy](../06-governance-policy/06-00-governance-policy.md) | Governance policy deployment | [06-01-deploy-governance-policy.ipynb](../06-governance-policy/06-01-deploy-governance-policy.ipynb) |
 | [08 Agents](../08-agents/08-00-what-is-an-agent.md) | Agent versioning and lifecycle | [08-01-create-versioned-storytelling-agent.ipynb](../08-agents/08-01-create-versioned-storytelling-agent.ipynb) |
 | [08 Agents](../08-agents/08-00-what-is-an-agent.md) | Agent observability (OpenTelemetry) | [08-07-03-agent-observability.ipynb](../08-agents/08-07-agent-live-observability/08-07-03-agent-observability.ipynb) |

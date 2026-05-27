@@ -7,9 +7,9 @@ Leveraging Microsoft Foundry to build and manage your AI building blocks at scal
 | File | Description |
 |------|-------------|
 | [05-01-architecture.md](05-01-architecture.md) | Lab series architecture overview: centralised AI gateway pattern, 1:1 spoke vs 1:N multi-project provisioning, RBAC layout, and connectivity model |
-| [05-02-deploy-foundry-core-gateway/](05-02-deploy-foundry-core-gateway/) | Deploys the central Foundry core with API Management gateway as the shared entry point for model traffic ([deploy-foundry-core-gateway.ipynb](05-02-deploy-foundry-core-gateway/deploy-foundry-core-gateway.ipynb), [main.bicep](05-02-deploy-foundry-core-gateway/main.bicep)) |
-| [05-03-deploy-foundry-project-spoke/](05-03-deploy-foundry-project-spoke/) | Deploys a 1:1 dedicated Foundry account spoke for a single team with a hard infrastructure boundary ([deploy-foundry-project-spoke.ipynb](05-03-deploy-foundry-project-spoke/deploy-foundry-project-spoke.ipynb), [main.bicep](05-03-deploy-foundry-project-spoke/main.bicep)) |
-| [05-04-deploy-foundry-multi-project/](05-04-deploy-foundry-multi-project/) | Deploys the 1:N multi-project Foundry account hosting several team projects with project-level isolation ([deploy-foundry-multi-project.ipynb](05-04-deploy-foundry-multi-project/deploy-foundry-multi-project.ipynb), [main.bicep](05-04-deploy-foundry-multi-project/main.bicep)) |
+| [05-02-deploy-foundry-core-gateway/](05-02-deploy-foundry-core-gateway/) | Deploys the central Foundry core with API Management gateway as the shared entry point for model traffic ([05-02-01-deploy-foundry-core-gateway.ipynb](05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb), [main.bicep](05-02-deploy-foundry-core-gateway/main.bicep)) |
+| [05-03-deploy-foundry-project-spoke/](05-03-deploy-foundry-project-spoke/) | Deploys a 1:1 dedicated Foundry account spoke for a single team with a hard infrastructure boundary ([05-03-01-deploy-foundry-project-spoke.ipynb](05-03-deploy-foundry-project-spoke/05-03-01-deploy-foundry-project-spoke.ipynb), [main.bicep](05-03-deploy-foundry-project-spoke/main.bicep)) |
+| [05-04-deploy-foundry-multi-project/](05-04-deploy-foundry-multi-project/) | Deploys the 1:N multi-project Foundry account hosting several team projects with project-level isolation ([05-04-01-deploy-foundry-multi-project.ipynb](05-04-deploy-foundry-multi-project/05-04-01-deploy-foundry-multi-project.ipynb), [main.bicep](05-04-deploy-foundry-multi-project/main.bicep)) |
 
 ---
 

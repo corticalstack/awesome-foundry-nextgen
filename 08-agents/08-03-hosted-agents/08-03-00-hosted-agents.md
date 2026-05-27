@@ -45,7 +45,7 @@ The next architectural step is **grounding** the agent over a knowledge base and
 
 | File | Purpose |
 |---|---|
-| [`deploy-hosted-agent.ipynb`](deploy-hosted-agent.ipynb) | Provisions ACR, builds the agent container, deploys it via Capability Host, registers it with the Foundry project, runs two test prompts |
+| [`08-03-01-deploy-hosted-agent.ipynb`](08-03-01-deploy-hosted-agent.ipynb) | Provisions ACR, builds the agent container, deploys it via Capability Host, registers it with the Foundry project, runs two test prompts |
 | [`main.bicep`](main.bicep) | Deploys the Azure Container Registry into the existing Spoke Alpha resource group and grants AcrPull to the project's managed identity |
 | [`contoso-wealth-agent/main.py`](contoso-wealth-agent/main.py) | The agent code - a `ChatAgent` with the prompt-stuffed product list as `instructions` |
 | [`contoso-wealth-agent/Dockerfile`](contoso-wealth-agent/Dockerfile) | Container image definition |
@@ -53,4 +53,4 @@ The next architectural step is **grounding** the agent over a knowledge base and
 
 ---
 
-[Next: Deploy a hosted agent →](deploy-hosted-agent.ipynb)
+[Next: Deploy a hosted agent →](08-03-01-deploy-hosted-agent.ipynb)
