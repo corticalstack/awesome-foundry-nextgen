@@ -13,7 +13,7 @@ This lab demonstrates the **Human-in-the-Loop (HITL)** pattern: intercepting age
 5. [Tool routing](#5-tool-routing)
 6. [Approval and rejection flows](#6-approval-and-rejection-flows)
 7. [Multi-step scenarios](#7-multi-step-scenarios)
-8. [Future: MAF `approval_mode`](#8-future-maf-approval_mode)
+8. [Related patterns](#8-related-patterns)
 9. [Files in this lab](#9-files-in-this-lab)
 10. [Primary sources](#10-primary-sources)
 
@@ -54,7 +54,7 @@ For read-only or idempotent operations (balance checks, searches, lookups), auto
 
 ## 3. HITL approval loop
 
-The HITL pattern implemented in [`hitl.ipynb`](hitl.ipynb) follows this loop:
+The HITL pattern implemented in [`08-08-01-human-in-the-loop.ipynb`](08-08-01-human-in-the-loop.ipynb) follows this loop:
 
 ```
 responses.create(user_message)
@@ -89,14 +89,14 @@ The core Responses API calls used in the HITL loop:
 # Initial call - start a new agent turn
 response = openai_client.responses.create(
     input=[{"role": "user", "content": user_message}],
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
 )
 
 # Continuation call - submit tool results and get the next response
 response = openai_client.responses.create(
     input=tool_outputs,               # list of function_call_output dicts
     previous_response_id=response.id, # links this call to the previous turn
-    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
 )
 ```
 
@@ -139,7 +139,7 @@ for call in tool_calls:
 - Policy is defined in the client, not the tool - multiple clients must each maintain consistent sets
 - No per-invocation context - the decision is based solely on the tool name, not the argument values
 
-See [Section 8](#8-future-maf-approval_mode) for the upcoming MAF `approval_mode` feature which moves the policy declaration to the tool definition itself.
+See [Section 8](#8-related-patterns) for how this manual routing relates to the MAF `@tool(approval_mode=...)` decorator (a different runtime layer) and the Foundry `MCPTool(require_approval=...)` server-side flag (MCP tools only).
 
 ---
 
@@ -181,7 +181,7 @@ The agent receives the rejection message and acknowledges that the action was no
 
 The HITL loop handles scenarios where a single user message triggers multiple tool calls, including a mix of auto-execute and approval-required tools.
 
-In the multi-step scenario in [`hitl.ipynb`](hitl.ipynb), the agent:
+In the multi-step scenario in [`08-08-01-human-in-the-loop.ipynb`](08-08-01-human-in-the-loop.ipynb), the agent:
 1. Calls `get_account_balance` - auto-executed, no prompt shown
 2. Then calls `transfer_funds` - HITL prompt appears
 
@@ -191,31 +191,38 @@ Both tool calls may be returned in the same `response.output` batch, or the agen
 
 ---
 
-## 8. Future: MAF `approval_mode`
+## 8. Related patterns
 
-The [Microsoft Agent Framework (MAF)](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/function-tools-approvals?pivots=programming-language-python) is developing a first-class declarative alternative to the `APPROVAL_REQUIRED_TOOLS` set convention.
+Three different "approval" layers exist across the stack. This lab uses the third one because the first two do not cover its scenario (custom `FunctionTool` on a Foundry-hosted versioned agent).
 
-The planned pattern uses an `approval_mode` parameter on the `@ai_function` decorator:
+### 8.1 MAF `@tool(approval_mode="always_require")` - client-side runtime approvals
+
+Released in `agent-framework-core` and available in the version this repo pins (`1.0.0rc6`). Applies when the agent runs in the local [Microsoft Agent Framework (MAF)](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/function-tools-approvals?pivots=programming-language-python) runtime (`Agent(client=OpenAIChatClient(), ...)`), **not** when calling a Foundry-hosted agent through the Responses API. The MAF runtime returns `user_input_requests` on the run result; the caller replies with a `Message` containing `req.create_response(True|False)` to resume.
 
 ```python
-from agent_framework import ai_function
+from typing import Annotated
+from agent_framework import tool
 
-# Executes automatically
-@ai_function
-def get_account_balance(account_id: str) -> str:
+@tool
+def get_account_balance(account_id: Annotated[str, "Account ID"]) -> str:
     ...
 
-# Requires human approval before execution
-@ai_function(approval_mode="always_require")
-def transfer_funds(from_account: str, to_account: str, amount: float) -> str:
+@tool(approval_mode="always_require")
+def transfer_funds(from_account: Annotated[str, "Source account ID"],
+                   to_account:   Annotated[str, "Destination account ID"],
+                   amount:       Annotated[float, "Amount in USD"]) -> str:
     ...
 ```
 
-When `approval_mode="always_require"` is set, the MAF SDK intercepts the tool call and surfaces it as a `user_input_request` in the agent response, rather than executing it. The calling code then handles the approval flow using `create_response(True/False)`.
+The decorator name is `@tool` (the `@ai_function` alias appears in some API reference pages but is not exported by the `rc6` package this repo pins).
 
-**Current status:** The `approval_mode` parameter is not yet available in the published pip package as of the time this lab was written. The `APPROVAL_REQUIRED_TOOLS` convention in this lab provides equivalent functionality using the current stable SDK.
+### 8.2 Foundry `MCPTool(require_approval="always")` - server-side MCP approvals
 
-Once `approval_mode` ships, it will be a more ergonomic replacement: the approval policy lives with the tool definition, not in the calling code, making it harder to accidentally omit.
+Native server-side approval routing on the Foundry Agent Service, but only for MCP tools. When approval is required the Responses API returns an `mcp_approval_request` output item; the client submits an `mcp_approval_response` to continue. See: [Connect to MCP Server Endpoints for agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+
+### 8.3 Manual interception - what this lab does
+
+For custom `FunctionTool` definitions on a Foundry-hosted agent there is no first-class `require_approval` flag in the current SDK (`azure-ai-projects` rc6 `FunctionTool` exposes only `name` / `description` / `parameters` / `strict` / `type`). The `APPROVAL_REQUIRED_TOOLS` set + Responses API loop demonstrated in this lab is the canonical pattern for this scenario.
 
 ---
 
@@ -223,7 +230,7 @@ Once `approval_mode` ships, it will be a more ergonomic replacement: the approva
 
 | File | Purpose |
 |------|---------|
-| [`hitl.ipynb`](hitl.ipynb) | Lab notebook - configuration, tool definitions, HITL loop helper, and three scenarios: approve, reject, and multi-step |
+| [`08-08-01-human-in-the-loop.ipynb`](08-08-01-human-in-the-loop.ipynb) | Lab notebook - configuration, tool definitions, HITL loop helper, and three scenarios: approve, reject, and multi-step |
 
 ---
 
@@ -231,4 +238,5 @@ Once `approval_mode` ships, it will be a more ergonomic replacement: the approva
 
 - [azure-ai-projects SDK - FunctionTool and PromptAgentDefinition](https://pypi.org/project/azure-ai-projects/) - Python SDK for the Foundry Agent Service
 - [OpenAI Responses API - function calling](https://platform.openai.com/docs/guides/function-calling) - how function calls are returned as output items and how tool results are submitted via `previous_response_id`
-- [MAF Function Tools with Human-in-the-Loop Approvals](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/function-tools-approvals?pivots=programming-language-python) - upcoming `approval_mode` pattern in the Microsoft Agent Framework
+- [MAF Function Tools with Human-in-the-Loop Approvals](https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/function-tools-approvals?pivots=programming-language-python) - `@tool(approval_mode="always_require")` pattern for MAF client-side runtime agents
+- [Connect to MCP Server Endpoints for agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol) - Foundry server-side `MCPTool(require_approval="always")` approval routing

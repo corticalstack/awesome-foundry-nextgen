@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-05-27
+
+Section 08 HITL lab cleanup: notebook rename, agent rename, and corrected guidance on MAF / Foundry approval mechanisms.
+
+### Changed
+
+- Renamed `08-agents/08-08-human-in-the-loop/hitl.ipynb` to `08-08-01-human-in-the-loop.ipynb` to match the `NN-MM-NN-slug` convention used by sibling sub-folders. Updated inbound references in `08-agents/08-00-what-is-an-agent.md` and the cross-reference in `08-agents/08-05b-contoso-private-banking-mcp/08-05b-02-private-banking-agent-queries.ipynb`.
+- Renamed the demo agent from `08-06-hitl-agent` (wrong chapter prefix) to `payments-approval-agent`, matching the descriptive `{domain}-{role}-agent` naming used elsewhere in section 08.
+- Replaced the "Future: MAF `approval_mode`" section in both the notebook and the overview with a "Related patterns" section that explains the three approval layers (MAF `@tool(approval_mode=...)`, Foundry `MCPTool(require_approval=...)`, manual interception) and when each applies.
+
+### Fixed
+
+- The MAF `approval_mode` guidance said "is developing" / "not yet available in published pip package". The feature has shipped in `agent-framework-core==1.0.0rc6` (the version this repo pins) and the decorator name in that release is `@tool`, not `@ai_function`. Text updated to reflect released status and corrected decorator name.
+- The `extra_body` code sample in section 4 of the overview used the wrong key (`agent` instead of `agent_reference`), which would have failed if copy-pasted. Fixed both occurrences to match the working pattern in the notebook.
+
 ## [0.8.0] - 2026-05-22
 
 Sections 13 (guardrails), 14 (red teaming), and 15 (fine-tuning) cleanup. This completes the systematic documentation pass over every section (00-15).
