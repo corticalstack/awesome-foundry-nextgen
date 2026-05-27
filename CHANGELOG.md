@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.9] - 2026-05-27
+
+### Added
+
+- New [14-00-red-teaming.md](14-red-teaming/14-00-red-teaming.md) section overview: introduces the AI Red Teaming Agent (PyRIT), the region constraint, the two notebooks, the callback/APIM architecture, and links to the official Microsoft docs + PyRIT GitHub. Brings section 14 in line with every other section's `NN-00-*` intro page.
+- Committed PyRIT scan output artifacts (`14-red-teaming/redteam_basic_output/` and `14-red-teaming/redteam_advanced_output/{strategies,multilang,custom}/`) so readers can see what the scans produce without running them. ~110KB total, no tenant identifiers.
+- Added `14-red-teaming/custom_attack_prompts.json` as the source-of-truth seed file for the custom-objectives scan.
+- Re-added the `[redteam]` extra to `azure-ai-evaluation` in `pyproject.toml` (pulls in PyRIT for section 14).
+
+### Changed
+
+- Renamed PyRIT `scan_name` arguments from the legacy `Lab16-*` form to descriptive `redteam-*` names (escaped the 0.8.0 "Lab N" cleanup): `Lab16-Basic` → `redteam-basic` in `14-01-red-team-basics.ipynb`; `Lab16-Advanced/MultiLang/Custom` → `redteam-advanced/multilang/custom` in `14-02-red-team-advanced.ipynb`. Updated in source cells and in cached outputs / committed scan JSON.
+- Refreshed cached outputs in `13-02-create-bank-agent.ipynb` and `13-03-demo-guardrails.ipynb` from runs against the now-fixed `customBlocklists`-empty policy. Confirms the bank agent + 13-03 demo run cleanly via the agent_reference / Responses API path.
+
+### Fixed
+
+- Scrubbed absolute local paths (`/home/jp/...`) from cached outputs and stack traces in `14-01-red-team-basics.ipynb` (6 occurrences) and `14-02-red-team-advanced.ipynb` (80 occurrences), replaced with `<repo-root>` and `<uv-python>` placeholders per the notebook-output hygiene policy in `CONTRIBUTING.md`.
+
 ## [0.8.8] - 2026-05-27
 
 ### Fixed
