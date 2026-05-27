@@ -13,8 +13,8 @@ not receive security updates.
 
 ## Reporting a Vulnerability
 
-If you discover a security issue in any lab — a leaked credential pattern,
-unsafe default in a Bicep template, an injection risk in a notebook, etc. —
+If you discover a security issue in any lab - a leaked credential pattern,
+unsafe default in a Bicep template, an injection risk in a notebook, etc. -
 **please do not open a public issue.**
 
 Instead, report it privately via GitHub's
@@ -37,4 +37,4 @@ You can expect an initial acknowledgement within 7 days.
 - Issues in third-party Python packages pinned in `pyproject.toml` (report
   upstream to the package maintainers)
 - Findings against deployments you have provisioned yourself using the Bicep
-  templates — these are your own resources to harden
+  templates - these are your own resources to harden
