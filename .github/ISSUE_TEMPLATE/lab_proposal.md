@@ -11,7 +11,7 @@ labels: ["lab-proposal", "enhancement"]
 
 ## Why is it useful?
 
-<!-- Who would benefit, and what's the gap in the existing 00–15 labs? -->
+<!-- Who would benefit, and what's the gap in the existing 00-15 labs? -->
 
 ## Proposed lab number
 
@@ -20,13 +20,13 @@ labels: ["lab-proposal", "enhancement"]
 ## Proposed scope
 
 - [ ] Markdown intro (`NN-00-*.md`)
-- [ ] Notebook(s) — list them here
+- [ ] Notebook(s) - list them here
 - [ ] Bicep / infra
 - [ ] New env vars (list them)
 
 ## Dependencies on other labs
 
-<!-- e.g. "assumes the multi-project spoke from Lab 05". -->
+<!-- e.g. "assumes the multi-project spoke from the project pattern setup section". -->
 
 ## Anything else?
 

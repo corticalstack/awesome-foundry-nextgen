@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.3] - 2026-05-27
+
+Two leftovers from prior cleanup passes: residual "Lab N" pointers in repo-root files, and a repo-wide em/en dash sweep that had never been done.
+
+### Changed
+
+- Removed remaining `Lab N` cross-references from `README.md` (line 48 "Lab 05" → "project pattern setup", line 69 "Lab 08 sub-labs" → "Agents sub-labs") and the `.github/ISSUE_TEMPLATE/lab_proposal.md` example. The `Lab` column header in the README labs table is kept since it is a concept noun, not a section pointer.
+- Replaced every em dash (`—`) and en dash (`–`) with a single hyphen across 22 prose files: `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `.github/` templates, `04-01-foundry-enterprise-provisioning.md`, and 17 notebooks (markdown cells + cached cell outputs only - code cell sources left untouched to avoid altering string-literal behaviour). 139 character replacements in total. Per `CLAUDE.md` writing style: single hyphen only.
+
+### Skipped (intentional)
+
+- Simulated dataset JSON under `assets/contoso-*-dataset/` and `08-agents/08-05*/contoso-*-mcp/data/`: dashes there are authentic punctuation in mock meeting notes / research reports and removing them changes the dataset's character.
+- `CHANGELOG.md`: historical release notes preserved as published.
+
 ## [0.8.2] - 2026-05-27
 
 Repo-wide file-naming sweep: brought six off-convention files into the `NN-MM-NN-slug` pattern used by sibling sub-folders and updated all inbound cross-references.

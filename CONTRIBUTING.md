@@ -1,13 +1,13 @@
 # Contributing
 
 Thanks for taking the time to contribute. This repo is a growing collection of
-Microsoft Foundry labs — every fix, clarification, and new scenario helps.
+Microsoft Foundry labs - every fix, clarification, and new scenario helps.
 
 ## Ground rules
 
 - **Never commit directly to `main`.** All changes go through a pull request from a
   feature branch.
-- **Auth is `DefaultAzureCredential`.** Don't introduce admin keys in notebooks — use
+- **Auth is `DefaultAzureCredential`.** Don't introduce admin keys in notebooks - use
   RBAC, except where APIM subscription keys are the documented path.
 - **Notebooks must run top-to-bottom** against the standard `.env` after the
   prerequisite labs have run.

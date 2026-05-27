@@ -430,11 +430,11 @@ Configure via: *Foundry portal → Operate → Admin console → AI Gateway tab 
 
 | Strategy | Potential Saving | Detail |
 |---|---|---|
-| **Model routing** | 10–20x cost reduction | Route simple classification and extraction tasks to lighter, cheaper models. Reserve expensive reasoning models for complex multi-step tasks only. |
+| **Model routing** | 10-20x cost reduction | Route simple classification and extraction tasks to lighter, cheaper models. Reserve expensive reasoning models for complex multi-step tasks only. |
 | **Batch API** | 50% cost reduction vs real-time | Asynchronous batch processing with up to 24-hour latency. Ideal for bulk evaluation, document processing, and offline classification. |
-| **Prompt caching** | 50–90% on cached prefixes | Structure reusable content (system prompts, retrieved documents) at the beginning of the prompt so caching maximises across requests. |
+| **Prompt caching** | 50-90% on cached prefixes | Structure reusable content (system prompts, retrieved documents) at the beginning of the prompt so caching maximises across requests. |
 | **Token minimisation** | Up to 71% per request | Set explicit `max_tokens`, use structured outputs to reduce verbose responses, limit few-shot examples to what is needed. |
-| **RAG over document stuffing** | Significant | Retrieve the top 3–5 relevant chunks from your knowledge base rather than sending entire source documents in context. |
+| **RAG over document stuffing** | Significant | Retrieve the top 3-5 relevant chunks from your knowledge base rather than sending entire source documents in context. |
 | **Fine-tuned model lifecycle** | Avoids idle deployment costs | Microsoft auto-deletes fine-tuned model deployments that have been inactive for 15 or more consecutive days. Redeploy from the registered model when needed. |
 | **PTU reservations** | Significant at scale | 1-month or 1-year Azure Reservations on PTU deployments reduce per-unit hourly costs materially for stable production workloads. |
 

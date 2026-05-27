@@ -1,6 +1,6 @@
 ## Summary
 
-<!-- 1–3 bullets describing what this PR changes and why. -->
+<!-- 1-3 bullets describing what this PR changes and why. -->
 
 ## Type of change
 
