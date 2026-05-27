@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] - 2026-05-27
+
+Repo-wide file-naming sweep: brought six off-convention files into the `NN-MM-NN-slug` pattern used by sibling sub-folders and updated all inbound cross-references.
+
+### Changed
+
+- Renamed five notebooks and one markdown stub:
+  - `05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/deploy-foundry-core-gateway.ipynb` → `05-02-01-deploy-foundry-core-gateway.ipynb`
+  - `05-foundry-project-pattern-setup/05-03-deploy-foundry-project-spoke/deploy-foundry-project-spoke.ipynb` → `05-03-01-deploy-foundry-project-spoke.ipynb`
+  - `05-foundry-project-pattern-setup/05-04-deploy-foundry-multi-project/deploy-foundry-multi-project.ipynb` → `05-04-01-deploy-foundry-multi-project.ipynb`
+  - `08-agents/08-03-hosted-agents/deploy-hosted-agent.ipynb` → `08-03-01-deploy-hosted-agent.ipynb`
+  - `08-agents/08-04-agent-memory/deploy.ipynb` → `08-04-01-deploy-agent-memory.ipynb`
+  - `08-agents/08-05-contoso-pmo-mcp/mcp-authentication-methods.md` → `08-05-04-mcp-authentication-methods.md`
+- Updated all inbound cross-references: `04-00-control-plane.md` (2 links), `05-00-project-setup.md` (3 links), `05-01-architecture.md` (1 link), `08-03-00-hosted-agents.md` (2 links), `13-01-configure-bank-guardrails.ipynb` (2 links), `11-01-deploy-setup.ipynb` (1 prose mention), and `10-01-deploy-search-and-project.ipynb` (1 prose mention).
+
 ## [0.8.1] - 2026-05-27
 
 Section 08 HITL lab cleanup: notebook rename, agent rename, and corrected guidance on MAF / Foundry approval mechanisms.
