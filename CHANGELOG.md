@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.10] - 2026-05-27
+
+### Fixed
+
+- `15-fine-tune/15-01-data-preparation.ipynb` failed at cell 3 with `ModuleNotFoundError: No module named 'torch'`. Two underlying issues: (1) `torch`, `transformers`, `peft`, `matplotlib`, `azure-storage-blob`, and `azure-ai-inference` were never declared in `pyproject.toml`, and (2) cell 2's inline `%pip install` silently failed in the uv-managed `.venv` (which doesn't ship `pip`, so `%pip` prints `No module named pip`). Same import-failure pattern would have hit `15-04-local-inference.ipynb`, which depends on torch/transformers/peft but had no install cell at all.
+
+### Added
+
+- New `[dependency-groups] finetune` entry in `pyproject.toml` declaring the heavy ML dependencies needed for section 15 (`torch>=2.0.0`, `transformers>=4.40.0`, `peft>=0.10.0`, `matplotlib>=3.7.0`, `azure-storage-blob>=12.20.0`, `azure-ai-inference>=1.0.0`). Users run `uv sync --group finetune` once before opening section 15. Base install stays lean for everyone else (~3 GB saved when section 15 isn't needed). Matches the pattern used for `azure-ai-evaluation[redteam]` in section 14.
+
+### Changed
+
+- Cell 2 of `15-01-data-preparation.ipynb` converted from a broken `%pip install` code cell to a markdown cell that points readers at the `uv sync --group finetune` command and explains why `%pip` doesn't work in this venv.
+- Updated `15-00-fine-tune.md` prerequisites: step 4 now specifies `uv sync --group finetune`, with a note explaining what the group includes and why the base install was kept lean.
+
 ## [0.8.9] - 2026-05-27
 
 ### Added
