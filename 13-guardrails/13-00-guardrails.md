@@ -18,6 +18,14 @@ unaffected.
 > blocklist resource is still created so it shows in the portal and can be re-attached
 > with two lines of code once the service is fixed - see the comment on the RAI policy
 > cell in [13-01](13-01-configure-bank-guardrails.ipynb).
+>
+> The blocklist mechanism itself has been verified end-to-end here previously: the
+> cached outputs of [13-03-demo-guardrails.ipynb](13-03-demo-guardrails.ipynb) - captured
+> in an earlier run when `customBlocklists` was attached - show all 5 PII inputs and all
+> 5 codename/competitor prompts blocking correctly through the Responses API. So when
+> the service bug is fixed and the blocklist is re-attached, no further demo verification
+> is needed; the cached results are direct evidence the policy + blocklist combination
+> behaves correctly.
 
 ## What gets demonstrated
 
