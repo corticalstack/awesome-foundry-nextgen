@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.4] - 2026-05-27
+
+### Fixed
+
+- `12-foundry-iq-deep-research/12-01-deploy-o3-backend.ipynb` failed on Step 5 with `'subscription' is misspelled or not recognized` because it used `az apim subscription list-secrets`, which requires the `apim` Azure CLI extension. Same issue affected Step 3's `az apim backend show`. Both calls rewritten to use `az rest` against the ARM management endpoint, matching the pattern already used by `10-01-deploy-search-and-project.ipynb` and `11-01-deploy-setup.ipynb`. Step 2 now also resolves `SUB_ID` and an `APIM_BASE_URI` helper used by Steps 3 and 5. No new dependencies; works with the base Azure CLI.
+
 ## [0.8.3] - 2026-05-27
 
 Two leftovers from prior cleanup passes: residual "Lab N" pointers in repo-root files, and a repo-wide em/en dash sweep that had never been done.
