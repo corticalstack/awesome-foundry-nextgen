@@ -75,7 +75,7 @@ The labs in this directory put these building blocks into practice - agent versi
 | [08-05b-contoso-private-banking-mcp/](08-05b-contoso-private-banking-mcp/) | Private-banking MCP server variant - [overview](08-05b-contoso-private-banking-mcp/08-05b-00-contoso-private-banking-mcp.md), agent setup and queries notebooks, plus the Functions MCP app |
 | [08-06-agent-offline-evaluation/](08-06-agent-offline-evaluation/) | Pre-release agent evaluation against a curated test set - [overview](08-06-agent-offline-evaluation/08-06-00-agent-offline-evaluation.md), quality + RAI + agent-specific + custom evaluators, plus a full batch `evaluate()` run with portal logging |
 | [08-07-agent-live-observability/](08-07-agent-live-observability/) | OpenTelemetry tracing, real-time observability, and continuous evaluation - [overview](08-07-agent-live-observability/08-07-00-agent-live-observability.md), [tracing](08-07-agent-live-observability/08-07-02-agent-tracing.md), [real-time observability](08-07-agent-live-observability/08-07-04-real-time-observability.md), plus observability and continuous-eval notebooks |
-| [08-08-human-in-the-loop/](08-08-human-in-the-loop/) | Human-in-the-loop pattern - [overview](08-08-human-in-the-loop/08-08-00-human-in-the-loop.md) and `hitl.ipynb` walkthrough for pausing an agent for approval before tool execution |
+| [08-08-human-in-the-loop/](08-08-human-in-the-loop/) | Human-in-the-loop pattern - [overview](08-08-human-in-the-loop/08-08-00-human-in-the-loop.md) and [08-08-01-human-in-the-loop.ipynb](08-08-human-in-the-loop/08-08-01-human-in-the-loop.ipynb) walkthrough for pausing an agent for approval before tool execution |
 
 ## Resources
 
