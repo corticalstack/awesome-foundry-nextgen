@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.9] - 2026-05-27
+
+### Added
+
+- New [14-00-red-teaming.md](14-red-teaming/14-00-red-teaming.md) section overview: introduces the AI Red Teaming Agent (PyRIT), the region constraint, the two notebooks, the callback/APIM architecture, and links to the official Microsoft docs + PyRIT GitHub. Brings section 14 in line with every other section's `NN-00-*` intro page.
+- Committed PyRIT scan output artifacts (`14-red-teaming/redteam_basic_output/` and `14-red-teaming/redteam_advanced_output/{strategies,multilang,custom}/`) so readers can see what the scans produce without running them. ~110KB total, no tenant identifiers.
+- Added `14-red-teaming/custom_attack_prompts.json` as the source-of-truth seed file for the custom-objectives scan.
+- Re-added the `[redteam]` extra to `azure-ai-evaluation` in `pyproject.toml` (pulls in PyRIT for section 14).
+
+### Changed
+
+- Renamed PyRIT `scan_name` arguments from the legacy `Lab16-*` form to descriptive `redteam-*` names (escaped the 0.8.0 "Lab N" cleanup): `Lab16-Basic` → `redteam-basic` in `14-01-red-team-basics.ipynb`; `Lab16-Advanced/MultiLang/Custom` → `redteam-advanced/multilang/custom` in `14-02-red-team-advanced.ipynb`. Updated in source cells and in cached outputs / committed scan JSON.
+- Refreshed cached outputs in `13-02-create-bank-agent.ipynb` and `13-03-demo-guardrails.ipynb` from runs against the now-fixed `customBlocklists`-empty policy. Confirms the bank agent + 13-03 demo run cleanly via the agent_reference / Responses API path.
+
+### Fixed
+
+- Scrubbed absolute local paths (`/home/jp/...`) from cached outputs and stack traces in `14-01-red-team-basics.ipynb` (6 occurrences) and `14-02-red-team-advanced.ipynb` (80 occurrences), replaced with `<repo-root>` and `<uv-python>` placeholders per the notebook-output hygiene policy in `CONTRIBUTING.md`.
+
+## [0.8.8] - 2026-05-27
+
+### Fixed
+
+- `13-guardrails/13-02-create-bank-agent.ipynb` (and the demo runner in `13-03`) returned `InternalServerError: 500` on every Responses API call. Root cause empirically isolated: when ANY `customBlocklists` entry is attached to the RAI policy (Prompt-side, Completion-side, or both), the Responses API runtime returns 500 on happy-path content while still correctly returning 400 `content_filter` on blocked content. Same policy works fine through Chat Completions. This is the service-side analogue of the Java SDK array-shape issue [#49196](https://github.com/Azure/azure-sdk-for-java/issues/49196).
+- Fix applied in `13-01-configure-bank-guardrails.ipynb`: `customBlocklists` is now an empty list. The `bank-demo-blocklist` resource is still created (so it shows in the portal and can be re-attached with two lines once the service bug is fixed), but the attachment to the policy is removed. Standard content filters and Prompt Shields (Jailbreak / Indirect Attack / Protected Material) still work via the Responses API path used by all the other agent notebooks in this repo.
+
+### Changed
+
+- Updated the descriptions in `13-00-guardrails.md`, the top markdown of `13-01`, the architecture diagram, the portal-fallback steps, and `13-03-demo-guardrails.ipynb` to reflect the temporary limitation: PII-regex and custom-blocklist scenarios (codenames, competitors) will not block until the Responses API bug is fixed; Prompt Shields and standard filters continue to work.
+- Added a detailed comment on the RAI policy cell in `13-01` explaining the bug, the empirical evidence, the workaround, and how to re-enable when Microsoft fixes the service.
+
 ## [0.8.7] - 2026-05-27
 
 ### Fixed
