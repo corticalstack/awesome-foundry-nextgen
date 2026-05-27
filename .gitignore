@@ -43,3 +43,8 @@ docs/05-custom-mcp-server/maestro-mcp/data/
 .ralph/
 .tmux/
 .tmux.ralph.conf
+# Section 15 fine-tuning artifacts (regenerable / too large to commit)
+15-fine-tune/data/
+15-fine-tune/models/
+15-fine-tune/eval_job.json
+15-fine-tune/job.json

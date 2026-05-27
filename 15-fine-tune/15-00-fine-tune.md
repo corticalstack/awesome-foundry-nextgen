@@ -65,20 +65,26 @@ APIM Gateway
    ```
    GATEWAY_URL=https://<apim-name>.azure-api.net/openai
    CHAT_MODEL=gpt-4.1-mini
+   ALPHA_GATEWAY_KEY=<existing apim subscription key for alpha>
    FINETUNE_FOUNDRY_PROJECT_ENDPOINT=https://aif-spoke-multi-{suffix}.services.ai.azure.com/api/projects/finetune-project
-   FINETUNE_GATEWAY_KEY=<apim subscription key for finetune>
    FINETUNE_APIM_CONNECTION=finetune-apim-connection
    FINETUNE_RESOURCE_GROUP=rg-foundry-multi-{suffix}
    FINETUNE_STORAGE_ACCOUNT=issft{suffix}
    FINETUNE_ACA_ENVIRONMENT=acae-finetune-{suffix}
    ```
 
+   > **No dedicated finetune APIM key.** The teacher-model calls only need a valid APIM subscription key for the shared gateway, so the notebooks reuse `ALPHA_GATEWAY_KEY` (already in `.env` from the project-spoke deployment) rather than provisioning a separate `foundry-gateway-finetune` subscription. This removes one resource and one extra env variable. If you want isolated quotas later, you can create a dedicated APIM subscription and wire its key in - the call site is straightforward to swap.
+
 3. **Azure CLI logged in** - run `az login` and ensure you have Contributor access to the resource group.
 
 4. **`uv` installed** - install dependencies with:
    ```bash
-   uv sync
+   uv sync --group finetune
    ```
+
+   This section needs heavy ML dependencies (PyTorch, Hugging Face Transformers, PEFT) that are not in the base install. They live in the `finetune` dependency group in `pyproject.toml`. Plain `uv sync` will leave `torch` / `transformers` / `peft` / `matplotlib` / `azure-storage-blob` / `azure-ai-inference` missing and the notebooks will fail with `ModuleNotFoundError`. The `--group finetune` flag pulls them in.
+
+   > The base install was kept lean because the fine-tuning group adds ~3 GB (PyTorch + CUDA libs). Once you've synced the group it persists in `.venv`; you don't need the flag on subsequent `uv sync` calls.
 
 5. **Bicep deployed** - deploy this lab's infrastructure into the existing multi-spoke resource group:
    ```bash
@@ -87,7 +93,7 @@ APIM Gateway
      --template-file 15-fine-tune/main.bicep \
      --parameters deployerPrincipalId=$(az ad signed-in-user show --query id -o tsv) \
                   apimUrl=$GATEWAY_URL \
-                  apimSubscriptionKey=$FINETUNE_GATEWAY_KEY \
+                  apimSubscriptionKey=$ALPHA_GATEWAY_KEY \
                   existingAccountName=aif-spoke-multi-{suffix}
    ```
 

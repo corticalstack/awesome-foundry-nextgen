@@ -53,10 +53,12 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
   name: 'default'
 }
 
-// 'ft' container for training data, fine-tuned adapter and evaluation results
+// 'finetune' container for training data, fine-tuned adapter and evaluation results.
+// Azure Storage requires container names to be 3-63 chars - 'ft' was too short and
+// failed silently during deployment, causing downstream jobs to error on download.
 resource ftContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
   parent: blobService
-  name: 'ft'
+  name: 'finetune'
   properties: {
     publicAccess: 'None'
   }

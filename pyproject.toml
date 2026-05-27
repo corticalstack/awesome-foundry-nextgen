@@ -1,6 +1,6 @@
 [project]
 name = "awesome-foundry-nextgen"
-version = "0.8.9"
+version = "0.8.10"
 description = "Hands-on labs for Microsoft Foundry — Azure's unified PaaS for enterprise AI"
 requires-python = ">=3.11"
 dependencies = [
@@ -35,6 +35,24 @@ dependencies = [
 dev = [
     "ipykernel>=6.29.0",
     "pytest>=9.0.2",
+]
+
+# Fine-tuning section (15-*) - pulls in PyTorch + Hugging Face + matplotlib.
+# Large install (~3GB with CUDA). Sync with: `uv sync --group finetune`.
+#
+# transformers is pinned to the 4.x line because Phi-4-mini's custom remote
+# code (modeling_phi3.py served from the Hugging Face hub) imports symbols
+# (e.g. `LossKwargs`) that were removed in transformers 5.x. The ACA
+# fine-tune job in azure_infra.py pins the same 4.53.3 version explicitly;
+# the local install needs to match for 15-04 (local inference) to load the
+# adapter without ImportErrors.
+finetune = [
+    "torch>=2.0.0",
+    "transformers>=4.46.0,<5.0.0",
+    "peft>=0.10.0",
+    "matplotlib>=3.7.0",
+    "azure-storage-blob>=12.20.0",
+    "azure-ai-inference>=1.0.0",
 ]
 
 [tool.uv]
