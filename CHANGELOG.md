@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `15-fine-tune/15-01-data-preparation.ipynb` failed at cell 3 with `ModuleNotFoundError: No module named 'torch'`. Two underlying issues: (1) `torch`, `transformers`, `peft`, `matplotlib`, `azure-storage-blob`, and `azure-ai-inference` were never declared in `pyproject.toml`, and (2) cell 2's inline `%pip install` silently failed in the uv-managed `.venv` (which doesn't ship `pip`, so `%pip` prints `No module named pip`). Same import-failure pattern would have hit `15-04-local-inference.ipynb`, which depends on torch/transformers/peft but had no install cell at all.
+- `15-fine-tune/15-01-data-preparation.ipynb` cell 8 then failed with `OpenAIError: Missing credentials` because `FINETUNE_GATEWAY_KEY` was missing from `.env`. The Bicep at `15-fine-tune/main.bicep` does not create a dedicated `foundry-gateway-finetune` APIM subscription (unlike 10-01 / 11-01 which provision their own), so this env var was never going to be set. The teacher-model call only needs any valid APIM key, so the cell now reuses `ALPHA_GATEWAY_KEY` (already in `.env` from the project-spoke deployment). This removes a phantom env variable and one redundant Azure resource.
 
 ### Added
 
@@ -18,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Cell 2 of `15-01-data-preparation.ipynb` converted from a broken `%pip install` code cell to a markdown cell that points readers at the `uv sync --group finetune` command and explains why `%pip` doesn't work in this venv.
-- Updated `15-00-fine-tune.md` prerequisites: step 4 now specifies `uv sync --group finetune`, with a note explaining what the group includes and why the base install was kept lean.
+- Updated `15-00-fine-tune.md` prerequisites: step 4 now specifies `uv sync --group finetune`, with a note explaining what the group includes and why the base install was kept lean. Step 2's `.env` block now references `ALPHA_GATEWAY_KEY` (no separate `FINETUNE_GATEWAY_KEY`), step 5's `az deployment` command uses `$ALPHA_GATEWAY_KEY` as `apimSubscriptionKey`. A note above the block explains the rationale.
 
 ## [0.8.9] - 2026-05-27
 
