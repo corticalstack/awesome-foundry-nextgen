@@ -6,6 +6,19 @@ codenames and competitor names. Built around `contoso-bank-agent` in the admin F
 project, isolated to its own model deployment so other agents on the project are
 unaffected.
 
+> **Known service-side limitation (2026-05).** The custom blocklist is currently **not
+> attached** to the RAI policy because doing so breaks the Responses API with HTTP 500 on
+> any happy-path call (tested empirically: 5/5 fail with any `customBlocklists` entry, 5/5
+> succeed with none). The same policy works through Chat Completions API. This is the
+> service-side analogue of the Java SDK array-shape issue
+> [#49196](https://github.com/Azure/azure-sdk-for-java/issues/49196).
+> Practical impact on the demo: Prompt Shields (Jailbreak / Indirect Attack), standard
+> safety filters, and Protected Material still work. The blocklist-specific scenarios
+> (PII regex, internal codenames, competitor names) currently **do not block**. The
+> blocklist resource is still created so it shows in the portal and can be re-attached
+> with two lines of code once the service is fixed - see the comment on the RAI policy
+> cell in [13-01](13-01-configure-bank-guardrails.ipynb).
+
 ## What gets demonstrated
 
 | Layer | Mechanism | What the audience sees |
@@ -40,14 +53,17 @@ pinned to that deployment, so other agents on the project (`storytelling-agent`,
 │     Indirect Attack)     │
 │  • Protected Material    │
 │    (Text + Code)         │
-│  • Custom blocklists     │
-└─────────────┬────────────┘
-              │  references by name
-              ▼
+│  • (customBlocklists     │
+│     intentionally empty  │
+│     - service bug, see   │
+│     note above)          │
+└──────────────────────────┘
+
 ┌──────────────────────────┐
 │ bank-demo-blocklist      │  ← jailbreak phrases + PII regex +
-│                          │     codenames + competitors
-└──────────────────────────┘
+│  (created but NOT        │     codenames + competitors. Resource
+│   attached to policy)    │     exists for portal visibility +
+└──────────────────────────┘     re-attachment when bug is fixed.
 ```
 
 ## Run order
@@ -75,8 +91,8 @@ the Azure portal under `aif-core-{suffix}`:
    listed in cell 4 of [13-01](13-01-configure-bank-guardrails.ipynb); flip the *regex*
    toggle on for the PII patterns.
 2. **Content filters → + Create custom content filter** - name `bank-guardrails-policy`.
-   Match the configuration in cell 6 of [13-01](13-01-configure-bank-guardrails.ipynb);
-   reference `bank-demo-blocklist` for both prompt and completion.
+   Match the configuration in cell 6 of [13-01](13-01-configure-bank-guardrails.ipynb).
+   Leave the **Blocklists** section empty (see Known limitation above).
 3. **Deployments → + Deploy a model** - pick `gpt-4.1-mini` (`2025-04-14`),
    name `gpt-4.1-mini-bank-guardrails`, SKU `GlobalStandard` at 30K TPM, set the content
    filter to `bank-guardrails-policy` under Advanced.
