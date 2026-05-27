@@ -120,7 +120,10 @@ resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' =
 resource researchModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: researchHub
   name: 'o3-deep-research'
-  sku: { name: 'GlobalStandard', capacity: 10 }
+  // Capacity is K-TPM. 10 was too low - multi-step deep-research runs hit
+  // 429 throttling before completing. 200 gives realistic headroom while
+  // staying well under the Norway East o3-DeepResearch subscription quota.
+  sku: { name: 'GlobalStandard', capacity: 200 }
   properties: {
     model: {
       name: 'o3-deep-research'

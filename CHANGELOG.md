@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.5] - 2026-05-27
+
+### Fixed
+
+- Raised the `o3-deep-research` model deployment capacity from 10 (10K TPM) to 200 (200K TPM) in both `05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/main.bicep` and `12-foundry-iq-deep-research/main.bicep`. The original 10K cap throttled multi-step deep-research runs with 429 errors before completion. 200K stays well under the Norway East `o3-DeepResearch` subscription quota (3000). Existing live deployments must be updated separately (`az cognitiveservices account deployment update --sku-capacity 200`) or via a fresh Bicep apply.
+
 ## [0.8.4] - 2026-05-27
 
 ### Fixed
