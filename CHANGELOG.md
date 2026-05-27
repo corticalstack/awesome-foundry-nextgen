@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.6] - 2026-05-27
+
+Tenant-identifier scrub of cached notebook outputs across sections 08 and 12, plus refreshed cached outputs for the deep-research notebooks.
+
+### Changed
+
+- Scrubbed nine tenant-specific UUIDs from cached notebook outputs to the conventional `00000000-0000-0000-0000-000000000000` placeholder. Per the notebook-output hygiene policy in `CONTRIBUTING.md`: deterministic resource-name suffixes (`c2676f`, `n5d3ja`) are kept; subscription IDs, Entra principal IDs, project managed-identity principals, eval-run IDs, and ACR build volume IDs are scrubbed.
+  - `08-agents/08-03-hosted-agents/08-03-01-deploy-hosted-agent.ipynb` - Entra principal ID + ACR build volume ID
+  - `08-agents/08-05-contoso-pmo-mcp/08-05-01-contoso-pmo-agent-setup.ipynb` - project MI principal
+  - `08-agents/08-05b-contoso-private-banking-mcp/08-05b-01-private-banking-agent-setup.ipynb` - project MI principal
+  - `08-agents/08-06-agent-offline-evaluation/08-06-05-results-and-portal.ipynb` - two eval-run IDs in portal URLs
+  - `08-agents/08-07-agent-live-observability/08-07-01-deploy-observability-infra.ipynb` - Entra principal ID
+  - `12-foundry-iq-deep-research/12-01-deploy-o3-backend.ipynb` - subscription ID + Entra principal ID
+- Refreshed cached outputs in `12-foundry-iq-deep-research/12-01-deploy-o3-backend.ipynb` and `12-foundry-iq-deep-research/12-02-deep-research-loop.ipynb` from a successful end-to-end run after the v0.8.4 / v0.8.5 fixes landed.
+
+### Kept (false positive flagged for completeness)
+
+- `08-agents/08-03-hosted-agents/08-03-01-deploy-hosted-agent.ipynb` references `53ca6127-db72-4b80-b1b0-d745d6d5456d` as `FOUNDRY_USER_ROLE_ID`. This is the public Azure built-in role-definition ID for "Foundry User", identical across all Azure tenants - not personal data.
+
 ## [0.8.5] - 2026-05-27
 
 ### Fixed
