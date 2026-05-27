@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.8] - 2026-05-27
+
+### Fixed
+
+- `13-guardrails/13-02-create-bank-agent.ipynb` (and the demo runner in `13-03`) returned `InternalServerError: 500` on every Responses API call. Root cause empirically isolated: when ANY `customBlocklists` entry is attached to the RAI policy (Prompt-side, Completion-side, or both), the Responses API runtime returns 500 on happy-path content while still correctly returning 400 `content_filter` on blocked content. Same policy works fine through Chat Completions. This is the service-side analogue of the Java SDK array-shape issue [#49196](https://github.com/Azure/azure-sdk-for-java/issues/49196).
+- Fix applied in `13-01-configure-bank-guardrails.ipynb`: `customBlocklists` is now an empty list. The `bank-demo-blocklist` resource is still created (so it shows in the portal and can be re-attached with two lines once the service bug is fixed), but the attachment to the policy is removed. Standard content filters and Prompt Shields (Jailbreak / Indirect Attack / Protected Material) still work via the Responses API path used by all the other agent notebooks in this repo.
+
+### Changed
+
+- Updated the descriptions in `13-00-guardrails.md`, the top markdown of `13-01`, the architecture diagram, the portal-fallback steps, and `13-03-demo-guardrails.ipynb` to reflect the temporary limitation: PII-regex and custom-blocklist scenarios (codenames, competitors) will not block until the Responses API bug is fixed; Prompt Shields and standard filters continue to work.
+- Added a detailed comment on the RAI policy cell in `13-01` explaining the bug, the empirical evidence, the workaround, and how to re-enable when Microsoft fixes the service.
+
 ## [0.8.7] - 2026-05-27
 
 ### Fixed
