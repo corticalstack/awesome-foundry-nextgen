@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.11] - 2026-05-30
+
+Two new `08-agents` labs: invoking a Foundry agent over raw REST, and deploying a GitHub Copilot SDK agent as a Foundry hosted agent.
+
+### Added
+
+- New `08-agents/08-09-invoke-agent-via-rest` section: three notebooks that invoke a Foundry agent over raw REST (the responses API) instead of the SDK - `08-09-01-rest-single-shot`, `08-09-02-rest-multi-turn`, and `08-09-03-rest-streaming` - plus an `08-09-00` overview. Closes the gap where the repo only demonstrated agent consumption through the SDK.
+- New `08-agents/08-10-hosted-copilot-sdk-agent` section: deploys a GitHub Copilot SDK agent (`CopilotClient` plus the `azure-ai-agentserver-invocations` protocol) as a Microsoft Foundry hosted agent. The `08-10-01` notebook walks Bicep (`az deployment sub create`), `az acr build`, and `AIProjectClient.agents.create_version`, with a two-pass register and bootstrap-version delete, runtime role grants on the per-agent managed identity (AgentIdentity), a smoke test, and an M365 license-analytics demo.
+- BYOK Foundry model path in 08-10: the Copilot SDK routes inference to a Foundry-deployed `gpt-5.4-mini` over the project endpoint (`<project>/openai/v1/`, token audience `ai.azure.com`) via Managed Identity, with a `GITHUB_TOKEN` Copilot-model fallback.
+- M365 license-analytics demo (Step 7) with markdown tables rendered inline (a new `render=True` mode on the notebook's `invoke()` helper) and an agent-generated, downloadable cost-by-department chart: the agent renders the chart (matplotlib, pip-installed into its own session shell, with a dependency-free SVG fallback) into the session sandbox, and the notebook retrieves it with a new `download_session_file()` helper (the read counterpart to `upload_session_file()`).
+- `08-10-00` documentation covering the two-layer agentic loop (the outer Foundry-protocol shell in `main.py` versus the inner Copilot CLI reason/act/observe loop), the BYOK wiring, and the agent permission model (`PermissionHandler.approve_all` as the yolo-equivalent, a four-layer "what the agent is allowed to do" table, and tool-call observability).
+- OpenTelemetry tracing (`tracing.py`) mapping Copilot `SessionEvent`s to GenAI-semantic-convention spans (`invoke_agent` parent with `execute_tool` and `chat <model>` children), surfaced in the Foundry portal Tracing tab.
+
+### Changed
+
+- `pyproject.toml`: bumped `azure-ai-projects` from `>=2.0.0b1` to `>=2.1.0` (required for the hosted-agent `agents.create_version` API used by section 08-10).
+
+### Removed
+
+- `pyproject.toml`: dropped the unused `azure-ai-inference>=1.0.0` from the `finetune` dependency group. It had zero usages in the repo and its `>=1.0.0` floor conflicted with `agent-framework-azure-ai`'s `<1.0.0b10` pin, blocking `uv lock`.
+- Deleted an accidentally-committed upstream `.git` directory and azd scaffolding (azure.yaml, agent.yaml, git hook samples, pack files) from the old `08-agents/08-09` path.
+
 ## [0.8.10] - 2026-05-27
 
 End-to-end fixes for the section 15 fine-tuning pipeline. The pipeline failed at multiple points; this release fixes them in sequence.
