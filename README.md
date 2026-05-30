@@ -3,7 +3,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/corticalstack/awesome-foundry-nextgen?include_prereleases&sort=semver)](https://github.com/corticalstack/awesome-foundry-nextgen/releases)
 [![Last commit](https://img.shields.io/github/last-commit/corticalstack/awesome-foundry-nextgen)](https://github.com/corticalstack/awesome-foundry-nextgen/commits)
-[![Made with Jupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?logo=jupyter&logoColor=white)](https://jupyter.org/)
 [![Notebooks](https://img.shields.io/badge/Notebooks-50%2B-8A2BE2?logo=jupyter&logoColor=white)](https://github.com/corticalstack/awesome-foundry-nextgen)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Azure AI Foundry](https://img.shields.io/badge/Azure-AI%20Foundry-0078D4?logo=microsoftazure&logoColor=white)](https://learn.microsoft.com/en-us/azure/ai-foundry/)
