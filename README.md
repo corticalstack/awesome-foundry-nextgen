@@ -4,13 +4,14 @@
 [![Release](https://img.shields.io/github/v/release/corticalstack/awesome-foundry-nextgen?include_prereleases&sort=semver)](https://github.com/corticalstack/awesome-foundry-nextgen/releases)
 [![Last commit](https://img.shields.io/github/last-commit/corticalstack/awesome-foundry-nextgen)](https://github.com/corticalstack/awesome-foundry-nextgen/commits)
 [![Made with Jupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?logo=jupyter&logoColor=white)](https://jupyter.org/)
+[![Notebooks](https://img.shields.io/badge/Notebooks-50%2B-8A2BE2?logo=jupyter&logoColor=white)](https://github.com/corticalstack/awesome-foundry-nextgen)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Azure AI Foundry](https://img.shields.io/badge/Azure-AI%20Foundry-0078D4?logo=microsoftazure&logoColor=white)](https://learn.microsoft.com/en-us/azure/ai-foundry/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 A hands-on lab series for **Microsoft Foundry NextGen** - Azure's unified PaaS for enterprise AI
 operations, model builders, and application development. Each lab demonstrates a specific Foundry pattern:
-provisioning, agents, MCP tools, knowledge bases, fine-tuning, guardrails, red-teaming,
+provisioning, agents, hosted Copilot SDK agents, MCP tools, knowledge bases, fine-tuning, guardrails, red-teaming,
 observability, and more.
 
 Foundry unifies agents, models, and tools under one Azure resource provider namespace
@@ -57,7 +58,7 @@ you. Most capability labs assume the multi-project spoke from the [project patte
 | 05 | [Project pattern setup](05-foundry-project-pattern-setup/) | Hub/spoke architecture with Bicep: deploy the core gateway, a single-project spoke, and a multi-project spoke. |
 | 06 | [Governance policy](06-governance-policy/) | Azure Policy that denies model deployments in spokes, forcing all traffic through the core APIM gateway. |
 | 07 | [Model inference](07-model-inference/) | Inference paths behind APIM - Azure OpenAI vs Foundry project clients, chat/embeddings/responses, server-side router, deep-research, streaming. |
-| 08 | [Agents](08-agents/) | Agent fundamentals across nine sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop. |
+| 08 | [Agents](08-agents/) | Agent fundamentals across eleven sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop, REST invocation, and a hosted Copilot SDK agent. |
 | 09 | [Content Understanding integration](09-content-understanding-integration/) | Plumb Azure AI Content Understanding behind the core APIM with managed-identity backend auth. |
 | 10 | [Foundry IQ](10-foundry-iq/) | Managed knowledge base end-to-end: provision Azure AI Search, ingest 3k arXiv NLP papers, build a KB, ground an agent. |
 | 11 | [Foundry IQ - multi-agent](11-foundry-iq-multi-agent/) | Router + specialist pattern over three KBs (HR, Marketing, Products) using Microsoft Agent Framework `WorkflowBuilder`. |
@@ -82,6 +83,8 @@ The agents lab is large enough to warrant its own breakdown:
 | 08-06 | [Offline evaluation](08-agents/08-06-agent-offline-evaluation/) | Quality, agent-specific, and custom evaluators run against a test set. |
 | 08-07 | [Live observability](08-agents/08-07-agent-live-observability/) | Tracing, real-time observability, and continuous evaluation in production. |
 | 08-08 | [Human in the loop](08-agents/08-08-human-in-the-loop/) | Pause an agent run for human approval before sensitive tool calls. |
+| 08-09 | [Invoke an agent over REST](08-agents/08-09-invoke-agent-via-rest/) | Single-shot, multi-turn, and streaming invocation of a Foundry agent over the raw REST responses API. |
+| 08-10 | [Hosted Copilot SDK agent](08-agents/08-10-hosted-copilot-sdk-agent/) | Deploy a GitHub Copilot SDK agent as a Foundry hosted agent, with a BYOK Foundry model and an M365 license-analytics demo. |
 
 ## Repository layout
 
