@@ -84,6 +84,7 @@ The agents lab is large enough to warrant its own breakdown:
 | 08-08 | [Human in the loop](08-agents/08-08-human-in-the-loop/) | Pause an agent run for human approval before sensitive tool calls. |
 | 08-09 | [Invoke an agent over REST](08-agents/08-09-invoke-agent-via-rest/) | Single-shot, multi-turn, and streaming invocation of a Foundry agent over the raw REST responses API. |
 | 08-10 | [Hosted Copilot SDK agent](08-agents/08-10-hosted-copilot-sdk-agent/) | Deploy a GitHub Copilot SDK agent as a Foundry hosted agent, with a BYOK Foundry model and an M365 license-analytics demo. |
+| 08-10b | [Hosted Copilot SDK agent on the 1:N multi account](08-agents/08-10b-hosted-copilot-sdk-agent-multi/) | A self-contained Copilot SDK agent on the shared multi-project account, pointed directly at the APIM gateway (api-key auth) for a reasoning model - no local model deployment, no Foundry connection. |
 
 ## Repository layout
 

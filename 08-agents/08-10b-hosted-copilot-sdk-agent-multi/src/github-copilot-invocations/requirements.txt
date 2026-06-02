@@ -1,0 +1,12 @@
+github-copilot-sdk>=0.2.0
+
+# Bumped from 1.0.0b3 -> 1.0.0b4. The pinned 1.0.0b3 calls
+# `self.request_span()` on InvocationAgentServerHost, but the transitively-
+# resolved azure-ai-agentserver-core (>= 2.0.0b4) has removed that method,
+# so every request fails with `AttributeError: Error in ASGI Framework` and
+# returns 500 in 0.1ms. 1.0.0b4 declares `core>=2.0.0b4` and was published
+# specifically to match the new core API.
+azure-ai-agentserver-invocations==1.0.0b4
+azure-identity>=1.17.0
+azure-monitor-opentelemetry>=1.6.0
+python-dotenv==1.1.1
