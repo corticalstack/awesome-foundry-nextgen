@@ -38,3 +38,10 @@
 # Lychee tests the regex against the URL-encoded form, so match both literal {name} and %7Bname%7D.
 \{[a-zA-Z_-]+\}
 %7B[a-zA-Z_-]+%7D
+
+# Valid external pages/redirects the checker mis-extracts from notebook cells: a trailing
+# newline or backslash gets glued onto the URL (e.g. .../user_install.html/n,
+# .../issues/49196/n#, or a fwlink ending in a backslash). The pages themselves are fine.
+^https?://ipywidgets\.readthedocs\.io
+^https?://go\.microsoft\.com/fwlink
+^https?://github\.com/Azure/azure-sdk-for-java/issues

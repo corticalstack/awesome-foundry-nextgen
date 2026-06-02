@@ -325,7 +325,7 @@ With `update_delay=0` (the default in direct API calls), extraction must be trig
 
 ## 8. Lab scenarios
 
-All five scenarios are implemented in [`deploy.ipynb`](deploy.ipynb):
+All five scenarios are implemented in [`08-04-01-deploy-agent-memory.ipynb`](08-04-01-deploy-agent-memory.ipynb):
 
 | # | Scenario | Description |
 |---|----------|-------------|
@@ -351,7 +351,7 @@ All five scenarios are implemented in [`deploy.ipynb`](deploy.ipynb):
 | File | Purpose |
 |------|---------|
 | [`main.bicep`](main.bicep) | Bicep template - deploys dedicated Foundry account, model deployments, project, and RBAC assignments |
-| [`deploy.ipynb`](deploy.ipynb) | Lab notebook - all five scenarios end-to-end |
+| [`08-04-01-deploy-agent-memory.ipynb`](08-04-01-deploy-agent-memory.ipynb) | Lab notebook - all five scenarios end-to-end |
 | [`memory_helpers.py`](memory_helpers.py) | `MemoryClient` class and `build_conversation()` helper |
 | [`display_helpers.py`](display_helpers.py) | Notebook display helpers: `show_config`, `show_store_created`, `show_memories`, `show_search_results`, `show_agent_created`, `show_conversation`, `show_error` |
 
@@ -364,4 +364,4 @@ All five scenarios are implemented in [`deploy.ipynb`](deploy.ipynb):
 
 ---
 
-[Next: Deploy agent memory →](deploy.ipynb)
+[Next: Deploy agent memory →](08-04-01-deploy-agent-memory.ipynb)
