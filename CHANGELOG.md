@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.12] - 2026-06-01
+
+A new `08-agents` lab: the 08-10 Copilot SDK container rehosted on the shared 1:N multi account, taking its inference from the APIM core gateway.
+
+### Added
+
+- New `08-agents/08-10b-hosted-copilot-sdk-agent-multi` section: the "B" variant of 08-10 that rehosts the **identical** Copilot SDK container on the existing shared `aif-spoke-multi` (1:N) account from 05-04, with inference from the APIM core gateway instead of a local model deployment. The lab is **self-contained** - it ships its own copy of the container source (`src/github-copilot-invocations/`) and demo data (`data/`), with no dependency on 08-10. The `08-10b-01` notebook mints a dedicated `foundry-gateway-copilot-sdk` APIM subscription, deploys a `gpt-5-mini` reasoning model on the gateway backend (`aif-core`), deploys the project + ACR Bicep, enables the account-level capability host (idempotent REST `PUT`), builds the agent image, registers + role-grants the hosted agent in APIM-direct mode, then runs the smoke tests and the M365 analytics demo.
+- 08-10b points the Copilot SDK container **directly at the APIM gateway** (`base_url = <apim>/openai`, the subscription key in the `api-key` header, bare reasoning model `gpt-5-mini`), bypassing the Foundry project connection. Reason: Foundry's connection model-gateway (bring-your-own-model via an `ApiManagement` connection) is [supported only for *prompt* agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/ai-gateway) - a hosted agent calling the Responses API through a `connection/deployment` model string forwards the qualified name upstream and fails with `DeploymentNotFound`. A *reasoning* model is required because the Copilot CLI's Responses protocol carries encrypted reasoning content (`gpt-4.1-mini` returns `Encrypted content is not supported`). `main.py` gained an additive, env-driven APIM-direct branch (active only when `APIM_BASE_URL` + `APIM_KEY` are set); the standalone 08-10 path is unaffected. The reasoning model is deployed on the core account (`aif-core`), so `rg-foundry-multi`'s `deny-model-deployments` policy is untouched; agent RBAC is AcrPull + Foundry User only (the gateway key, not the managed identity, pays for inference). Tradeoff: the gateway key lives in the container env var (Key Vault connection or managed-identity-to-APIM noted as hardening).
+- `08-10b-00` documentation: the 1:N governance framing and the why-direct-not-connection rationale (with the prompt-agents-only citation, the reasoning-model requirement, and the api-key-in-env tradeoff).
+
+### Changed
+
+- README `08-agents` sub-lab table: added a row for `08-10b`.
+
 ## [0.8.11] - 2026-05-30
 
 Two new `08-agents` labs: invoking a Foundry agent over raw REST, and deploying a GitHub Copilot SDK agent as a Foundry hosted agent.

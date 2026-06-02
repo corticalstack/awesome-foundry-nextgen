@@ -1,0 +1,13 @@
+.azure
+.env
+*.env
+**/.env
+**/.venv/
+**/__pycache__/
+*.log
+
+# Notebook-generated bicep params (substituted from ${AZURE_*} placeholders at runtime)
+infra/.main.parameters.runtime.json
+
+# Agent-generated chart artifacts from the analytics demo (regenerated on each run)
+data/license_cost_by_department.*

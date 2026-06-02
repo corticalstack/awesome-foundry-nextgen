@@ -1,0 +1,20 @@
+{
+  "license_costs_usd_monthly": {
+    "SPE_E5": 57.00,
+    "SPE_E3": 36.00,
+    "ENTERPRISEPACK": 23.00,
+    "STANDARDPACK": 10.00,
+    "M365_F3": 8.00,
+    "M365_F1": 2.25
+  },
+  "department_codes": {
+    "1": "IT",
+    "2": "Sales",
+    "3": "Marketing",
+    "4": "HR",
+    "5": "Finance",
+    "6": "Operations",
+    "7": "Legal",
+    "8": "Engineering"
+  }
+}

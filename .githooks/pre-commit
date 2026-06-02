@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Scrub Azure secrets / tenant-identifying values from staged notebook OUTPUTS before
+# they are committed. Tutorial notebooks keep their outputs, so this is the safety net.
+# See scripts/scrub_notebooks.py and the "Notebook output scrubbing" rule in CLAUDE.md.
+#
+# Enable with:  git config core.hooksPath .githooks
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+PY="$(command -v python3 || command -v python || true)"
+if [ -z "$PY" ]; then
+  echo "pre-commit: python not found; skipping notebook scrub" >&2
+  exit 0
+fi
+
+mapfile -t NBS < <(git diff --cached --name-only --diff-filter=ACM -- '*.ipynb')
+if [ "${#NBS[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+echo "pre-commit: scrubbing ${#NBS[@]} staged notebook(s)..."
+"$PY" scripts/scrub_notebooks.py "${NBS[@]}"
+git add -- "${NBS[@]}"
+
+if ! "$PY" scripts/scrub_notebooks.py --check "${NBS[@]}"; then
+  echo "pre-commit: BLOCKED - sensitive values remain in notebook outputs after scrub." >&2
+  echo "  If 'az' is not logged in, known-value redaction can't run; run 'az login' and retry," >&2
+  echo "  or clear the offending cell outputs manually." >&2
+  exit 1
+fi
+echo "pre-commit: notebooks clean."
