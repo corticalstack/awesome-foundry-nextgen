@@ -549,26 +549,32 @@
     .iq-fam .f.on { color: var(--c-accent-bright); border-color: var(--c-accent); background: rgba(96, 220, 246, 0.06); }
 
     /* ========== Act 6: agentic-retrieval data flow ========== */
-    .flowlane { width: min(1030px, 99%); display: flex; flex-direction: column; gap: 11px; }
+    .flowlane { width: min(1030px, 99%); display: flex; flex-direction: column; gap: 20px; }
     .lane { border: 1px solid var(--c-line); border-radius: 12px; padding: 11px 14px; }
     .lane.ingest { border-left: 3px solid var(--c-violet); }
-    .lane.query { border-left: 3px solid var(--c-accent); }
     .lane-h { font: 700 11px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 9px; }
-    .lane.query .lane-h { color: var(--c-accent-bright); }
     .lane.ingest .lane-h { color: var(--c-violet); }
     .lane-steps { display: flex; align-items: center; gap: 7px; justify-content: center; }
     .lstep { border: 1px solid var(--c-line); border-radius: 8px; padding: 7px 10px; font: 600 11px var(--c-mono); color: var(--c-fg); background: rgba(255, 255, 255, 0.03); text-align: center; }
     .lstep small { display: block; color: var(--c-muted); font-weight: 400; font-size: 8.5px; margin-top: 1px; }
-    .lstep.llm { border-color: rgba(96, 220, 246, 0.6); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.07); }
     .lstep.emb { border-color: rgba(164, 140, 255, 0.5); color: var(--c-violet); background: rgba(164, 140, 255, 0.07); }
-    .lstep.out { border-color: rgba(90, 209, 154, 0.5); color: var(--c-green); background: rgba(90, 209, 154, 0.07); }
     .larrow { color: var(--c-muted); font-size: 13px; }
-    .flow-legend { display: flex; gap: 18px; justify-content: center; font-size: 10.5px; color: var(--c-muted); }
-    .flow-legend .lg { display: flex; align-items: center; gap: 6px; }
-    .flow-legend .sw { width: 11px; height: 11px; border-radius: 3px; }
-    .flow-legend .sw.llm { background: var(--c-accent); }
-    .flow-legend .sw.emb { background: var(--c-violet); }
-    .flow-legend .sw.out { background: var(--c-green); }
+    .iqkb { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; }
+    .iqkb-src { font: 600 10.5px var(--c-mono); color: var(--c-accent-bright); border: 1px solid rgba(96, 220, 246, 0.4); border-radius: 8px; padding: 5px 14px; background: rgba(96, 220, 246, 0.05); }
+    .iqkb-src small { color: var(--c-muted); font-weight: 400; }
+    .iqkb-cards { display: flex; gap: 14px; width: 100%; }
+    .iqkb-card { flex: 1 1 0; box-sizing: border-box; border: 1px solid var(--c-line); border-radius: 11px; padding: 10px 15px; display: flex; flex-direction: column; gap: 3px; }
+    .iqkb-card.fast { border-top: 3px solid var(--c-green); }
+    .iqkb-card.std { border-top: 3px solid var(--c-accent); }
+    .iqkb-card .kbc-h { font: 700 14px var(--c-mono); margin-bottom: 2px; }
+    .iqkb-card.fast .kbc-h { color: var(--c-green); }
+    .iqkb-card.std .kbc-h { color: var(--c-accent-bright); }
+    .iqkb-card .kbc-r { font-size: 11.5px; color: var(--c-fg); line-height: 1.3; }
+    .iqkb-card .kbc-r.muted { color: var(--c-muted); font-size: 10.5px; }
+    .iqkb-card .kbc-r b { color: var(--c-accent-bright); }
+    .iqkb-card.fast .kbc-r b { color: var(--c-green); }
+    .iqkb-note { font: 500 10px var(--c-mono); color: var(--c-muted); text-align: center; line-height: 1.4; }
+    .iqkb-note b { color: var(--c-accent-bright); }
 
     /* ========== Act 6: scales out (multi-agent + deep research) ========== */
     .iqscale { width: 100%; display: flex; gap: 16px; align-items: stretch; }
@@ -1719,50 +1725,60 @@
         <div class="canvas">
           <div class="flowlane">
             <div class="lane ingest">
-              <div class="lane-h">Ingest &middot; build time</div>
+              <div class="lane-h">Build the index</div>
               <div class="lane-steps">
-                <span class="lstep">documents<small>your corpus</small></span>
+                <span class="lstep">documents<small>3k arxiv-nlp abstracts</small></span>
                 <span class="larrow">&rarr;</span>
-                <span class="lstep emb">embed<small>integrated vectorizer</small></span>
+                <span class="lstep emb">embed<small>text-embedding-3-large &middot; 3072d</small></span>
                 <span class="larrow">&rarr;</span>
-                <span class="lstep">index<small>vector + semantic + ACLs</small></span>
+                <span class="lstep">index<small>HNSW vector + semantic + ACL trim</small></span>
               </div>
             </div>
-            <div class="lane query">
-              <div class="lane-h">Query &middot; run time &middot; agentic retrieval</div>
-              <div class="lane-steps">
-                <span class="lstep">query</span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep llm">decompose<small>LLM plans sub-queries</small></span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep emb">vectorize<small>parallel sub-queries</small></span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep">hybrid search<small>BM25 + vector</small></span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep">rerank<small>semantic</small></span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep llm">synthesize<small>LLM, optional</small></span>
-                <span class="larrow">&rarr;</span>
-                <span class="lstep out">cited answer</span>
+            <div class="iqkb">
+              <div class="iqkb-src">&#9670; Knowledge source <small>registers the arxiv-nlp index</small></div>
+              <div class="iqkb-cards">
+                <div class="iqkb-card fast">
+                  <div class="kbc-h">kb-fast</div>
+                  <div class="kbc-r"><b>minimal</b> effort &middot; no LLM</div>
+                  <div class="kbc-r">direct index-driven retrieval</div>
+                  <div class="kbc-r muted">fastest, no model quota</div>
+                </div>
+                <div class="iqkb-card std">
+                  <div class="kbc-h">kb (standard)</div>
+                  <div class="kbc-r"><b>low</b> effort &middot; one LLM pass</div>
+                  <div class="kbc-r">gpt-4.1-mini (APIM) plans sub-queries</div>
+                  <div class="kbc-r muted">better relevance, multi-turn</div>
+                </div>
               </div>
             </div>
-            <div class="flow-legend">
-              <span class="lg"><span class="sw llm"></span> LLM (plan &amp; synthesize)</span>
-              <span class="lg"><span class="sw emb"></span> embedding model</span>
-              <span class="lg"><span class="sw out"></span> grounded output</span>
-            </div>
+            <div class="iqkb-note">Both return raw chunks (<b>EXTRACTIVE_DATA</b>) for the agent's own LLM; each KB auto-exposes an <b>MCP</b> endpoint. Effort: minimal &rarr; low &rarr; medium &rarr; high.</div>
           </div>
         </div>
-        <p class="takeaway">An LLM <b>decomposes</b> the question into parallel sub-queries and (optionally) <b>synthesizes</b> a cited answer; a <b>reasoning-effort</b> knob (minimal / low / medium) trades depth for latency and cost.</p>
+        <p class="takeaway">Two knowledge bases over one index: <b>kb-fast</b> (minimal effort, no LLM) for speed, <b>kb (standard)</b> (low effort, gpt-4.1-mini) for relevance. The <b>effort knob</b> puts the model inside the search, trading depth for latency and cost.</p>
         <aside class="notes">
-          This is the slide that explains why agentic retrieval beats plain RAG, and where the model sits. Two lanes. At
-          ingest, build time, your documents are embedded by the integrated vectorizer and written into an index that carries
-          vectors, a semantic configuration and ACLs. At query, run time, the agentic pipeline kicks in: an LLM decomposes the
-          question into focused sub-queries and picks which sources to hit; those run in parallel, each embedded at search time
-          by the integrated vectorizer; results come back via hybrid BM25-plus-vector search; a semantic reranker orders them;
-          and optionally an LLM synthesizes a cited natural-language answer. So the model is used twice inside search, to plan
-          and to synthesize, not just bolted on afterwards. You control depth with a reasoning-effort knob, minimal does no LLM
-          planning, low and medium add planning and more sub-queries, trading latency and cost for relevance.
+          This is the concrete Foundry IQ setup the demo builds. First the index, notebooks 10-01 and 10-02: three thousand
+          arxiv NLP abstracts are embedded by text-embedding-3-large at 3072 dimensions through the gateway and written into an
+          Azure AI Search index with HNSW vectors, a semantic configuration and a group-ids field for ACL security trimming.
+          Then in 10-03 the index is registered as a knowledge source and exposed as two knowledge bases that differ on one
+          knob, retrieval reasoning effort. kb-fast uses minimal effort: no LLM at all, direct index-driven retrieval, fastest
+          and no model quota. kb standard uses low effort: one LLM planning pass with gpt-4.1-mini through the gateway that
+          decomposes the question into sub-queries, for better relevance on complex or multi-turn questions. Both return raw
+          chunks, extractive data, for the agent's own model to reason over, rather than the knowledge base synthesizing the
+          answer itself. Each knowledge base auto-exposes an MCP endpoint the agent connects to. The effort knob runs minimal,
+          low, medium, high: that is the model living inside the search.
+        </aside>
+      </section>
+
+      <!-- 27b - LIVE DEMO: FOUNDRY IQ -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Build a knowledge base, then retrieve</h2>
+        <p class="demo-sub">Index a corpus &rarr; build kb-fast and kb-standard &rarr; retrieve and compare the two reasoning efforts.</p>
+        <aside class="notes">
+          Live: build the full Foundry IQ stack. Deploy search and index the corpus, create the two knowledge bases, kb-fast at
+          minimal effort with no LLM and kb-standard at low effort with gpt-4.1-mini, then run retrieval against each and watch
+          how the reasoning-effort knob changes the results, before wiring a knowledge base to an agent. Same corpus, two
+          latency-and-relevance trade-offs.
         </aside>
       </section>
 
