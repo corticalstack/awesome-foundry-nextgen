@@ -1396,20 +1396,15 @@
       <!-- 16 - LIVE DEMO: INFERENCE -->
       <section class="demo">
         <span class="demo-badge"><span class="rec"></span> Live demo</span>
-        <h2>Call the gateway, both ways</h2>
-        <p class="demo-sub">Direct client vs project client, across chat, embeddings, streaming and the Responses API.</p>
-        <div class="demo-steps">
-          <div class="demo-step"><span class="n">1</span> Call <b>chat completions</b> with the direct OpenAI client (keyless)</div>
-          <div class="demo-step"><span class="n">2</span> Switch to the <b>Foundry project client</b> and run the <b>Responses API</b></div>
-          <div class="demo-step"><span class="n">3</span> Show <b>streaming</b> tokens and a <b>multi-turn</b> follow-up via previous_response_id</div>
-          <div class="demo-step"><span class="n">4</span> Hit the <b>model router</b> and the deep-research model, routed by APIM</div>
-        </div>
+        <h2>Model inference, end to end</h2>
+        <p class="demo-sub">The direct <b>AzureOpenAI</b> client and the Foundry <b>AIProjectClient</b> &rarr; chat, embeddings, deep research &rarr; the Responses API, multi-turn and streaming.</p>
         <div class="demo-where">notebook &middot; <b>07-01 models-inference-examples</b></div>
         <aside class="notes">
-          Live: run the inference notebook. Call chat completions with the direct client to prove keyless auth, switch to the
-          project client and run the Responses API, show streaming and a multi-turn follow-up using previous_response_id, then
-          hit the model router and the deep-research model to show APIM routing requests to the right regional hub. The point:
-          one gateway, many surfaces, no keys.
+          The live run of the inference notebook, 07-01. It sets up the two clients - the direct Azure OpenAI client on the
+          gateway key and the keyless Foundry project client - then exercises every surface in turn: chat completions,
+          embeddings, the deep-research model, the Responses API, a multi-turn follow-up via previous_response_id, and token
+          streaming. It also creates a short-lived agent in each team project to show the connection/model routing. The
+          throughline: one gateway, many surfaces, no keys.
         </aside>
       </section>
 
