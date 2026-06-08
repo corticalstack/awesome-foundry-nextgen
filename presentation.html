@@ -300,7 +300,7 @@
     .tabmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; width: 100%; }
     .tabmap-card { border: 1px solid var(--c-line); border-radius: 11px; background: rgba(255, 255, 255, 0.03); padding: 12px 13px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 5px; }
     .tabmap-card .tm-t { font: 700 14px var(--c-sans); color: var(--c-accent-bright); }
-    .tabmap-card .tm-d { font-size: 11.5px; color: var(--c-muted); line-height: 1.3; }
+    .tabmap-card .tm-d { font-size: 12.5px; color: var(--c-muted); line-height: 1.3; }
 
     /* Discover: providers + leaderboard */
     .disc-head { display: flex; align-items: baseline; gap: 12px; }
@@ -345,6 +345,11 @@
     .pillar.obs { border-top-color: var(--c-green); }
     .pillar.sec { border-top-color: var(--c-pink); }
     .pillar.flt { border-top-color: var(--c-amber); }
+    .pillars.g2 { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .pillars.g2 .pillar { padding: 24px 28px; gap: 10px; justify-content: center; }
+    .pillars.g2 .pl-n { font-size: 10px; }
+    .pillars.g2 .pl-t { font-size: 24px; }
+    .pillars.g2 .pl-d { font-size: 15px; }
 
     /* ========== Act 3: resource model (1:1 vs 1:N) ========== */
     .resmodel { width: 100%; display: flex; flex-direction: column; gap: 18px; align-items: center; }
@@ -414,7 +419,7 @@
     .dep-card.std { border-top: 3px solid var(--c-accent); }
     .dep-card.ptu { border-top: 3px solid var(--c-violet); }
     .dep-card .dc-t { font: 700 17px var(--c-sans); color: var(--c-fg); }
-    .dep-card .dc-t small { color: var(--c-muted); font-weight: 400; font-size: 12px; display: block; margin-top: 1px; }
+    .dep-card .dc-t small { color: var(--c-muted); font-weight: 400; font-size: 12.5px; display: block; margin-top: 1px; }
     .dep-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
     .dep-card li { font-size: 12.5px; color: var(--c-muted); padding-left: 15px; position: relative; line-height: 1.3; }
     .dep-card li::before { content: "+"; position: absolute; left: 0; color: var(--c-accent); font-weight: 700; }
@@ -491,7 +496,7 @@
     .catcol.k { border-top-color: var(--c-green); }
     .catcol.c { border-top-color: var(--c-violet); }
     .catcol h4 { font: 700 14px var(--c-sans); color: var(--c-fg); margin: 0 0 8px; }
-    .catrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 12px var(--c-mono); padding: 5px 0; border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
+    .catrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 12.5px var(--c-mono); padding: 5px 0; border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
     .catrow:last-child { border-bottom: none; }
     .catrow .nm { color: var(--c-fg); }
     .catrow .nm a { color: var(--c-accent-bright); text-decoration: underline; text-underline-offset: 2px; }
@@ -505,9 +510,9 @@
     .hc-card.prompt { border-top: 3px solid var(--c-accent); }
     .hc-card.host { border-top: 3px solid var(--c-violet); }
     .hc-h { font: 700 16px var(--c-sans); color: var(--c-fg); }
-    .hc-h small { display: block; color: var(--c-muted); font-weight: 400; font-size: 11.5px; margin-top: 2px; }
+    .hc-h small { display: block; color: var(--c-muted); font-weight: 400; font-size: 12.5px; margin-top: 2px; }
     .hc-card ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
-    .hc-card li { font-size: 12px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
+    .hc-card li { font-size: 12.5px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
     .hc-card li::before { content: "+"; position: absolute; left: 0; color: var(--c-accent); font-weight: 700; }
     .hc-card a { color: var(--c-accent-bright); text-decoration: underline; text-underline-offset: 2px; }
     .hc-card.host li::before { color: var(--c-violet); }
@@ -560,7 +565,7 @@
     .lstep.emb { border-color: rgba(164, 140, 255, 0.5); color: var(--c-violet); background: rgba(164, 140, 255, 0.07); }
     .larrow { color: var(--c-muted); font-size: 13px; }
     .iqkb { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; }
-    .iqkb-src { font: 600 10.5px var(--c-mono); color: var(--c-accent-bright); border: 1px solid rgba(96, 220, 246, 0.4); border-radius: 8px; padding: 5px 14px; background: rgba(96, 220, 246, 0.05); }
+    .iqkb-src { font: 600 12.5px var(--c-mono); color: var(--c-accent-bright); border: 1px solid rgba(96, 220, 246, 0.4); border-radius: 8px; padding: 5px 14px; background: rgba(96, 220, 246, 0.05); }
     .iqkb-src small { color: var(--c-muted); font-weight: 400; }
     .iqkb-cards { display: flex; gap: 14px; width: 100%; }
     .iqkb-card { flex: 1 1 0; box-sizing: border-box; border: 1px solid var(--c-line); border-radius: 11px; padding: 10px 15px; display: flex; flex-direction: column; gap: 3px; }
@@ -569,8 +574,8 @@
     .iqkb-card .kbc-h { font: 700 14px var(--c-mono); margin-bottom: 2px; }
     .iqkb-card.fast .kbc-h { color: var(--c-green); }
     .iqkb-card.std .kbc-h { color: var(--c-accent-bright); }
-    .iqkb-card .kbc-r { font-size: 11.5px; color: var(--c-fg); line-height: 1.3; }
-    .iqkb-card .kbc-r.muted { color: var(--c-muted); font-size: 10.5px; }
+    .iqkb-card .kbc-r { font-size: 12.5px; color: var(--c-fg); line-height: 1.3; }
+    .iqkb-card .kbc-r.muted { color: var(--c-muted); font-size: 12.5px; }
     .iqkb-card .kbc-r b { color: var(--c-accent-bright); }
     .iqkb-card.fast .kbc-r b { color: var(--c-green); }
     .iqkb-note { font: 500 10px var(--c-mono); color: var(--c-muted); text-align: center; line-height: 1.4; }
@@ -594,26 +599,23 @@
 
     /* ========== Act 7: generic 3-card row (observability, security) ========== */
     .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
-    .card3 { border: 1px solid var(--c-line); border-radius: 12px; padding: 15px 17px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 8px; }
+    .card3 { border: 1px solid var(--c-line); border-radius: 12px; padding: 16px 18px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 9px; }
     .card3.g { border-top-color: var(--c-green); }
     .card3.v { border-top-color: var(--c-violet); }
     .card3.p { border-top-color: var(--c-pink); }
-    .card3 .c3-t { font: 700 16px var(--c-sans); color: var(--c-fg); }
-    .card3 .c3-d { font-size: 12px; color: var(--c-muted); line-height: 1.35; }
-    .card3 ul { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
-    .card3 li { font-size: 11.5px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
+    .card3 .c3-t { font: 700 17px var(--c-sans); color: var(--c-fg); }
+    .card3 .c3-d { font-size: 13px; color: var(--c-muted); line-height: 1.35; }
+    .card3 ul { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .card3 li { font-size: 12.5px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
     .card3 li::before { content: "\2022"; position: absolute; left: 2px; color: var(--c-accent); font-weight: 700; }
 
     /* ========== Act 7: guardrail pipeline ========== */
-    .guard { display: flex; gap: 18px; width: 100%; align-items: stretch; }
-    .gpipe { flex: 0 0 44%; display: flex; flex-direction: column; align-items: center; gap: 5px; justify-content: center; }
-    .gp-node { width: 70%; text-align: center; border: 1px solid var(--c-line); border-radius: 9px; padding: 8px; font: 600 12px var(--c-mono); color: var(--c-fg); background: rgba(255, 255, 255, 0.03); }
-    .gp-gate { width: 92%; text-align: center; border: 1px solid var(--c-accent); border-radius: 9px; padding: 6px 10px; font: 600 10.5px var(--c-mono); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.07); }
-    .gp-gate small { color: var(--c-muted); font-weight: 400; display: block; font-size: 8.5px; }
+    .gpipe { width: min(760px, 96%); margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .gp-node { width: 60%; text-align: center; border: 1px solid var(--c-line); border-radius: 9px; padding: 8px; font: 600 12px var(--c-mono); color: var(--c-fg); background: rgba(255, 255, 255, 0.03); }
+    .gp-gate { width: 100%; box-sizing: border-box; text-align: center; border: 1px solid var(--c-accent); border-radius: 9px; padding: 8px 12px; font: 700 12.5px var(--c-mono); letter-spacing: 0.06em; color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.07); }
+    .gp-gate small { color: var(--c-muted); font-weight: 400; letter-spacing: 0; display: block; font-size: 12.5px; margin-top: 3px; }
     .gp-gate.pv { border-color: rgba(255, 170, 60, 0.5); color: var(--c-amber-bright); background: rgba(255, 170, 60, 0.06); }
     .gp-arr { color: var(--c-muted); font-size: 11px; }
-    .gctrls { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; }
-    .gctrls h4 { font: 700 13px var(--c-sans); color: var(--c-fg); margin: 0 0 6px; }
 
     /* ========== Act 7: controls vs policies strip ========== */
     .cvp { display: flex; gap: 14px; width: 100%; }
@@ -623,7 +625,7 @@
     .cvp-card .cv-t { font: 700 14px var(--c-sans); color: var(--c-fg); }
     .cvp-card .cv-t b { color: var(--c-accent-bright); }
     .cvp-card.pol .cv-t b { color: var(--c-pink); }
-    .cvp-card .cv-d { font-size: 12px; color: var(--c-muted); margin-top: 4px; line-height: 1.35; }
+    .cvp-card .cv-d { font-size: 12.5px; color: var(--c-muted); margin-top: 4px; line-height: 1.35; }
 
     /* ========== Act 7: red-team ASR (illustrative) ========== */
     .asr { display: flex; gap: 18px; width: 100%; align-items: stretch; }
@@ -665,7 +667,7 @@
     .refgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
     .refcard { border: 1px solid var(--c-line); border-radius: 12px; padding: 13px 16px; border-top: 3px solid var(--c-accent); }
     .refcard h4 { font: 700 14px var(--c-sans); color: var(--c-fg); margin: 0 0 7px; }
-    .refcard .rc-row { font: 600 11.5px var(--c-mono); color: var(--c-muted); padding: 3px 0; }
+    .refcard .rc-row { font: 600 12.5px var(--c-mono); color: var(--c-muted); padding: 3px 0; }
     .refcard .rc-row b { color: var(--c-fg); }
     .refcard .rc-row .ac { color: var(--c-accent-bright); }
 
@@ -695,8 +697,8 @@
     .endp-card .ec-host { font: 600 10px var(--c-mono); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.06); border: 1px solid var(--c-line); border-radius: 6px; padding: 4px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .endp-card.fdry .ec-host { color: var(--c-green); }
     .endp-card.tools .ec-host { color: var(--c-violet); }
-    .endp-card .ec-d { font-size: 11.5px; color: var(--c-muted); line-height: 1.35; flex: 1; }
-    .endp-card .ec-auth { font: 600 9px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
+    .endp-card .ec-d { font-size: 12.5px; color: var(--c-muted); line-height: 1.35; flex: 1; }
+    .endp-card .ec-auth { font: 600 12px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
     .endp-note { font: 600 11px var(--c-mono); color: var(--c-accent-bright); border: 1px dashed rgba(96, 220, 246, 0.45); border-radius: 8px; padding: 6px 16px; background: rgba(96, 220, 246, 0.05); text-align: center; }
 
     /* ======= APPEND COMPONENT CSS ABOVE THIS LINE ======= */
@@ -713,7 +715,7 @@
         <div class="title-mark">Enterprise AI Upskilling</div>
         <h1>Microsoft<br><span class="accent">Foundry</span></h1>
         <p class="subtitle">One platform for enterprise AI: models, agents, tools, knowledge, and the control plane that governs them.</p>
-        <div class="title-foot"><span class="who">Jon-Paul Boyd</span> <span class="accent">&middot;</span> June 2026 <span class="accent">&middot;</span> corticalstack.ai</div>
+        <div class="title-foot"><span class="who">Jon-Paul Boyd</span> <span class="accent">&middot;</span> June 2026</div>
         <aside class="notes">
           Welcome. Over the next two hours we go end to end on Microsoft Foundry: what it is, the portal, how you deploy and
           call models, how you build agents, how you ground them with Foundry IQ, and how you govern a whole fleet from the
@@ -1783,13 +1785,13 @@
               </div>
             </div>
             <div class="fails">
-              <div class="fail"><div class="fl-t">Prompt injection</div><div class="fl-d">Untrusted content in a tool result hijacks the agent's instructions.</div></div>
-              <div class="fail"><div class="fl-t">Task drift</div><div class="fl-d">The agent quietly does something other than what it was asked.</div></div>
-              <div class="fail"><div class="fl-t">Data leakage</div><div class="fl-d">Access plus a confused instruction plus an outbound channel equals exfiltration.</div></div>
+              <div class="fail"><div class="fl-t">Risk: Prompt injection</div><div class="fl-d">Untrusted content in a tool result hijacks the agent's instructions.</div></div>
+              <div class="fail"><div class="fl-t">Risk: Task drift</div><div class="fl-d">The agent quietly does something other than what it was asked.</div></div>
+              <div class="fail"><div class="fl-t">Risk: Data leakage</div><div class="fl-d">Access plus a confused instruction plus an outbound channel equals exfiltration.</div></div>
             </div>
           </div>
         </div>
-        <p class="takeaway">Agents add failure modes apps never had, and they <b>compound</b> as you add tools and data. A picture: an injected document had an agent weave customer data into replies for <b>three days</b>, unnoticed.</p>
+        <p class="takeaway">Agents add failure modes apps never had, and they <b>compound</b> as you add tools and data. Their underlying intelligence is a <b>probabilistic, non-deterministic</b> LLM, not deterministic code, so the same input can behave differently each time.</p>
         <aside class="notes">
           Here is the pivot of the whole talk: from building one agent to running a fleet. In cloud terms, the data plane is the
           work running, agents chatting, calling tools, retrieving data. The control plane is the management surface above it:
@@ -1808,27 +1810,19 @@
         <div class="kicker"><span class="num">26</span> &middot; The pillars</div>
         <h2>What the control plane brings together</h2>
         <div class="canvas">
-          <div class="pillars">
-            <div class="pillar ctrl"><span class="pl-n">CONTROLS</span><span class="pl-t">Guardrails</span><span class="pl-d">Runtime checks on inputs, outputs, tool calls and tool responses.</span></div>
+          <div class="pillars g2">
+            <div class="pillar ctrl"><span class="pl-n">CONTROLS</span><span class="pl-t">Guardrails</span><span class="pl-d">Prompt Shields, content filters and blocklists, validated by red teaming.</span></div>
             <div class="pillar obs"><span class="pl-n">OBSERVABILITY</span><span class="pl-t">See inside</span><span class="pl-d">Tracing, continuous evaluation on live traffic, per-agent cost.</span></div>
             <div class="pillar sec"><span class="pl-n">SECURITY</span><span class="pl-t">Identity &amp; data</span><span class="pl-d">Entra Agent ID, Microsoft Defender, Microsoft Purview.</span></div>
             <div class="pillar flt"><span class="pl-n">FLEET OPS</span><span class="pl-t">At scale</span><span class="pl-d">One inventory and to-do list across projects, frameworks and clouds.</span></div>
           </div>
-          <div class="cvp">
-            <div class="cvp-card ctrl"><div class="cv-t">Half one &middot; <b>Agent 365</b></div><div class="cv-d">Treat each agent as a new kind of identity, governed with the stack you already run: Entra, Defender, Purview, Intune. For IT and security admins.</div></div>
-            <div class="cvp-card pol"><div class="cv-t">Half two &middot; <b>new runtime defences</b></div><div class="cv-d">Purpose-built controls and continuous evaluation for risks that are new to agents. For developers, in the build flow.</div></div>
-          </div>
         </div>
-        <p class="takeaway">Four pillars, two halves that meet here: govern agents as <b>identities</b> with the existing Microsoft stack, and add <b>new runtime defences</b> for the risks that are genuinely new.</p>
+        <p class="takeaway">The control plane brings four essentials into one surface: runtime <b>guardrails</b>, <b>observability</b>, agent <b>security</b> and <b>fleet operations</b>, across every project, framework and cloud.</p>
         <aside class="notes">
           The control plane brings together four essentials. Controls: runtime guardrails not just on prompts and responses
           but on tool calls and tool responses too. Observability: tracing, continuous evaluation on live traffic, and
           per-agent cost. Security: a durable Entra identity per agent, plus Defender and Purview. And fleet-wide operations:
-          one inventory and to-do list across projects, frameworks and clouds. Underneath, Microsoft's approach is two halves
-          that meet in this plane. Half one, Agent 365: treat each agent as a new kind of identity and govern it with the stack
-          you already run, Entra, Defender, Purview, Intune, aimed at IT and security. Half two, new runtime defences:
-          purpose-built controls and continuous evaluation for risks that are new to agents, aimed at developers. We will walk
-          each pillar with a demo.
+          one inventory and to-do list across projects, frameworks and clouds. We will walk each pillar with a demo.
         </aside>
       </section>
 
@@ -1837,40 +1831,47 @@
         <div class="kicker"><span class="num">27</span> &middot; Controls</div>
         <h2>Guardrails on inputs, outputs and tool traffic</h2>
         <div class="canvas">
-          <div class="guard">
-            <div class="gpipe">
-              <div class="gp-node">User input</div>
-              <div class="gp-arr">&darr;</div>
-              <div class="gp-gate">INPUT <small>prompt shields &middot; PII</small></div>
-              <div class="gp-arr">&darr;</div>
-              <div class="gp-node">Agent + model</div>
-              <div class="gp-arr">&darr;</div>
-              <div class="gp-gate pv">TOOL CALL / RESPONSE <small>indirect injection &middot; sensitive data &middot; preview</small></div>
-              <div class="gp-arr">&darr;</div>
-              <div class="gp-gate">OUTPUT <small>groundedness &middot; protected material</small></div>
-              <div class="gp-arr">&darr;</div>
-              <div class="gp-node">Response</div>
-            </div>
-            <div class="gctrls">
-              <h4>Control types</h4>
-              <div class="catrow"><span class="nm">Prompt Shields (jailbreak + indirect)</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Protected material (text + code)</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Custom blocklists</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Groundedness detection</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Sensitive data / PII</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Task adherence &middot; spotlighting</span><span class="pv">preview</span></div>
-            </div>
+          <div class="gpipe">
+            <div class="gp-node">User input</div>
+            <div class="gp-arr">&darr;</div>
+            <div class="gp-gate">INPUT <small>Prompt Shields (jailbreak + indirect) &middot; content filters &middot; custom blocklists</small></div>
+            <div class="gp-arr">&darr;</div>
+            <div class="gp-node">Agent + model</div>
+            <div class="gp-arr">&darr;</div>
+            <div class="gp-gate pv">TOOL CALL / RESPONSE <small>task adherence on the call &middot; indirect injection on the response</small></div>
+            <div class="gp-arr">&darr;</div>
+            <div class="gp-gate">OUTPUT <small>content filters &middot; protected material &middot; groundedness &middot; sensitive data / PII &middot; custom blocklists</small></div>
+            <div class="gp-arr">&darr;</div>
+            <div class="gp-node">Response</div>
           </div>
         </div>
-        <p class="takeaway">A guardrail is a set of <b>controls</b> at four intervention points. The new part is <b>tool call and tool response</b> checks, which catch indirect prompt injection before behaviour changes. <span class="accent">&#9654; LIVE DEMO: trigger a Prompt Shield block.</span></p>
+        <p class="takeaway">A guardrail is a set of <b>controls</b> at four points: input, tool call, tool response, and output. The <b>tool-call and tool-response</b> checks are the agent-specific part, catching indirect prompt injection before the agent acts.</p>
         <aside class="notes">
-          Controls, the first pillar. A guardrail is a named collection of controls, each control being a risk, an intervention
-          point and an action. The four intervention points are user input and output, both GA, and tool call and tool
-          response, in preview and the genuinely new part: Foundry can detect and block indirect prompt injection at the
-          tool-response level, before the behaviour changes. Control types, with honest status: Prompt Shields for jailbreak
-          and indirect attacks, protected material, and custom blocklists are GA; groundedness, PII and task adherence with
-          spotlighting are preview. Default policy is Microsoft.DefaultV2. In the demo we paste an injection and a fake SSN into
-          the bank agent and watch the input shield block them before the model ever sees them, at zero token cost.
+          Controls, the first pillar. A guardrail is a named set of controls; each control is a risk, an intervention point and
+          an action. Guardrails fire at four points in a turn, in order. On the user input: Prompt Shields for jailbreak and
+          indirect attacks, content filters, and custom blocklists. At the
+          tool call, before the tool runs: task adherence, checking the planned call and its arguments match the user's intent.
+          At the tool response, when data comes back: Prompt Shields for indirect, cross-prompt injection, the genuinely new
+          defence, malicious instructions hidden in a document, web page or tool result, caught before the agent acts on them.
+          And on the output: content filters, protected material, groundedness against the retrieved context, and sensitive
+          data or PII detection. Note that groundedness is currently model-level and not yet enabled for
+          agents. In the demo we paste an injection and a fake SSN into the bank agent; the input shield blocks the injection
+          before the model ever sees it, at zero token cost.
+        </aside>
+      </section>
+
+      <!-- 31b - LIVE DEMO: GUARDRAILS -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Trip the guardrails</h2>
+        <p class="demo-sub">Prompt Shields block a jailbreak &rarr; a PII blocklist blocks a fake SSN &rarr; a custom blocklist blocks a competitor name.</p>
+        <aside class="notes">
+          Live: a fictional bank customer-service agent with one RAI policy attached to its model deployment. Send a clean
+          banking question first to set the baseline, then three attacks. A prompt injection, "ignore all previous
+          instructions", is caught by Prompt Shields before the model ever sees it. A message containing a fake SSN is caught
+          by the PII blocklist. A question naming a competitor or an internal codename is caught by the custom blocklist. Each
+          block is input-side, so it costs zero tokens, and the agent's own system prompt has no defensive language: the
+          guardrails are the perimeter.
         </aside>
       </section>
 
@@ -1882,7 +1883,7 @@
           <div class="cards3">
             <div class="card3">
               <span class="c3-t">Tracing</span>
-              <span class="c3-d">OpenTelemetry spans, prompt to model to tool, into Application Insights.</span>
+              <span class="c3-d">OpenTelemetry traces, prompt to model to tool, into Application Insights.</span>
               <ul><li>Walk back any run, step by step</li><li>Auto-traced for Agent Framework, LangChain, LangGraph</li></ul>
             </div>
             <div class="card3 g">
