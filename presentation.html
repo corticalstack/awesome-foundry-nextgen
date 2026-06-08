@@ -153,14 +153,6 @@
     .title-foot .accent { color: var(--c-accent-bright); }
     .title-foot .who { color: var(--c-fg); font-weight: 600; }
 
-    /* ========== Closing slide ========== */
-    .reveal section.closing { height: 100%; display: flex; flex-direction: column; justify-content: center; }
-    .reveal section.closing h2 { font-size: 56px; max-width: 100%; }
-    .closing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; margin-top: 34px; }
-    .closing ul { list-style: none; margin: 0; padding: 0; }
-    .closing li { font-size: 23px; padding: 12px 0 12px 30px; position: relative; border-bottom: 1px solid var(--c-line); }
-    .closing li:last-child { border-bottom: none; }
-    .closing li::before { content: ""; position: absolute; left: 0; top: 22px; width: 12px; height: 12px; background: var(--c-accent); border-radius: 2px; }
 
     /* ========== Code blocks (atom-one-dark via highlight.js) ========== */
     .reveal pre { width: 100%; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5); margin: 0; }
@@ -681,11 +673,6 @@
     .recap-col li::before { content: "\2713"; position: absolute; left: 0; top: 1px; color: var(--c-accent); font-weight: 700; }
     .recap-col.op li::before { color: var(--c-pink); }
 
-    /* ========== Act 8: closing resources ========== */
-    .reslist { display: flex; flex-direction: column; gap: 10px; }
-    .res { border: 1px solid var(--c-line); border-left: 3px solid var(--c-accent); border-radius: 9px; padding: 10px 14px; }
-    .res .r-t { font: 600 14px var(--c-sans); color: var(--c-fg); }
-    .res .r-u { font: 500 11.5px var(--c-mono); color: var(--c-accent-bright); margin-top: 2px; }
 
     /* ========== Act 4: endpoints & SDKs ========== */
     .endp { width: min(1080px, 99%); display: flex; flex-direction: column; gap: 14px; align-items: center; }
@@ -2098,28 +2085,27 @@
       <!-- 38 - PROVISIONING AND RBAC QUICK-REF -->
       <section class="content">
         <div class="kicker"><span class="num">32</span> &middot; Provisioning</div>
-        <h2>The admin essentials, on one card</h2>
+        <h2>The admin essentials</h2>
         <div class="canvas">
           <div class="refgrid">
             <div class="refcard">
               <h4>Four Foundry roles</h4>
-              <div class="rc-row"><b>Foundry User</b> &middot; build &amp; call</div>
-              <div class="rc-row"><b>Project Manager</b> &middot; manage projects</div>
-              <div class="rc-row"><b>Account Owner</b> &middot; deploy, control plane</div>
-              <div class="rc-row"><b>Owner</b> &middot; unrestricted</div>
+              <div class="rc-row"><b>Foundry User</b> &middot; build &amp; call: models, agents, evals, data plane</div>
+              <div class="rc-row"><b>Project Manager</b> &middot; manage projects, assign User; full data plane</div>
+              <div class="rc-row"><b>Account Owner</b> &middot; deploy, connections, quota; no data plane</div>
+              <div class="rc-row"><b>Owner</b> &middot; unrestricted: full control + data plane</div>
               <div class="rc-row"><span class="ac">tip:</span> assign to groups, not people</div>
             </div>
             <div class="refcard">
               <h4>Two-layer RBAC</h4>
               <div class="rc-row"><b>Layer 1</b> Foundry plane &middot; portal, projects, build</div>
-              <div class="rc-row"><b>Layer 2</b> Cognitive Services plane &middot; quota, content filters</div>
+              <div class="rc-row"><b>Layer 2</b> Cognitive Services plane &middot; content filters, quota, keys</div>
               <div class="rc-row"><span class="ac">gotcha:</span> the second layer is commonly missed</div>
             </div>
             <div class="refcard">
               <h4>Regions &amp; quota</h4>
               <div class="rc-row">Pick by <b>model availability</b> + residency</div>
               <div class="rc-row">Quota is <b>TPM</b> per region + subscription</div>
-              <div class="rc-row">Azure Government portal: <span class="ac">ai.azure.us</span></div>
             </div>
             <div class="refcard">
               <h4>Cost &amp; SDK</h4>
@@ -2129,15 +2115,14 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">For platform owners: four roles (assigned to <b>groups</b>), a <b>two-layer</b> RBAC model, TPM quota by region, and a free platform you meter at the deployment level.</p>
+        <p class="takeaway">For platform owners: four roles (assigned to <b>groups</b>), a <b>two-layer</b> RBAC model, TPM quota by region and subscription, and a free platform you meter at the deployment level.</p>
         <aside class="notes">
           One reference card for the platform owners in the room. Four built-in Foundry roles, recently renamed: Foundry User
           to build and call, Project Manager to manage projects, Account Owner for deployment and the control plane, and Owner
           for unrestricted access, and you assign them to Entra groups, not individuals. RBAC is two layers that are configured
-          separately: the Foundry plane for portal and build, and the underlying Cognitive Services plane for quota and content
-          filters, and the second layer is the one people forget. Regions are chosen by model availability and data residency,
-          quota is tokens per minute per region and subscription, and Azure Government lives at ai.azure.us with a reduced
-          feature set. Cost: the platform itself is free, you pay at the deployment level, there are no hard spending cutoffs so
+          separately: the Foundry plane for portal and build, and the underlying Cognitive Services plane for content filters, quota and
+          keys, and the second layer is the one people forget. Regions are chosen by model availability and data residency,
+          quota is tokens per minute per region and subscription. Cost: the platform itself is free, you pay at the deployment level, there are no hard spending cutoffs so
           you wire up budget alerts, and the SDK story is the unified azure-ai-projects package plus the standard OpenAI client.
         </aside>
       </section>
@@ -2170,7 +2155,7 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">The pitch is not a single feature, it is the <b>seam</b>: you build with rich primitives and govern them from the same place, build and operate in one flow.</p>
+        <p class="takeaway">Build with <b>rich primitives</b> and govern them from <b>the same place</b>.</p>
         <aside class="notes">
           Pulling it together. The reason Foundry is worth your attention is not any single feature, it is the seam between
           build and operate. On the build side: deploy any model behind one governed gateway; build agents on the Responses API
@@ -2182,32 +2167,6 @@
         </aside>
       </section>
 
-      <!-- 40 - CLOSING -->
-      <section class="closing">
-        <div class="kicker"><span class="num">&rarr;</span> &middot; Where to go next</div>
-        <h2>Build boldly. <span class="accent">Govern from day one.</span></h2>
-        <div class="closing-grid">
-          <ul>
-            <li>Start in the portal: deploy a model, build a prompt agent.</li>
-            <li>Centralise inference behind a gateway before it sprawls.</li>
-            <li>Turn on guardrails and an Entra identity from the first agent.</li>
-            <li>Treat the control plane as part of shipping, not an afterthought.</li>
-          </ul>
-          <div class="reslist">
-            <div class="res"><div class="r-t">Microsoft Foundry docs</div><div class="r-u">learn.microsoft.com/azure/foundry</div></div>
-            <div class="res"><div class="r-t">Foundry IQ &middot; agentic retrieval</div><div class="r-u">.../foundry/agents/concepts/what-is-foundry-iq</div></div>
-            <div class="res"><div class="r-t">AI Red Teaming Agent</div><div class="r-u">.../foundry/concepts/ai-red-teaming-agent</div></div>
-            <div class="res"><div class="r-t">This field guide &amp; labs</div><div class="r-u">github.com/corticalstack/awesome-foundry-nextgen</div></div>
-          </div>
-        </div>
-        <aside class="notes">
-          Where to go next. Four habits to leave with: start small in the portal, deploy a model and build a prompt agent;
-          centralise inference behind a gateway before deployments sprawl across teams; turn on guardrails and an Entra identity
-          from your very first agent, not after an incident; and treat the control plane as part of shipping, not an
-          afterthought. Resources are on screen: the Microsoft Foundry docs, the Foundry IQ and AI Red Teaming Agent concept
-          pages, and this repository, which has runnable labs for everything we demoed. Thank you. Questions?
-        </aside>
-      </section>
 
       <!-- ============ APPEND NEW SECTIONS BELOW ============ -->
 
