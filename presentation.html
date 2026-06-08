@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Foundry - Enterprise AI</title>
+
+  <!-- Reveal.js 5.1.0 (CDN, no build step) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme">
+  <!-- highlight.js 11.9.0 atom-one-dark theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css">
+
+  <!-- Fonts: Space Grotesk + JetBrains Mono (matches corticalstack.ai) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+
+  <style>
+    /* ========== Theme / brand overrides (cyber-teal, matched to corticalstack.ai) ========== */
+    :root {
+      --c-accent: #60dcf6;
+      --c-accent-bright: #8fe9ff;
+      --c-bg: #010203;
+      --c-bg-soft: #060e15;
+      --c-fg: #eaf2f5;
+      --c-muted: #8aa0a9;
+      --c-line: rgba(96, 220, 246, 0.16);
+      --c-green: #5ad19a;
+      --c-amber: #ffaa3c;
+      --c-amber-bright: #ffbf66;
+      --c-violet: #a48cff;
+      --c-pink: #e58cb5;
+      --c-sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --c-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, "Courier New", monospace;
+    }
+
+    html, body { background: var(--c-bg); }
+
+    .reveal {
+      font-family: var(--c-sans);
+      color: var(--c-fg);
+      background: radial-gradient(circle at 28% -10%, #0b1c25 0%, #060e15 52%, #010203 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Thin accent rule pinned to the top of every slide */
+    .reveal::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--c-accent) 0%, var(--c-accent-bright) 100%);
+      z-index: 60;
+    }
+
+    /* Persistent brand mark, bottom-left */
+    .brandmark {
+      position: fixed;
+      left: 26px; bottom: 18px;
+      z-index: 55;
+      font-family: var(--c-mono);
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      pointer-events: none;
+    }
+    .brandmark b { color: var(--c-fg); font-weight: 600; }
+    .brandmark .dot { color: var(--c-accent); }
+
+    .reveal .slides { text-align: left; }
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: var(--c-sans);
+      text-transform: none;
+      color: var(--c-fg);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.04;
+      margin: 0;
+    }
+    .reveal p { line-height: 1.4; }
+    .reveal .accent { color: var(--c-accent-bright); }
+
+    /* ========== Shared content-slide scaffold ========== */
+    /* Reveal sets the present slide's display inline to block; re-assert flex on the
+       visible slide only (non-present slides stay display:none, so nothing stacks). */
+    .reveal .slides > section.present { display: flex !important; }
+
+    .reveal section.content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 8px 0 58px;
+      box-sizing: border-box;
+    }
+    .kicker {
+      font-family: var(--c-mono);
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--c-accent-bright);
+      margin-bottom: 10px;
+      flex: 0 0 auto;
+    }
+    .kicker .num { color: var(--c-muted); }
+    .reveal section.content h2 {
+      font-size: 44px;
+      max-width: 94%;
+      flex: 0 0 auto;
+      margin-bottom: 28px; /* breathing room between strapline and content */
+    }
+    .reveal section.content h2 .q { color: var(--c-muted); }
+    .subcap { font: 500 15px var(--c-mono); color: var(--c-muted); margin: -18px 0 0; }
+    .subcap b { color: var(--c-accent-bright); font-weight: 600; }
+
+    /* Generic hero wrapper: takes remaining space, centers its diagram */
+    .canvas {
+      flex: 1 1 auto; min-height: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; margin: 4px 0;
+    }
+
+    /* Takeaway bar */
+    .takeaway {
+      flex: 0 0 auto;
+      font-size: 23px;
+      color: var(--c-fg);
+      max-width: 96%;
+      padding-left: 18px;
+      border-left: 4px solid var(--c-accent);
+      margin: 0;
+    }
+    .takeaway b { color: var(--c-accent-bright); font-weight: 600; }
+    /* clearance so the takeaway never collides with a tall hero; scoped, not global */
+    .reveal section.content:has(.canvas) .takeaway { margin-top: 28px; }
+
+    /* ========== Title slide ========== */
+    .reveal section.title { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+    .title-mark {
+      font-family: var(--c-mono);
+      font-size: 18px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-bottom: 26px;
+    }
+    .title-mark .dot { color: var(--c-accent); }
+    .reveal section.title h1 { font-size: 100px; letter-spacing: -0.035em; line-height: 0.94; }
+    .reveal section.title .subtitle { font-size: 28px; color: var(--c-muted); margin-top: 28px; max-width: 82%; }
+    .title-foot { margin-top: 50px; font-family: var(--c-mono); font-size: 16px; letter-spacing: 0.06em; color: var(--c-muted); }
+    .title-foot .accent { color: var(--c-accent-bright); }
+    .title-foot .who { color: var(--c-fg); font-weight: 600; }
+
+    /* ========== Closing slide ========== */
+    .reveal section.closing { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    .reveal section.closing h2 { font-size: 56px; max-width: 100%; }
+    .closing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; margin-top: 34px; }
+    .closing ul { list-style: none; margin: 0; padding: 0; }
+    .closing li { font-size: 23px; padding: 12px 0 12px 30px; position: relative; border-bottom: 1px solid var(--c-line); }
+    .closing li:last-child { border-bottom: none; }
+    .closing li::before { content: ""; position: absolute; left: 0; top: 22px; width: 12px; height: 12px; background: var(--c-accent); border-radius: 2px; }
+
+    /* ========== Code blocks (atom-one-dark via highlight.js) ========== */
+    .reveal pre { width: 100%; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5); margin: 0; }
+    .reveal pre code {
+      font-family: var(--c-mono);
+      font-size: 16px; line-height: 1.5;
+      border-radius: 10px;
+      border: 1px solid var(--c-line);
+      border-top: 3px solid var(--c-accent);
+      padding: 18px 20px;
+    }
+
+    /* Slide numbers + nav, tuned to brand */
+    .reveal .slide-number { font-family: var(--c-mono); background: transparent; color: var(--c-muted); font-size: 14px; right: 22px; bottom: 16px; }
+    .reveal .controls { right: 110px; bottom: 6px; }
+    .reveal .controls .navigate-left, .reveal .controls .navigate-right { bottom: 0; }
+    .reveal .progress { color: var(--c-accent); height: 4px; }
+
+    /* ========== Reusable primitives ========== */
+    /* simple "vs" divider used by compare slides */
+    .vs { flex: 0 0 46px; align-self: stretch; position: relative; display: flex; align-items: center; justify-content: center; }
+    .vs::before { content: ""; position: absolute; top: 6%; bottom: 6%; left: 50%; border-left: 1px dashed rgba(255, 255, 255, 0.16); }
+    .vs span {
+      position: relative; z-index: 1; width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font: 700 11px var(--c-mono); text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--c-muted); background: var(--c-bg-soft); border: 1px solid var(--c-line);
+    }
+
+    /* ========== LIVE DEMO marker slide ========== */
+    .reveal section.demo { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .demo-badge {
+      font: 700 14px var(--c-mono); letter-spacing: 0.3em; text-transform: uppercase; color: #04222b;
+      background: linear-gradient(135deg, var(--c-accent-bright), #2b8fa6);
+      padding: 8px 22px; border-radius: 99px; display: inline-flex; align-items: center; gap: 11px;
+      box-shadow: 0 0 0 1px rgba(96, 220, 246, 0.25), 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+    .demo-badge .rec { width: 11px; height: 11px; border-radius: 50%; background: #04222b; animation: recpulse 1.6s ease-in-out infinite; }
+    @keyframes recpulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+    .reveal section.demo h2 { font-size: 52px; margin: 22px 0 8px; max-width: 86%; }
+    .reveal section.demo .demo-sub { font-size: 20px; color: var(--c-muted); max-width: 64%; margin: 0 auto; line-height: 1.4; }
+    .demo-steps { margin-top: 26px; display: flex; flex-direction: column; gap: 8px; width: min(800px, 90%); text-align: left; }
+    .demo-step { font-family: var(--c-mono); font-size: 14.5px; color: var(--c-fg); border: 1px solid var(--c-line); border-left: 3px solid var(--c-accent); border-radius: 8px; background: rgba(255, 255, 255, 0.03); padding: 9px 14px; }
+    .demo-step b { color: var(--c-accent-bright); }
+    .demo-step .n { color: var(--c-muted); margin-right: 8px; }
+    .demo-where { margin-top: 18px; font: 600 12px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); }
+    .demo-where b { color: var(--c-accent-bright); }
+    .reveal section.demo a { color: var(--c-accent-bright); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { .demo-badge .rec { animation: none; } }
+
+    /* ========== Act 0: audience map + agenda arc ========== */
+    .audience { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+    .aud-card { border: 1px solid var(--c-line); border-radius: 14px; background: rgba(255, 255, 255, 0.03); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; border-top: 3px solid var(--c-accent); }
+    .aud-card.dev { border-top-color: var(--c-green); }
+    .aud-card.it { border-top-color: var(--c-amber); }
+    .aud-card.sec { border-top-color: var(--c-pink); }
+    .aud-tag { align-self: flex-start; font: 700 10px var(--c-mono); letter-spacing: 0.18em; color: var(--c-accent); border: 1px solid currentColor; border-radius: 6px; padding: 2px 8px; }
+    .aud-card.dev .aud-tag { color: var(--c-green); }
+    .aud-card.it .aud-tag { color: var(--c-amber); }
+    .aud-card.sec .aud-tag { color: var(--c-pink); }
+    .aud-role { font: 700 19px var(--c-sans); color: var(--c-fg); letter-spacing: -0.01em; }
+    .aud-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .aud-card li { font-size: 14px; color: var(--c-muted); line-height: 1.3; padding-left: 16px; position: relative; }
+    .aud-card li::before { content: ""; position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 2px; background: var(--c-accent); }
+    .aud-card.dev li::before { background: var(--c-green); }
+    .aud-card.it li::before { background: var(--c-amber); }
+    .aud-card.sec li::before { background: var(--c-pink); }
+    .arc { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .arc-chip { font: 600 12px var(--c-mono); color: var(--c-muted); border: 1px solid var(--c-line); border-radius: 99px; padding: 6px 13px; background: rgba(255, 255, 255, 0.02); }
+    .arc-chip b { color: var(--c-accent-bright); }
+    .arc-sep { color: var(--c-line); }
+
+    /* ========== Act 1: platform overview map ========== */
+    .ovw { width: 100%; max-width: 1220px; }
+    .ovw-frame { border: 1px solid var(--c-line); border-radius: 16px; padding: 18px 16px 16px; background: rgba(96, 220, 246, 0.03); position: relative; display: flex; flex-direction: column; gap: 11px; }
+    .ovw-brand { position: absolute; top: -14px; left: 26px; background: var(--c-bg-soft); padding: 3px 14px; font: 700 13px var(--c-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-bright); border: 1px solid var(--c-line); border-radius: 99px; }
+    .ovw-ns { position: absolute; top: -13px; right: 22px; font: 500 11px var(--c-mono); color: var(--c-muted); background: var(--c-bg-soft); padding: 3px 10px; }
+    .ovw-row { display: flex; gap: 11px; }
+    .obox { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 11px; background: rgba(255, 255, 255, 0.03); padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; border-top: 3px solid var(--c-line); min-width: 0; }
+    .obox h4 { font: 700 14px var(--c-sans); margin: 0 0 2px; color: var(--c-fg); }
+    .obox span { font: 500 11.5px var(--c-mono); color: var(--c-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .obox .svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px 14px; }
+    .obox.obs { border-top-color: var(--c-violet); }
+    .obox.dev { border-top-color: var(--c-green); }
+    .obox.svc { border-top-color: var(--c-accent); background: rgba(96, 220, 246, 0.06); }
+    .obox.models, .obox.kt, .obox.integ { border-top-color: #60a5fa; }
+    .obox.kt { flex-grow: 1.7; }
+    .obox.base { border-top-color: var(--c-amber); background: rgba(255, 170, 60, 0.05); }
+
+    /* ========== Act 1: Assistants -> Responses terminology map ========== */
+    .tmap { width: min(840px, 96%); display: flex; flex-direction: column; gap: 9px; font-family: var(--c-mono); }
+    .tmap-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 4px; }
+    .tmap-head .old { color: var(--c-amber-bright); text-decoration: line-through; font-size: 16px; opacity: 0.85; }
+    .tmap-head .arr { color: var(--c-muted); font-size: 18px; }
+    .tmap-head .new { color: var(--c-accent-bright); font-weight: 700; font-size: 18px; }
+    .tmap-row { display: grid; grid-template-columns: 1fr 44px 1fr; align-items: center; gap: 10px; border: 1px solid var(--c-line); border-radius: 9px; background: rgba(255, 255, 255, 0.02); padding: 9px 16px; }
+    .tmap-row .o { color: var(--c-muted); text-align: right; font-size: 14px; }
+    .tmap-row .o s { color: var(--c-amber-bright); opacity: 0.8; }
+    .tmap-row .a { color: var(--c-accent); text-align: center; }
+    .tmap-row .n { color: var(--c-fg); font-size: 14px; }
+    .tmap-row .n b { color: var(--c-accent-bright); }
+    .tmap-note { text-align: center; border: 1px dashed rgba(255, 170, 60, 0.5); background: rgba(255, 170, 60, 0.06); color: #ffce8a; border-radius: 10px; padding: 10px 16px; font-size: 13px; margin-top: 4px; }
+    .tmap-note b { color: var(--c-amber-bright); }
+
+    /* ========== Act 1: capabilities ribbon (build / operate) ========== */
+    .caps { display: flex; gap: 12px; width: 100%; max-width: 1220px; }
+    .capgrp { flex: 1; display: flex; align-items: center; flex-wrap: wrap; gap: 5px 9px; border: 1px solid var(--c-line); border-top-width: 2px; border-radius: 10px; padding: 7px 13px; background: rgba(255, 255, 255, 0.02); font: 500 12px var(--c-mono); color: var(--c-muted); }
+    .capgrp .capk { font: 700 9.5px var(--c-mono); letter-spacing: 0.14em; padding: 2px 8px; border-radius: 5px; border: 1px solid currentColor; }
+    .capgrp.build { border-top-color: var(--c-green); }
+    .capgrp.build .capk { color: var(--c-green); }
+    .capgrp.operate { border-top-color: var(--c-amber); }
+    .capgrp.operate .capk { color: var(--c-amber); }
+
+    /* ========== Act 2: portal browser mockup ========== */
+    .portal { width: min(1080px, 99%); border: 1px solid var(--c-line); border-radius: 12px; overflow: hidden; background: #0a0f13; box-shadow: 0 22px 54px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
+    .pf-bar { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--c-line); background: rgba(255, 255, 255, 0.04); font-size: 12px; }
+    .pf-brand { display: flex; align-items: center; gap: 6px; color: var(--c-fg); font-weight: 600; white-space: nowrap; }
+    .pf-brand .logo { color: var(--c-accent); }
+    .pf-crumb { color: var(--c-muted); white-space: nowrap; font-family: var(--c-mono); font-size: 11px; }
+    .pf-search { flex: 0 1 260px; border: 1px solid var(--c-line); border-radius: 7px; padding: 4px 10px; color: var(--c-muted); background: rgba(0, 0, 0, 0.35); font-family: var(--c-mono); font-size: 10.5px; }
+    .pf-toggle { display: flex; align-items: center; gap: 6px; color: var(--c-accent-bright); font-size: 10.5px; white-space: nowrap; font-family: var(--c-mono); }
+    .pf-toggle .sw { width: 26px; height: 14px; border-radius: 99px; background: var(--c-accent); position: relative; }
+    .pf-toggle .sw::after { content: ""; position: absolute; right: 2px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #04222b; }
+    .pf-tabs { display: flex; gap: 16px; margin-left: auto; }
+    .pf-tab { color: var(--c-muted); font-size: 12.5px; }
+    .pf-tab.active { color: var(--c-accent-bright); font-weight: 600; border-bottom: 2px solid var(--c-accent); padding-bottom: 2px; }
+    .pf-icons { color: var(--c-muted); letter-spacing: 3px; font-size: 11px; }
+    .pf-body { padding: 16px 20px; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 11px; }
+
+    /* Home: welcome strip + tab purpose cards */
+    .pf-home { display: flex; flex-direction: column; gap: 9px; align-items: center; text-align: center; padding: 4px 0 2px; }
+    .pf-welcome { font: 700 21px var(--c-sans); color: var(--c-fg); }
+    .pf-startbtn { font: 600 11.5px var(--c-mono); color: #04222b; background: var(--c-accent); border-radius: 7px; padding: 6px 16px; }
+    .pf-meta { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+    .pf-meta .m { font-family: var(--c-mono); font-size: 10px; color: var(--c-muted); border: 1px solid var(--c-line); border-radius: 6px; padding: 4px 9px; }
+    .pf-meta .m b { color: var(--c-fg); }
+    .tabmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 11px; width: 100%; }
+    .tabmap-card { border: 1px solid var(--c-line); border-radius: 11px; background: rgba(255, 255, 255, 0.03); padding: 12px 13px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 5px; }
+    .tabmap-card .tm-t { font: 700 14px var(--c-sans); color: var(--c-accent-bright); }
+    .tabmap-card .tm-d { font-size: 11.5px; color: var(--c-muted); line-height: 1.3; }
+
+    /* Discover: providers + leaderboard */
+    .disc-head { display: flex; align-items: baseline; gap: 12px; }
+    .disc-head .dh-t { font: 700 16px var(--c-sans); color: var(--c-fg); }
+    .disc-head .dh-s { font: 500 11px var(--c-mono); color: var(--c-muted); }
+    .disc-providers { display: flex; gap: 7px; flex-wrap: wrap; }
+    .disc-providers .p { font-family: var(--c-mono); font-size: 11px; color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 8px; padding: 5px 11px; background: rgba(255, 255, 255, 0.03); }
+    .lb { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 11.5px; }
+    .lb th { text-align: right; color: var(--c-muted); font-weight: 600; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em; padding: 5px 10px; border-bottom: 1px solid var(--c-line); }
+    .lb th:first-child { text-align: left; }
+    .lb td { padding: 5px 10px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); text-align: right; }
+    .lb td:first-child { text-align: left; color: var(--c-accent-bright); }
+    .lb .win { color: var(--c-amber-bright); }
+    .disc-tools { font-size: 11.5px; color: var(--c-muted); border-left: 3px solid var(--c-accent); padding-left: 10px; }
+    .disc-tools b { color: var(--c-accent-bright); }
+
+    /* Build: left nav building blocks */
+    .build-wrap { display: flex; gap: 16px; flex: 1 1 auto; min-height: 0; }
+    .build-nav { flex: 0 0 150px; display: flex; flex-direction: column; gap: 3px; border-right: 1px solid var(--c-line); padding-right: 12px; }
+    .build-nav .n { font-family: var(--c-mono); font-size: 11.5px; color: var(--c-muted); padding: 5px 9px; border-radius: 6px; }
+    .build-nav .n.active { color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.08); border-left: 2px solid var(--c-accent); }
+    .build-main { flex: 1 1 auto; display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+    .build-note { font-size: 11px; color: #ffce8a; border: 1px dashed rgba(255, 170, 60, 0.5); border-radius: 8px; padding: 7px 12px; background: rgba(255, 170, 60, 0.05); }
+    .build-note b { color: var(--c-amber-bright); }
+    .build-actions { display: flex; gap: 8px; }
+    .build-btn { font: 600 11px var(--c-mono); border-radius: 7px; padding: 6px 13px; }
+    .build-btn.primary { background: var(--c-accent); color: #04222b; }
+    .build-btn.ghost { border: 1px solid var(--c-line); color: var(--c-fg); }
+    .agtbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 11.5px; }
+    .agtbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em; padding: 5px 9px; border-bottom: 1px solid var(--c-line); }
+    .agtbl td { padding: 6px 9px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
+    .agtbl td:first-child { color: var(--c-accent-bright); }
+    .agtbl .ver { color: var(--c-muted); }
+
+    /* Reusable pillar cards (control plane teaser + deep dive) */
+    .pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; }
+    .pillar { border: 1px solid var(--c-line); border-radius: 12px; background: rgba(255, 255, 255, 0.03); padding: 15px 16px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 7px; }
+    .pillar .pl-n { font: 700 9px var(--c-mono); letter-spacing: 0.18em; color: var(--c-muted); }
+    .pillar .pl-t { font: 700 17px var(--c-sans); color: var(--c-fg); letter-spacing: -0.01em; }
+    .pillar .pl-d { font-size: 12.5px; color: var(--c-muted); line-height: 1.32; }
+    .pillar.ctrl { border-top-color: var(--c-accent); }
+    .pillar.obs { border-top-color: var(--c-green); }
+    .pillar.sec { border-top-color: var(--c-pink); }
+    .pillar.flt { border-top-color: var(--c-amber); }
+
+    /* ========== Act 3: resource model (1:1 vs 1:N) ========== */
+    .resmodel { width: 100%; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+    .hier { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--c-mono); font-size: 12px; flex-wrap: wrap; }
+    .hier .h { border: 1px solid var(--c-line); border-radius: 8px; padding: 6px 12px; color: var(--c-muted); }
+    .hier .h.foundry { border-color: var(--c-accent); color: var(--c-accent-bright); }
+    .hier .h.proj { border-color: rgba(90, 209, 154, 0.5); color: var(--c-green); }
+    .hier .ha { color: var(--c-muted); }
+    .twocol { display: flex; gap: 18px; align-items: stretch; width: 100%; }
+    .rm-panel { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+    .rm-panel.one { border-top: 3px solid var(--c-amber); }
+    .rm-panel.many { border-top: 3px solid var(--c-green); }
+    .rm-h { font: 700 17px var(--c-sans); color: var(--c-fg); }
+    .rm-h small { color: var(--c-muted); font-weight: 400; font-size: 12px; display: block; margin-top: 2px; }
+    .acct { border: 1px solid var(--c-line); border-radius: 10px; background: rgba(96, 220, 246, 0.05); padding: 11px 12px; }
+    .acct-label { font: 600 11px var(--c-mono); color: var(--c-accent-bright); margin-bottom: 8px; }
+    .projrow { display: flex; gap: 7px; flex-wrap: wrap; }
+    .proj { font: 600 10.5px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 6px; padding: 5px 9px; background: rgba(255, 255, 255, 0.04); }
+    .proj.cap { color: var(--c-violet); border-color: rgba(164, 140, 255, 0.4); }
+    .rm-note { font-size: 12.5px; color: var(--c-muted); line-height: 1.35; }
+    .rm-note b { color: var(--c-fg); }
+
+    /* ========== Act 3: hub-and-spoke architecture ========== */
+    .arch { width: min(1080px, 99%); display: flex; flex-direction: column; align-items: center; gap: 11px; font-family: var(--c-mono); }
+    .arch-label { font: 600 9.5px var(--c-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-muted); }
+    .arch-hubs { display: flex; gap: 12px; justify-content: center; }
+    .hub { border: 1px solid var(--c-line); border-top: 3px solid var(--c-violet); border-radius: 10px; background: rgba(164, 140, 255, 0.06); padding: 8px 13px; text-align: center; min-width: 168px; }
+    .hub .hb-n { font: 700 12.5px var(--c-mono); color: var(--c-fg); }
+    .hub .hb-r { font-size: 9.5px; color: var(--c-muted); margin: 2px 0 6px; }
+    .hub .hb-m { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+    .hub .m { font-size: 9px; color: var(--c-violet); border: 1px solid rgba(164, 140, 255, 0.4); border-radius: 5px; padding: 2px 6px; }
+    .arch-arrow { color: var(--c-muted); font-size: 10px; display: flex; align-items: center; gap: 10px; }
+    .arch-arrow .ar { color: var(--c-accent); font-size: 13px; }
+    .apim { width: 84%; border: 1px solid var(--c-accent); border-radius: 10px; background: rgba(96, 220, 246, 0.08); box-shadow: 0 0 0 1px rgba(96, 220, 246, 0.12); padding: 9px 14px; text-align: center; }
+    .apim .ap-n { font: 700 13px var(--c-mono); color: var(--c-accent-bright); }
+    .apim .ap-d { font-size: 9.5px; color: var(--c-muted); margin-top: 3px; }
+    .arch-spokes { display: flex; gap: 14px; justify-content: center; width: 100%; }
+    .spoke { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 10px; padding: 9px 13px; }
+    .spoke.one { border-top: 3px solid var(--c-amber); }
+    .spoke.many { border-top: 3px solid var(--c-green); }
+    .spoke .sp-h { font: 700 12px var(--c-sans); color: var(--c-fg); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .spoke .badge { font-size: 8px; color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
+    .spoke .sp-acct { font-size: 10.5px; color: var(--c-accent-bright); margin: 5px 0; }
+    .spoke .projrow { gap: 5px; }
+    .spoke .proj { font-size: 9px; padding: 2px 7px; }
+    .spoke .sp-conn { font-size: 9px; color: var(--c-muted); margin-top: 6px; }
+    .spoke .sp-conn b { color: var(--c-green); }
+    .arch-foot { font: 500 9px var(--c-mono); color: var(--c-muted); text-align: center; max-width: 92%; line-height: 1.4; }
+
+    /* ========== Act 3: deny policy ========== */
+    .policy { display: flex; gap: 20px; align-items: stretch; width: 100%; }
+    .policy .pcode { flex: 1.25 1 0; display: flex; flex-direction: column; justify-content: center; }
+    .policy .pside { flex: 1 1 0; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+    .scope { display: flex; flex-direction: column; gap: 7px; }
+    .scope-row { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--c-line); border-radius: 8px; padding: 9px 13px; font-family: var(--c-mono); font-size: 12.5px; }
+    .scope-row .rg { color: var(--c-fg); }
+    .scope-row .st { font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 99px; letter-spacing: 0.05em; }
+    .scope-row .st.deny { color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); }
+    .scope-row .st.exempt { color: var(--c-green); border: 1px solid rgba(90, 209, 154, 0.5); }
+    .policy-err { font-family: var(--c-mono); font-size: 12px; color: var(--c-amber-bright); border-left: 3px solid var(--c-amber); padding: 6px 0 6px 12px; line-height: 1.4; }
+    .policy-err b { color: var(--c-fg); }
+
+    /* ========== Act 4: deployment types ========== */
+    .dep { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+    .dep-types { display: flex; gap: 16px; }
+    .dep-card { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 13px; padding: 15px 17px; display: flex; flex-direction: column; gap: 8px; }
+    .dep-card.std { border-top: 3px solid var(--c-accent); }
+    .dep-card.ptu { border-top: 3px solid var(--c-violet); }
+    .dep-card .dc-t { font: 700 17px var(--c-sans); color: var(--c-fg); }
+    .dep-card .dc-t small { color: var(--c-muted); font-weight: 400; font-size: 12px; display: block; margin-top: 1px; }
+    .dep-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+    .dep-card li { font-size: 12.5px; color: var(--c-muted); padding-left: 15px; position: relative; line-height: 1.3; }
+    .dep-card li::before { content: "+"; position: absolute; left: 0; color: var(--c-accent); font-weight: 700; }
+    .dep-card.ptu li::before { color: var(--c-violet); }
+    .dep-scope { display: flex; gap: 9px; }
+    .dep-chip { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 9px; padding: 9px 12px; text-align: center; background: rgba(255, 255, 255, 0.02); }
+    .dep-chip .ds-t { font: 700 12px var(--c-mono); color: var(--c-accent-bright); }
+    .dep-chip .ds-d { font-size: 10.5px; color: var(--c-muted); margin-top: 2px; }
+    .dep-note { font-size: 12px; color: #ffce8a; border: 1px dashed rgba(255, 170, 60, 0.5); border-radius: 9px; padding: 8px 13px; background: rgba(255, 170, 60, 0.05); }
+    .dep-note b { color: var(--c-amber-bright); }
+
+    /* ========== Act 4: deployment tabs (playground / details / monitor) ========== */
+    .dpl { width: min(1010px, 99%); border: 1px solid var(--c-line); border-radius: 12px; background: #0a0f13; overflow: hidden; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45); }
+    .dpl-bar { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--c-line); background: rgba(255, 255, 255, 0.04); }
+    .dpl-name { font: 700 13px var(--c-mono); color: var(--c-accent-bright); }
+    .dpl-tabs { display: flex; gap: 16px; margin-left: 8px; }
+    .dpl-tab { font: 600 11.5px var(--c-mono); color: var(--c-muted); }
+    .dpl-tab.active { color: var(--c-accent-bright); border-bottom: 2px solid var(--c-accent); padding-bottom: 3px; }
+    .dpl-act { margin-left: auto; font: 600 10px var(--c-mono); color: #04222b; background: var(--c-accent); border-radius: 6px; padding: 4px 11px; }
+    .dpl-body { display: flex; }
+    .dpl-cfg { flex: 0 0 40%; border-right: 1px solid var(--c-line); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .cfg-card { border: 1px solid var(--c-line); border-radius: 9px; padding: 9px 11px; background: rgba(255, 255, 255, 0.02); }
+    .cfg-card.hot { border-color: var(--c-accent); background: rgba(96, 220, 246, 0.07); }
+    .cfg-card .cc-h { font: 600 11px var(--c-mono); color: var(--c-fg); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .cfg-card .cc-h .pv { font: 700 8px var(--c-mono); color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); border-radius: 99px; padding: 0 6px; }
+    .cfg-card .cc-d { font-size: 10.5px; color: var(--c-muted); line-height: 1.3; }
+    .cfg-card .tool { font-size: 10px; color: var(--c-accent-bright); border: 1px solid rgba(96, 220, 246, 0.4); border-radius: 6px; padding: 3px 8px; display: inline-block; margin-top: 4px; }
+    .dpl-chat { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .msg { font-size: 11px; border-radius: 8px; padding: 7px 10px; line-height: 1.35; }
+    .msg.u { background: rgba(96, 220, 246, 0.1); color: var(--c-accent-bright); align-self: flex-end; max-width: 78%; }
+    .msg.a { background: rgba(255, 255, 255, 0.04); color: var(--c-fg); max-width: 94%; }
+    .msg .cite { color: var(--c-accent); font-size: 9px; }
+    .dpl-tabsinfo { display: flex; gap: 12px; width: min(1010px, 99%); margin-top: 10px; }
+    .tabinfo { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 9px; padding: 9px 13px; background: rgba(255, 255, 255, 0.02); }
+    .tabinfo .ti-t { font: 700 11px var(--c-mono); color: var(--c-accent-bright); margin-bottom: 4px; }
+    .tabinfo .ti-d { font-size: 10.5px; color: var(--c-muted); line-height: 1.35; }
+
+    /* ========== Act 4: code compare + surfaces ========== */
+    .codecompare { display: flex; gap: 16px; width: 100%; align-items: stretch; }
+    .codecompare > div { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .cc-label { font: 700 11px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
+    .cc-label.a { color: var(--c-accent-bright); }
+    .surfaces { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+    .surf { font: 600 11px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 99px; padding: 5px 13px; background: rgba(96, 220, 246, 0.05); }
+
+    /* ========== Act 4: migration gotchas ========== */
+    .gotchas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
+    .gcard { border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 15px; border-left: 3px solid var(--c-amber); }
+    .gcard.good { border-left-color: var(--c-green); }
+    .gcard .gc-s { font: 700 13.5px var(--c-sans); color: var(--c-fg); }
+    .gcard .gc-f { font-size: 12px; color: var(--c-muted); margin-top: 3px; line-height: 1.32; }
+    .gcard .gc-f b { color: var(--c-accent-bright); }
+    .gcard.good .gc-f b { color: var(--c-green); }
+
+    /* ========== Act 5: agent components ========== */
+    .agentdiag { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .agt-row { display: flex; align-items: center; gap: 16px; justify-content: center; }
+    .agt-box { border: 1px solid var(--c-line); border-radius: 14px; padding: 13px 16px; background: rgba(255, 255, 255, 0.03); }
+    .agt-box .ab-h { font: 700 15px var(--c-sans); color: var(--c-fg); text-align: center; margin-bottom: 8px; }
+    .agt-box.agent { border-color: var(--c-accent); box-shadow: 0 0 0 1px var(--c-accent), 0 0 26px rgba(96, 220, 246, 0.18); }
+    .agt-box.agent .ab-h { color: var(--c-accent-bright); }
+    .agt-slots { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+    .agt-slot { font: 600 12px var(--c-mono); color: var(--c-fg); background: rgba(96, 220, 246, 0.1); border-radius: 7px; padding: 7px 0; text-align: center; }
+    .agt-items { display: flex; flex-direction: column; gap: 7px; min-width: 132px; }
+    .agt-items.horiz { flex-direction: row; gap: 10px; justify-content: center; }
+    .agt-item { font: 600 11.5px var(--c-mono); color: var(--c-muted); text-align: center; border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 10px; }
+    .agt-arrow { color: var(--c-accent); font-size: 24px; }
+    .agt-bidir { font: 600 11px var(--c-mono); letter-spacing: 0.08em; color: var(--c-accent); text-align: center; }
+
+    /* ========== Act 5: 6-stage ring (SVG) ========== */
+    .ringwrap { display: flex; align-items: center; justify-content: center; width: 100%; }
+    .ring { width: 100%; max-width: 760px; max-height: 52vh; }
+    .ring .rg-ring { fill: none; stroke: rgba(96, 220, 246, 0.25); stroke-width: 1.5; }
+    .ring .rg-core { fill: rgba(255, 255, 255, 0.04); stroke: var(--c-line); stroke-width: 1.5; }
+    .ring .rg-core-t { fill: var(--c-fg); font: 700 17px var(--c-sans); text-anchor: middle; }
+    .ring .rg-logo { fill: var(--c-accent); font-size: 26px; text-anchor: middle; }
+    .ring .rg-lab { fill: var(--c-fg); font: 600 15px var(--c-sans); }
+    .ring .rg-num { fill: #04222b; font: 700 13px var(--c-mono); text-anchor: middle; }
+    .ring .disc { fill: var(--c-accent); }
+    .ring .disc.hot { fill: var(--c-pink); }
+    .ring .arc { fill: none; stroke: var(--c-violet); stroke-width: 1.5; opacity: 0.6; }
+
+    /* ========== Act 5: Agent Service runtime flow ========== */
+    .svcflow { width: min(1010px, 99%); display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--c-mono); }
+    .svc-node { border: 1px solid var(--c-line); border-radius: 10px; padding: 8px 14px; text-align: center; background: rgba(255, 255, 255, 0.03); font-size: 12px; color: var(--c-fg); }
+    .svc-node.code { border-color: rgba(90, 209, 154, 0.5); color: var(--c-green); }
+    .svc-node b { color: var(--c-accent-bright); }
+    .svc-core { border: 1px solid var(--c-accent); border-radius: 12px; background: rgba(96, 220, 246, 0.06); box-shadow: 0 0 0 1px rgba(96, 220, 246, 0.12); padding: 11px 14px; width: 100%; box-sizing: border-box; }
+    .svc-core .sc-h { font: 700 12.5px var(--c-mono); color: var(--c-accent-bright); text-align: center; margin-bottom: 9px; }
+    .svc-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .svc-step { border: 1px solid var(--c-line); border-radius: 8px; padding: 8px 11px; font-size: 11px; color: var(--c-muted); background: rgba(255, 255, 255, 0.02); line-height: 1.3; }
+    .svc-step b { color: var(--c-fg); }
+    .svc-step .n { color: var(--c-accent); font-weight: 700; margin-right: 5px; }
+    .svc-arrow { color: var(--c-accent); font-size: 14px; }
+
+    /* ========== Act 5: knowledge & tools catalog ========== */
+    .cat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; }
+    .catcol { border: 1px solid var(--c-line); border-radius: 12px; padding: 13px 16px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; }
+    .catcol.k { border-top-color: var(--c-green); }
+    .catcol.c { border-top-color: var(--c-violet); }
+    .catcol h4 { font: 700 14px var(--c-sans); color: var(--c-fg); margin: 0 0 8px; }
+    .catrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 12px var(--c-mono); padding: 5px 0; border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
+    .catrow:last-child { border-bottom: none; }
+    .catrow .nm { color: var(--c-fg); }
+    .catrow .ga { font-size: 8px; color: var(--c-green); border: 1px solid rgba(90, 209, 154, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
+    .catrow .pv { font-size: 8px; color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
+
+    /* ========== Act 5: hosted agents ========== */
+    .hosted { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+    .hosted-cmp { display: flex; gap: 16px; align-items: stretch; }
+    .hc-card { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 13px; padding: 14px 17px; position: relative; }
+    .hc-card.prompt { border-top: 3px solid var(--c-accent); }
+    .hc-card.host { border-top: 3px solid var(--c-violet); }
+    .hc-h { font: 700 16px var(--c-sans); color: var(--c-fg); }
+    .hc-h small { display: block; color: var(--c-muted); font-weight: 400; font-size: 11.5px; margin-top: 2px; }
+    .hc-pv { position: absolute; top: 13px; right: 15px; font: 700 8px var(--c-mono); color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); border-radius: 99px; padding: 1px 8px; }
+    .hc-card ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+    .hc-card li { font-size: 12px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
+    .hc-card li::before { content: "+"; position: absolute; left: 0; color: var(--c-accent); font-weight: 700; }
+    .hc-card.host li::before { color: var(--c-violet); }
+    .frameworks { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .fw-label { font: 700 10px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); margin-right: 4px; }
+    .fw { font: 600 11px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 99px; padding: 5px 12px; background: rgba(164, 140, 255, 0.06); }
+
+    /* ========== Act 5: nested two-loop (Copilot SDK hosted) ========== */
+    .nest { width: min(980px, 99%); font-family: var(--c-mono); }
+    .nest-cap { font: 700 9.5px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); margin-bottom: 7px; }
+    .nest-l1 { border: 1px solid var(--c-line); border-radius: 14px; padding: 12px 14px; background: rgba(255, 255, 255, 0.02); }
+    .nest-l2 { border: 1px solid var(--c-accent); border-radius: 12px; padding: 11px 13px; background: rgba(96, 220, 246, 0.05); }
+    .nest-l2 > .nest-cap { color: var(--c-accent-bright); }
+    .nest-l3 { border: 1px dashed rgba(164, 140, 255, 0.6); border-radius: 10px; padding: 10px 12px; background: rgba(164, 140, 255, 0.07); margin-top: 8px; }
+    .nest-l3 > .nest-cap { color: var(--c-violet); }
+    .nest-loop { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10.5px; color: var(--c-fg); flex-wrap: wrap; }
+    .nest-loop .step { border: 1px solid var(--c-line); border-radius: 7px; padding: 5px 10px; background: rgba(0, 0, 0, 0.25); }
+    .nest-loop .ar { color: var(--c-violet); }
+    .byok { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 9px; font-size: 11px; color: var(--c-muted); flex-wrap: wrap; }
+    .byok .b-model { border: 1px solid var(--c-violet); border-radius: 8px; padding: 6px 11px; color: var(--c-violet); background: rgba(164, 140, 255, 0.07); }
+    .byok .ar { color: var(--c-accent); }
+
+    /* ========== Act 5: scale compare table ========== */
+    .cmptbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 12px; }
+    .cmptbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; border-bottom: 1px solid var(--c-line); }
+    .cmptbl th.a { color: var(--c-accent-bright); }
+    .cmptbl th.v { color: var(--c-violet); }
+    .cmptbl th.p { color: var(--c-pink); }
+    .cmptbl td { padding: 8px 12px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); vertical-align: top; line-height: 1.3; }
+    .cmptbl td:first-child { color: var(--c-muted); }
+
+    /* ========== Act 6: Foundry IQ overview ========== */
+    .iq { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+    .iq-flow { display: flex; align-items: stretch; gap: 12px; }
+    .iq-col-h { font: 700 9.5px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); margin-bottom: 6px; }
+    .iq-sources { flex: 0 0 25%; display: flex; flex-direction: column; gap: 6px; }
+    .iq-src { font: 600 11px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 10px; background: rgba(255, 255, 255, 0.03); }
+    .iq-arrow { display: flex; align-items: center; color: var(--c-accent); font-size: 20px; }
+    .iq-kb { flex: 1 1 0; border: 1px solid var(--c-accent); border-radius: 12px; background: rgba(96, 220, 246, 0.06); box-shadow: 0 0 0 1px rgba(96, 220, 246, 0.12); padding: 14px 16px; display: flex; flex-direction: column; gap: 7px; justify-content: center; }
+    .iq-kb .kb-h { font: 700 16px var(--c-sans); color: var(--c-accent-bright); }
+    .iq-kb .kb-d { font-size: 12px; color: var(--c-muted); line-height: 1.35; }
+    .iq-kb .kb-eng { font: 600 11px var(--c-mono); color: var(--c-fg); border-top: 1px solid var(--c-line); padding-top: 8px; }
+    .iq-kb .kb-eng b { color: var(--c-accent-bright); }
+    .iq-right { flex: 0 0 24%; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+    .iq-agent { border: 1px solid var(--c-line); border-radius: 8px; padding: 8px 11px; font: 600 11px var(--c-mono); color: var(--c-fg); text-align: center; background: rgba(255, 255, 255, 0.03); }
+    .iq-stat { border: 1px solid rgba(90, 209, 154, 0.5); border-radius: 10px; background: rgba(90, 209, 154, 0.06); padding: 9px; text-align: center; }
+    .iq-stat .num { font: 700 24px var(--c-sans); color: var(--c-green); }
+    .iq-stat .lbl { font-size: 9.5px; color: var(--c-muted); line-height: 1.3; }
+    .iq-fam { display: flex; gap: 8px; justify-content: center; }
+    .iq-fam .f { font: 600 11px var(--c-mono); border: 1px solid var(--c-line); border-radius: 99px; padding: 4px 13px; color: var(--c-muted); }
+    .iq-fam .f.on { color: var(--c-accent-bright); border-color: var(--c-accent); background: rgba(96, 220, 246, 0.06); }
+
+    /* ========== Act 6: agentic-retrieval data flow ========== */
+    .flowlane { width: min(1030px, 99%); display: flex; flex-direction: column; gap: 11px; }
+    .lane { border: 1px solid var(--c-line); border-radius: 12px; padding: 11px 14px; }
+    .lane.ingest { border-left: 3px solid var(--c-violet); }
+    .lane.query { border-left: 3px solid var(--c-accent); }
+    .lane-h { font: 700 11px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 9px; }
+    .lane.query .lane-h { color: var(--c-accent-bright); }
+    .lane.ingest .lane-h { color: var(--c-violet); }
+    .lane-steps { display: flex; align-items: center; gap: 7px; justify-content: center; }
+    .lstep { border: 1px solid var(--c-line); border-radius: 8px; padding: 7px 10px; font: 600 11px var(--c-mono); color: var(--c-fg); background: rgba(255, 255, 255, 0.03); text-align: center; }
+    .lstep small { display: block; color: var(--c-muted); font-weight: 400; font-size: 8.5px; margin-top: 1px; }
+    .lstep.llm { border-color: rgba(96, 220, 246, 0.6); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.07); }
+    .lstep.emb { border-color: rgba(164, 140, 255, 0.5); color: var(--c-violet); background: rgba(164, 140, 255, 0.07); }
+    .lstep.out { border-color: rgba(90, 209, 154, 0.5); color: var(--c-green); background: rgba(90, 209, 154, 0.07); }
+    .larrow { color: var(--c-muted); font-size: 13px; }
+    .flow-legend { display: flex; gap: 18px; justify-content: center; font-size: 10.5px; color: var(--c-muted); }
+    .flow-legend .lg { display: flex; align-items: center; gap: 6px; }
+    .flow-legend .sw { width: 11px; height: 11px; border-radius: 3px; }
+    .flow-legend .sw.llm { background: var(--c-accent); }
+    .flow-legend .sw.emb { background: var(--c-violet); }
+    .flow-legend .sw.out { background: var(--c-green); }
+
+    /* ========== Act 6: scales out (multi-agent + deep research) ========== */
+    .iqscale { width: 100%; display: flex; gap: 16px; align-items: stretch; }
+    .iqs-panel { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 13px; padding: 14px 17px; display: flex; flex-direction: column; gap: 11px; }
+    .iqs-panel.ma { border-top: 3px solid var(--c-accent); }
+    .iqs-panel.dr { border-top: 3px solid var(--c-violet); }
+    .iqs-h { font: 700 16px var(--c-sans); color: var(--c-fg); }
+    .iqs-h small { display: block; font-size: 11.5px; color: var(--c-muted); font-weight: 400; margin-top: 2px; }
+    .router { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .router .orch { font: 600 11px var(--c-mono); color: var(--c-accent-bright); border: 1px solid var(--c-accent); border-radius: 8px; padding: 6px 13px; background: rgba(96, 220, 246, 0.06); }
+    .router .down { color: var(--c-muted); font-size: 12px; }
+    .router .spec { display: flex; gap: 8px; }
+    .router .sp { font: 600 10px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 10px; text-align: center; background: rgba(255, 255, 255, 0.03); }
+    .router .sp small { display: block; color: var(--c-muted); font-size: 8px; margin-top: 2px; }
+    .drloop { display: flex; flex-direction: column; gap: 7px; align-items: center; font: 600 11px var(--c-mono); }
+    .drloop .dn { border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 12px; color: var(--c-fg); background: rgba(255, 255, 255, 0.03); text-align: center; }
+    .drloop .dn small { display: block; color: var(--c-muted); font-size: 8px; font-weight: 400; }
+    .drloop .dn.model { color: var(--c-violet); border-color: rgba(164, 140, 255, 0.5); background: rgba(164, 140, 255, 0.06); }
+    .drloop .cyc { color: var(--c-violet); font-size: 12px; }
+
+    /* ========== Act 7: data plane vs control plane ========== */
+    .cpwhat { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+    .plane-split { display: flex; gap: 14px; align-items: stretch; }
+    .plane { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 14px 17px; }
+    .plane.data { border-top: 3px solid var(--c-muted); }
+    .plane.ctrl { border-top: 3px solid var(--c-accent); background: rgba(96, 220, 246, 0.05); }
+    .plane .pn-k { font: 700 9.5px var(--c-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-muted); }
+    .plane .pn-h { font: 700 18px var(--c-sans); color: var(--c-fg); margin-top: 3px; }
+    .plane.ctrl .pn-h { color: var(--c-accent-bright); }
+    .plane .pn-d { font-size: 12.5px; color: var(--c-muted); margin-top: 5px; line-height: 1.35; }
+    .fails { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .fail { border: 1px solid rgba(255, 170, 60, 0.4); border-radius: 10px; background: rgba(255, 170, 60, 0.05); padding: 11px 14px; }
+    .fail .fl-t { font: 700 13.5px var(--c-sans); color: var(--c-amber-bright); }
+    .fail .fl-d { font-size: 11.5px; color: var(--c-muted); margin-top: 3px; line-height: 1.32; }
+
+    /* ========== Act 7: generic 3-card row (observability, security) ========== */
+    .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
+    .card3 { border: 1px solid var(--c-line); border-radius: 12px; padding: 15px 17px; border-top: 3px solid var(--c-accent); display: flex; flex-direction: column; gap: 8px; }
+    .card3.g { border-top-color: var(--c-green); }
+    .card3.v { border-top-color: var(--c-violet); }
+    .card3.p { border-top-color: var(--c-pink); }
+    .card3 .c3-t { font: 700 16px var(--c-sans); color: var(--c-fg); }
+    .card3 .c3-d { font-size: 12px; color: var(--c-muted); line-height: 1.35; }
+    .card3 ul { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+    .card3 li { font-size: 11.5px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
+    .card3 li::before { content: "\2022"; position: absolute; left: 2px; color: var(--c-accent); font-weight: 700; }
+
+    /* ========== Act 7: guardrail pipeline ========== */
+    .guard { display: flex; gap: 18px; width: 100%; align-items: stretch; }
+    .gpipe { flex: 0 0 44%; display: flex; flex-direction: column; align-items: center; gap: 5px; justify-content: center; }
+    .gp-node { width: 70%; text-align: center; border: 1px solid var(--c-line); border-radius: 9px; padding: 8px; font: 600 12px var(--c-mono); color: var(--c-fg); background: rgba(255, 255, 255, 0.03); }
+    .gp-gate { width: 92%; text-align: center; border: 1px solid var(--c-accent); border-radius: 9px; padding: 6px 10px; font: 600 10.5px var(--c-mono); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.07); }
+    .gp-gate small { color: var(--c-muted); font-weight: 400; display: block; font-size: 8.5px; }
+    .gp-gate.pv { border-color: rgba(255, 170, 60, 0.5); color: var(--c-amber-bright); background: rgba(255, 170, 60, 0.06); }
+    .gp-arr { color: var(--c-muted); font-size: 11px; }
+    .gctrls { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; }
+    .gctrls h4 { font: 700 13px var(--c-sans); color: var(--c-fg); margin: 0 0 6px; }
+
+    /* ========== Act 7: controls vs policies strip ========== */
+    .cvp { display: flex; gap: 14px; width: 100%; }
+    .cvp-card { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 11px; padding: 12px 16px; }
+    .cvp-card.ctrl { border-left: 3px solid var(--c-accent); }
+    .cvp-card.pol { border-left: 3px solid var(--c-pink); }
+    .cvp-card .cv-t { font: 700 14px var(--c-sans); color: var(--c-fg); }
+    .cvp-card .cv-t b { color: var(--c-accent-bright); }
+    .cvp-card.pol .cv-t b { color: var(--c-pink); }
+    .cvp-card .cv-d { font-size: 12px; color: var(--c-muted); margin-top: 4px; line-height: 1.35; }
+
+    /* ========== Act 7: red-team ASR (illustrative) ========== */
+    .asr { display: flex; gap: 18px; width: 100%; align-items: stretch; }
+    .asr-chart { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 18px; justify-content: center; }
+    .asr-title { font: 700 12px var(--c-mono); color: var(--c-fg); display: flex; justify-content: space-between; align-items: center; }
+    .asr-title .ill { font-size: 8.5px; color: var(--c-muted); border: 1px solid var(--c-line); border-radius: 99px; padding: 1px 8px; letter-spacing: 0.05em; }
+    .asr-bar .ab-l { font: 600 11px var(--c-mono); color: var(--c-muted); margin-bottom: 6px; }
+    .asr-bar .track { height: 24px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; overflow: hidden; }
+    .asr-bar .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font: 700 10px var(--c-mono); color: #04222b; }
+    .asr-bar.before .fill { background: var(--c-amber); width: 72%; }
+    .asr-bar.after .fill { background: var(--c-green); width: 14%; }
+    .asr-side { flex: 1 1 0; display: flex; flex-direction: column; gap: 10px; }
+    .asr-box { border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 14px; }
+    .asr-box h5 { font: 700 11px var(--c-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-accent-bright); margin: 0 0 6px; }
+    .asr-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .asr-chip { font: 600 10px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 6px; padding: 3px 8px; background: rgba(255, 255, 255, 0.03); }
+
+    /* ========== Act 7: fleet dashboard ========== */
+    .fleet { display: flex; gap: 16px; width: 100%; align-items: stretch; }
+    .fleet-todo { flex: 0 0 38%; border: 1px solid var(--c-line); border-radius: 12px; padding: 12px 15px; }
+    .fleet-todo h4 { font: 700 12px var(--c-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-amber-bright); margin: 0 0 9px; }
+    .todo { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; color: var(--c-fg); padding: 6px 0; border-bottom: 1px solid rgba(96, 220, 246, 0.07); line-height: 1.3; }
+    .todo:last-child { border-bottom: none; }
+    .todo .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex: 0 0 auto; }
+    .todo .dot.r { background: var(--c-amber); }
+    .todo .dot.b { background: var(--c-pink); }
+    .todo .dot.y { background: var(--c-accent); }
+    .fleet-assets { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 12px 15px; }
+    .fleet-assets h4 { font: 700 12px var(--c-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-bright); margin: 0 0 6px; }
+    .atbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 11px; }
+    .atbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; padding: 5px 8px; border-bottom: 1px solid var(--c-line); }
+    .atbl td { padding: 6px 8px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
+    .atbl td:first-child { color: var(--c-accent-bright); }
+    .atbl .src { color: var(--c-muted); }
+    .atbl .ok { color: var(--c-green); }
+    .atbl .blk { color: var(--c-amber-bright); }
+
+    /* ========== Act 7: provisioning quick-ref ========== */
+    .refgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
+    .refcard { border: 1px solid var(--c-line); border-radius: 12px; padding: 13px 16px; border-top: 3px solid var(--c-accent); }
+    .refcard h4 { font: 700 14px var(--c-sans); color: var(--c-fg); margin: 0 0 7px; }
+    .refcard .rc-row { font: 600 11.5px var(--c-mono); color: var(--c-muted); padding: 3px 0; }
+    .refcard .rc-row b { color: var(--c-fg); }
+    .refcard .rc-row .ac { color: var(--c-accent-bright); }
+
+    /* ========== Act 8: recap ========== */
+    .recap { display: flex; gap: 44px; width: 100%; }
+    .recap-col { flex: 1 1 0; }
+    .recap-col h4 { font: 700 13px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent-bright); margin: 0 0 14px; }
+    .recap-col.op h4 { color: var(--c-pink); }
+    .recap-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+    .recap-col li { font-size: 17px; color: var(--c-fg); padding-left: 28px; position: relative; line-height: 1.25; }
+    .recap-col li::before { content: "\2713"; position: absolute; left: 0; top: 1px; color: var(--c-accent); font-weight: 700; }
+    .recap-col.op li::before { color: var(--c-pink); }
+
+    /* ========== Act 8: closing resources ========== */
+    .reslist { display: flex; flex-direction: column; gap: 10px; }
+    .res { border: 1px solid var(--c-line); border-left: 3px solid var(--c-accent); border-radius: 9px; padding: 10px 14px; }
+    .res .r-t { font: 600 14px var(--c-sans); color: var(--c-fg); }
+    .res .r-u { font: 500 11.5px var(--c-mono); color: var(--c-accent-bright); margin-top: 2px; }
+
+    /* ======= APPEND COMPONENT CSS ABOVE THIS LINE ======= */
+  </style>
+</head>
+<body>
+  <div class="brandmark"><b>Microsoft Foundry</b></div>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- 0 - TITLE -->
+      <section class="title">
+        <div class="title-mark">Enterprise AI Upskilling</div>
+        <h1>Microsoft<br><span class="accent">Foundry</span></h1>
+        <p class="subtitle">One platform for enterprise AI: models, agents, tools, knowledge, and the control plane that governs them.</p>
+        <div class="title-foot"><span class="who">Jon-Paul Boyd</span> <span class="accent">&middot;</span> June 2026 <span class="accent">&middot;</span> corticalstack.ai</div>
+        <aside class="notes">
+          Welcome. Over the next two hours we go end to end on Microsoft Foundry: what it is, the portal, how you deploy and
+          call models, how you build agents, how you ground them with Foundry IQ, and how you govern a whole fleet from the
+          control plane. The product was called Azure AI Foundry until Microsoft dropped the "Azure" at Ignite in November
+          2025; the portal is still ai.azure.com. Mixed room today, so each section has a plain-language takeaway and a live
+          demo. Let us set expectations for who gets what first.
+        </aside>
+      </section>
+
+      <!-- 1 - ORIENTATION (audience + agenda) -->
+      <section class="content">
+        <div class="kicker"><span class="num">00</span> &middot; Orientation</div>
+        <h2>Something for everyone</h2>
+        <div class="canvas">
+          <div class="audience">
+            <div class="aud-card dev">
+              <span class="aud-tag">DEVELOPERS</span>
+              <span class="aud-role">Builders</span>
+              <ul>
+                <li>Choose and compare models: catalog, leaderboard, side by side</li>
+                <li>Prototype fast in model and agent playgrounds</li>
+                <li>Build agents with tools, MCP, memory, human in the loop, SDKs</li>
+                <li>Ground on Foundry IQ; evaluate, trace and fine-tune</li>
+              </ul>
+            </div>
+            <div class="aud-card it">
+              <span class="aud-tag">IT ADMINS</span>
+              <span class="aud-role">Platform owners</span>
+              <ul>
+                <li>One Foundry resource, many projects: 1:1 and 1:N patterns</li>
+                <li>Hub and spoke routing through an APIM gateway</li>
+                <li>RBAC roles, regions, quota and tokens-per-minute limits</li>
+                <li>Cost overview and tagging; provision with Bicep and Terraform</li>
+              </ul>
+            </div>
+            <div class="aud-card sec">
+              <span class="aud-tag">SECURITY</span>
+              <span class="aud-role">Risk &amp; compliance</span>
+              <ul>
+                <li>Guardrails: Prompt Shields, content filters, PII blocklists</li>
+                <li>Red teaming: AI Red Teaming Agent on PyRIT, attack success rate</li>
+                <li>Governance: Azure Policy deny rules on model deployments</li>
+                <li>Control plane: Entra Agent ID, Defender, Purview, continuous evals</li>
+              </ul>
+            </div>
+          </div>
+          <div class="arc">
+            <span class="arc-chip"><b>1</b> What it is</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>2</b> Portal</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>3</b> Deploy</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>4</b> Inference</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>5</b> Agents</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>6</b> Foundry IQ</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>7</b> Control plane</span><span class="arc-sep">&rsaquo;</span>
+            <span class="arc-chip"><b>8</b> Wrap</span>
+          </div>
+        </div>
+        <p class="takeaway">Build for business value outcomes, then <b>govern it at scale</b>.</p>
+        <aside class="notes">
+          Quick map of the room and the route. Developers: the portal, models, agents and Foundry IQ acts are yours. IT admins:
+          deployment pattern and provisioning. Security: guardrails, red teaming and the control plane. The arc along the bottom
+          is the running order. We will not go deep on every line of code; the point is the shape of the platform and where each
+          of you plugs in.
+        </aside>
+      </section>
+
+      <!-- 2 - WHAT IS MICROSOFT FOUNDRY (overview map) -->
+      <section class="content">
+        <div class="kicker"><span class="num">01</span> &middot; What it is</div>
+        <h2>One platform</h2>
+        <div class="canvas">
+          <div class="ovw">
+            <div class="ovw-frame">
+              <span class="ovw-brand">&#9670; Microsoft Foundry</span>
+              <div class="ovw-row">
+                <div class="obox obs">
+                  <h4>Observability</h4>
+                  <span>Tracing &middot; Monitoring</span>
+                  <span>Evaluation &middot; Experimentation</span>
+                </div>
+                <div class="obox dev">
+                  <h4>Frameworks &amp; SDKs</h4>
+                  <div class="svc-grid">
+                    <span>Foundry SDK</span><span>Agent Framework</span>
+                    <span>LangGraph</span><span>LangChain</span>
+                    <span>LlamaIndex</span><span>CrewAI</span>
+                    <span style="grid-column: span 2;">GitHub Copilot SDK</span>
+                  </div>
+                </div>
+              </div>
+              <div class="obox svc">
+                <h4>Foundry Agent Service <span style="font-weight:400;color:var(--c-muted);font-size:11px;">the runtime</span></h4>
+                <div class="svc-grid">
+                  <span>Managed orchestration</span><span>Conversations + state</span>
+                  <span>Network isolation</span><span>OBO auth</span>
+                </div>
+              </div>
+              <div class="ovw-row">
+                <div class="obox models">
+                  <h4>Models</h4>
+                  <span>Microsoft &amp; partners</span>
+                  <span>Fine-tuned</span>
+                  <span>Bring your own</span>
+                </div>
+                <div class="obox kt">
+                  <h4>Knowledge &amp; Tools</h4>
+                  <div class="svc-grid">
+                    <span>Azure AI Search</span><span>Bing</span>
+                    <span>SharePoint</span><span>Fabric</span>
+                    <span>Functions</span><span>Logic Apps</span>
+                    <span>OpenAPI</span><span>MCP</span>
+                  </div>
+                </div>
+                <div class="obox integ">
+                  <h4>Agent integrations</h4>
+                  <div class="svc-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <span>Foundry SDK</span><span>REST</span>
+                    <span>Responses API</span><span>A2A protocol</span>
+                  </div>
+                </div>
+              </div>
+              <div class="obox base">
+                <h4>Guardrails, security &amp; governance</h4>
+                <div class="svc-grid">
+                  <span>Prompt Shields</span><span>Content filters</span>
+                  <span>PII detection</span><span>Custom blocklists</span>
+                  <span>Protected material</span><span>Policy &amp; compliance</span>
+                  <span>Cost management</span><span>Entra &middot; Defender &middot; Purview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="caps">
+            <div class="capgrp build"><span class="capk">BUILD</span> Multi-agent &middot; 1,400+ tools &middot; Agent memory &middot; Foundry IQ</div>
+            <div class="capgrp operate"><span class="capk">OPERATE</span> Observability &middot; Agent 365 identity &middot; Fleet ops</div>
+          </div>
+        </div>
+        <p class="takeaway">Unified breadth: <b>build</b> with agents, tools, memory and knowledge, then <b>operate</b> them with identity, observability and fleet governance, all behind <b>one resource</b>.</p>
+        <aside class="notes">
+          This is the whole platform on one slide, and it is a faithful redraw of Microsoft's own architecture diagram with
+          two corrections baked in. Foundry unifies three jobs, running AI in production, building models, and building apps,
+          under a single Azure resource-provider namespace, so RBAC, networking and policy are shared rather than stitched
+          together. Reading the stack: observability and your choice of framework on top; the Foundry Agent Service runtime in
+          the middle; models, knowledge and tools, and integration protocols beneath; guardrails, security and governance as
+          the base. Two corrections from the original Microsoft slide: the integration surface is the Responses API now, not
+          the Assistants API, which is retiring, and Semantic Kernel plus AutoGen have merged into the Microsoft Agent
+          Framework. The ribbon under the diagram is the why-it-matters: the headline capabilities split into build
+          (multi-agent orchestration, a catalogue of over fourteen hundred tools and agent memory, both in preview, and
+          Foundry IQ for grounded knowledge) and operate (real-time observability, an Agent 365 Entra identity per agent,
+          and fleet governance in the Operate hub). The deck follows that shape: build first, then govern. We unpack each
+          layer over the next two hours.
+        </aside>
+      </section>
+
+      <!-- 5 - PORTAL HOME -->
+      <section class="content">
+        <div class="kicker"><span class="num">04</span> &middot; Portal</div>
+        <h2>The portal is organised around jobs to be done</h2>
+        <div class="canvas">
+          <div class="portal">
+            <div class="pf-bar">
+              <span class="pf-brand"><span class="logo">&#9670;</span> Microsoft Foundry</span>
+              <span class="pf-crumb">/ proj-foundry-core</span>
+              <span class="pf-search">Search with AI (Ctrl + K)</span>
+              <span class="pf-toggle">New Foundry <span class="sw"></span></span>
+              <span class="pf-tabs">
+                <span class="pf-tab active">Home</span><span class="pf-tab">Discover</span><span class="pf-tab">Build</span><span class="pf-tab">Operate</span><span class="pf-tab">Docs</span>
+              </span>
+              <span class="pf-icons">&#9788; &#9993; &#9737;</span>
+            </div>
+            <div class="pf-body">
+              <div class="pf-home">
+                <div class="pf-welcome">Welcome back</div>
+                <span class="pf-startbtn">Start building &rsaquo;</span>
+                <div class="pf-meta">
+                  <span class="m">Project endpoint <b>proj-foundry-core.services.ai.azure.com</b></span>
+                  <span class="m">Region <b>Sweden Central</b></span>
+                  <span class="m">API key auth <b>disabled</b></span>
+                </div>
+              </div>
+              <div class="tabmap">
+                <div class="tabmap-card"><span class="tm-t">Home</span><span class="tm-d">Land, resume recent work, quick start.</span></div>
+                <div class="tabmap-card"><span class="tm-t">Discover</span><span class="tm-d">Netflix-style catalog of models and tools.</span></div>
+                <div class="tabmap-card"><span class="tm-t">Build</span><span class="tm-d">Create agents, apps and workflows.</span></div>
+                <div class="tabmap-card"><span class="tm-t">Operate</span><span class="tm-d">Admin and fleet view across projects.</span></div>
+                <div class="tabmap-card"><span class="tm-t">Docs</span><span class="tm-d">Documentation, in context, never leave.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Flip on <b>New Foundry</b> at ai.azure.com and you get five tabs by job. Everything sits inside a <b>Foundry resource</b> (a subscription + resource group: the billing and governance boundary).</p>
+        <aside class="notes">
+          Sign in at ai.azure.com and toggle on New Foundry. The portal is deliberately organised around jobs to be done,
+          not Azure resource types. Home is your landing and recent work. Discover is the catalog. Build is where developers
+          create agents, apps and workflows. Operate is the admin and fleet view across subscriptions and projects, that is
+          the control plane we deep-dive later. Docs is integrated so you stay in context. Top left is the current project,
+          click to switch; the search bar is backed by Ask AI, which is itself several agents. The one structural thing to
+          remember: a project always lives inside a Foundry resource, provisioned into a subscription and resource group,
+          which is the billing, management and governance boundary. Note the new portal only shows assets created in the new
+          experience, not classic ones.
+        </aside>
+      </section>
+
+      <!-- 6 - PORTAL DISCOVER -->
+      <section class="content">
+        <div class="kicker"><span class="num">05</span> &middot; Discover</div>
+        <h2>A model catalog you can compare, then deploy</h2>
+        <div class="canvas">
+          <div class="portal">
+            <div class="pf-bar">
+              <span class="pf-brand"><span class="logo">&#9670;</span> Microsoft Foundry</span>
+              <span class="pf-crumb">/ proj-foundry-core</span>
+              <span class="pf-search">Search with AI (Ctrl + K)</span>
+              <span class="pf-toggle">New Foundry <span class="sw"></span></span>
+              <span class="pf-tabs">
+                <span class="pf-tab">Home</span><span class="pf-tab active">Discover</span><span class="pf-tab">Build</span><span class="pf-tab">Operate</span><span class="pf-tab">Docs</span>
+              </span>
+              <span class="pf-icons">&#9788; &#9993; &#9737;</span>
+            </div>
+            <div class="pf-body">
+              <div class="disc-head"><span class="dh-t">Discover what's possible</span><span class="dh-s">1,900+ models &middot; explore by provider, collection, leaderboard</span></div>
+              <div class="disc-providers">
+                <span class="p">Azure OpenAI</span><span class="p">Anthropic</span><span class="p">Microsoft</span><span class="p">Meta</span><span class="p">Mistral AI</span><span class="p">xAI</span><span class="p">DeepSeek</span>
+              </div>
+              <table class="lb">
+                <thead><tr><th>Model leaderboard</th><th>Quality</th><th>Safety</th><th>Throughput</th><th>Est. cost</th></tr></thead>
+                <tbody>
+                  <tr><td>gpt-5.2-codex <span class="win">&#9733;</span></td><td>0.93</td><td>0.18%</td><td>32 t/s</td><td>$4.81</td></tr>
+                  <tr><td>gpt-5.2</td><td>0.93</td><td>1.87%</td><td>60 t/s</td><td>$4.81</td></tr>
+                  <tr><td>claude-opus-4-6</td><td>0.93</td><td>2.41%</td><td>43 t/s</td><td>$10.00</td></tr>
+                  <tr><td>claude-sonnet-4-6</td><td>0.92</td><td>2.19%</td><td>61 t/s</td><td>$6.00</td></tr>
+                  <tr><td>grok-4</td><td>0.91</td><td>1.41%</td><td>48 t/s</td><td>$5.20</td></tr>
+                </tbody>
+              </table>
+              <div class="disc-tools"><b>Tools view:</b> Foundry Tools catalog: remote &amp; local MCP servers, OpenAPI and A2A. Configure once, add to any agent or workflow.</div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Optimise the choice across <b>quality, safety, throughput and cost</b>, compare models side by side, then <b>quick-deploy (global standard)</b> straight from the card.</p>
+        <aside class="notes">
+          Discover is a Netflix-style catalog of models and tools, over nineteen hundred models. You browse by provider and
+          by collection (Direct from Azure, Foundry Labs, Foundry Local), open a model card, and crucially you can rank the
+          leaderboard by quality, safety, throughput or cost, then multi-select and compare models side by side before you
+          commit. From a card you quick-deploy at global standard with one click. The Tools view is the other half: the
+          Foundry Tools catalog, where you discover remote and local MCP servers, OpenAPI tools and A2A endpoints, configure
+          them once, and attach them to any agent. The leaderboard numbers shown are a snapshot from the portal. We will deploy
+          one of these for real in the demo.
+        </aside>
+      </section>
+
+      <!-- 7 - LIVE DEMO: DISCOVER -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Compare and deploy from the catalog</h2>
+        <p class="demo-sub"><a href="https://ai.azure.com/nextgen/r/Alq6lAxKRD2IJkZkd-KFDw,rg-foundry-core-c2676f,,aif-core-c2676f,project-admin-c2676f/discover/overview" target="_blank" rel="noopener">Discover</a> &rarr; leaderboard &rarr; compare &rarr; quick-deploy, then the Foundry Tools / MCP catalog.</p>
+        <div class="demo-where">in the portal &middot; <b>ai.azure.com</b> &rarr; Discover</div>
+        <aside class="notes">
+          Live in the portal: open Discover, sort the leaderboard by quality then by cost to show the trade-off, multi-select
+          two models and hit Compare to see them side by side, then open a card and quick-deploy at global standard. Finish in
+          the Tools view filtering the MCP catalog by publisher and supported authentication. This sets up the deployment
+          pattern and inference acts that follow.
+        </aside>
+      </section>
+
+      <!-- 8 - PORTAL BUILD -->
+      <section class="content">
+        <div class="kicker"><span class="num">06</span> &middot; Build</div>
+        <h2>Where developers create and manage every asset</h2>
+        <div class="canvas">
+          <div class="portal">
+            <div class="pf-bar">
+              <span class="pf-brand"><span class="logo">&#9670;</span> Microsoft Foundry</span>
+              <span class="pf-crumb">/ project-admin-c2676f</span>
+              <span class="pf-search">Search with AI (Ctrl + K)</span>
+              <span class="pf-toggle">New Foundry <span class="sw"></span></span>
+              <span class="pf-tabs">
+                <span class="pf-tab">Home</span><span class="pf-tab">Discover</span><span class="pf-tab active">Build</span><span class="pf-tab">Operate</span><span class="pf-tab">Docs</span>
+              </span>
+              <span class="pf-icons">&#9788; &#9993; &#9737;</span>
+            </div>
+            <div class="pf-body">
+              <div class="build-wrap">
+                <div class="build-nav">
+                  <span class="n active">Agents</span>
+                  <span class="n">Deployments</span>
+                  <span class="n">Fine-tune</span>
+                  <span class="n">Tools</span>
+                  <span class="n">Knowledge</span>
+                  <span class="n">Data</span>
+                  <span class="n">Evaluations</span>
+                  <span class="n">Guardrails</span>
+                </div>
+                <div class="build-main">
+                  <div class="build-note"><b>New Foundry supports V2 agents only.</b> Classic agents and the Assistants API are not carried over: save them as new agents.</div>
+                  <div class="build-actions">
+                    <span class="build-btn ghost">Browse templates</span>
+                    <span class="build-btn ghost">Code agent</span>
+                    <span class="build-btn primary">Create agent</span>
+                  </div>
+                  <table class="agtbl">
+                    <thead><tr><th>Name</th><th>Version</th><th>Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                      <tr><td>contoso-bank-agent</td><td class="ver">1</td><td>prompt</td><td>Customer-service agent</td></tr>
+                      <tr><td>contoso-pmo-agent</td><td class="ver">1</td><td>prompt</td><td>PMO knowledge-base agent</td></tr>
+                      <tr><td>aria-rm-briefing-agent</td><td class="ver">1</td><td>prompt</td><td>Private-banking RM briefing</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Build is where developers manage <b>every asset</b> they deploy or create: models, agents, tools, knowledge, fine-tunes, evaluations and guardrails, and it is the home of the <b>playgrounds</b>.</p>
+        <aside class="notes">
+          Build is where developers create and manage every asset. Everything you deploy or create shows up here: deployed models, agents,
+          workflows, fine-tuned models, tools, knowledge bases, evaluations and guardrails, all the building blocks of an
+          agent in one place. It is also where the playgrounds live and where the agent builder runs. One important note
+          banner: the new Foundry experience supports V2 agents only; classic agents and the legacy Assistants API are not
+          carried over, you save them as new agents. The agents listed here are the ones we use later in the deck: a bank
+          customer-service agent, a PMO knowledge agent and a private-banking briefing agent.
+        </aside>
+      </section>
+
+      <!-- 9 - PORTAL OPERATE (teaser) -->
+      <section class="content">
+        <div class="kicker"><span class="num">07</span> &middot; Operate</div>
+        <h2>And one tab to govern it all</h2>
+        <div class="canvas">
+          <div class="portal">
+            <div class="pf-bar">
+              <span class="pf-brand"><span class="logo">&#9670;</span> Microsoft Foundry</span>
+              <span class="pf-crumb">/ fleet</span>
+              <span class="pf-search">Search with AI (Ctrl + K)</span>
+              <span class="pf-toggle">New Foundry <span class="sw"></span></span>
+              <span class="pf-tabs">
+                <span class="pf-tab">Home</span><span class="pf-tab">Discover</span><span class="pf-tab">Build</span><span class="pf-tab active">Operate</span><span class="pf-tab">Docs</span>
+              </span>
+              <span class="pf-icons">&#9788; &#9993; &#9737;</span>
+            </div>
+            <div class="pf-body">
+              <div class="pillars">
+                <div class="pillar ctrl"><span class="pl-n">PILLAR 1</span><span class="pl-t">Controls</span><span class="pl-d">Runtime guardrails on inputs, outputs and tool calls.</span></div>
+                <div class="pillar obs"><span class="pl-n">PILLAR 2</span><span class="pl-t">Observability</span><span class="pl-d">Tracing, continuous evaluation, cost.</span></div>
+                <div class="pillar sec"><span class="pl-n">PILLAR 3</span><span class="pl-t">Security</span><span class="pl-d">Entra Agent ID, Defender, Purview.</span></div>
+                <div class="pillar flt"><span class="pl-n">PILLAR 4</span><span class="pl-t">Fleet ops</span><span class="pl-d">One view across every project and cloud.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Operate is the <b>Foundry Control</b> to see, govern and act on every agent across the fleet.</p>
+        <aside class="notes">
+          The fifth tab, Operate, is the Foundry Control Plane, currently in public preview. This is where you stop thinking
+          about one agent and start thinking about a fleet: controls, observability, security and fleet-wide operations, the
+          four pillars on screen. We are only teasing it here so the shape is in your head; act seven is a full deep dive with
+          live demos for each pillar, including red teaming. For now, just notice that build and operate live in the same
+          portal, so a developer can jump from an alert straight into fixing the agent.
+        </aside>
+      </section>
+
+      <!-- 10 - RESOURCE MODEL -->
+      <section class="content">
+        <div class="kicker"><span class="num">08</span> &middot; Pattern</div>
+        <h2>One resource, many projects, two ways to slice it</h2>
+        <div class="canvas">
+          <div class="resmodel">
+            <div class="hier">
+              <span class="h">Subscription</span><span class="ha">&rsaquo;</span>
+              <span class="h">Resource group</span><span class="ha">&rsaquo;</span>
+              <span class="h foundry">Foundry resource</span><span class="ha">&rsaquo;</span>
+              <span class="h proj">Project(s)</span>
+            </div>
+            <div class="twocol">
+              <div class="rm-panel one">
+                <div class="rm-h">1 : 1 &middot; dedicated <small>one account, one team: a hard infrastructure boundary</small></div>
+                <div class="acct">
+                  <div class="acct-label">&#9670; aif-spoke-alpha</div>
+                  <div class="projrow"><span class="proj">project-alpha</span></div>
+                </div>
+                <div class="rm-note">For <b>strict compliance or cost isolation</b>, and to separate dev / test / prod.</div>
+              </div>
+              <div class="rm-panel many">
+                <div class="rm-h">1 : N &middot; shared <small>one account, many isolated project workspaces</small></div>
+                <div class="acct">
+                  <div class="acct-label">&#9670; aif-spoke-multi</div>
+                  <div class="projrow">
+                    <span class="proj">project-beta</span><span class="proj">project-delta</span><span class="proj">project-gamma</span>
+                    <span class="proj cap">iq</span><span class="proj cap">obs</span><span class="proj cap">cu</span>
+                  </div>
+                </div>
+                <div class="rm-note">For teams on the <b>same cost centre</b>: cost-efficient, shared RBAC, per-project isolation.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">The Foundry <b>resource</b> is the billing, networking and quota boundary; the <b>project</b> is the isolated workspace (its own agents, data and connections). New capabilities slot in as <b>new projects</b>, not new accounts.</p>
+        <aside class="notes">
+          The new resource model is two levels: a single Foundry resource, the account, contains one or more projects. The
+          resource is the boundary for billing, networking, Azure Policy and model-deployment quota; the project is the
+          isolated workspace, with its own agents, data and connections. So the first design decision is how you map teams to
+          resources. One to one gives each team its own account, a hard infrastructure boundary, which you want for strict
+          compliance or cost isolation and for separating dev, test and prod. One to many puts several teams as separate
+          projects under one shared account, which is cost-efficient and the right default for teams on the same cost centre.
+          The payoff, which the whole repo demonstrates, is that you absorb new capabilities, Foundry IQ, observability,
+          content understanding, by adding projects to the shared account rather than spinning up new accounts.
+        </aside>
+      </section>
+
+      <!-- 11 - HUB AND SPOKE ARCHITECTURE -->
+      <section class="content">
+        <div class="kicker"><span class="num">09</span> &middot; Architecture</div>
+        <h2>Centralise inference behind one AI gateway</h2>
+        <div class="canvas">
+          <div class="arch">
+            <div class="arch-label">Models live only in the 'hub' Foundry accounts*</div>
+            <div class="arch-hubs">
+              <div class="hub">
+                <div class="hb-n">&#9670; aif-core</div>
+                <div class="hb-r">East US 2 &middot; general</div>
+                <div class="hb-m"><span class="m">gpt-4.1-mini</span><span class="m">embeddings</span></div>
+              </div>
+              <div class="hub">
+                <div class="hb-n">&#9670; aif-research</div>
+                <div class="hb-r">Norway East &middot; reasoning</div>
+                <div class="hb-m"><span class="m">o3-deep-research</span></div>
+              </div>
+              <div class="hub">
+                <div class="hb-n">&#9670; aif-oss</div>
+                <div class="hb-r">West US 3 &middot; open-weights</div>
+                <div class="hb-m"><span class="m">Phi-4</span></div>
+              </div>
+            </div>
+            <div class="arch-arrow"><span class="ar">&uarr;</span> managed identity &middot; routed by URL (most specific wins)</div>
+            <div class="apim">
+              <div class="ap-n">&#8649; APIM gateway &middot; apim-foundry</div>
+              <div class="ap-d">swaps client key &rarr; managed-identity token &middot; per-team rate limits &amp; quota &middot; routes by URL to hubs</div>
+            </div>
+            <div class="arch-arrow"><span class="ar">&uarr;</span> each project: its own connection <b>core-{team}</b> + gateway key</div>
+            <div class="arch-spokes">
+              <div class="spoke one">
+                <div class="sp-h">Spoke 1 : 1 <span class="badge">no models &middot; deny policy</span></div>
+                <div class="sp-acct">&#9670; aif-spoke-alpha</div>
+                <div class="projrow"><span class="proj">project-alpha</span></div>
+                <div class="sp-conn">reaches models via the <b>core-alpha</b> connection</div>
+              </div>
+              <div class="spoke many">
+                <div class="sp-h">Spoke 1 : N <span class="badge">no models &middot; deny policy</span></div>
+                <div class="sp-acct">&#9670; aif-spoke-multi</div>
+                <div class="projrow"><span class="proj">beta</span><span class="proj">delta</span><span class="proj">gamma</span><span class="proj">iq</span><span class="proj">obs</span><span class="proj">cu</span></div>
+                <div class="sp-conn">each project: own key, own quota</div>
+              </div>
+            </div>
+            <div class="arch-foot">* 'Hub' here means the central model-hosting Foundry accounts in this topology, not the legacy Foundry v1 'hub' resource type.</div>
+          </div>
+        </div>
+        <p class="takeaway">One Azure API Management gateway fronts every model. Spokes hold <b>zero deployments</b>: they call the hub through a per-team key, so cost, content filters and observability stay <b>unified</b>.</p>
+        <aside class="notes">
+          This is the reference architecture for running Foundry at scale: a centralised AI gateway. One Azure API Management
+          instance is the single entry point for all model traffic, and it routes by URL to the right regional hub account,
+          general-purpose in East US 2, a reasoning model in Norway East, open-weights in West US 3. The crucial rule: model
+          deployments live only in the hubs. Every spoke, whether a one-to-one dedicated account or the shared one-to-many
+          account, holds zero local deployments and reaches models only through the gateway, using its own APIM subscription
+          key for independent rate limiting and usage tracking. The gateway also swaps the client key for a managed-identity
+          token, so the hub accounts have key auth disabled and only the gateway can call them. Net effect: one place for cost,
+          content filtering, quota and observability, instead of fragmentation across teams.
+        </aside>
+      </section>
+
+      <!-- 12 - DENY POLICY -->
+      <section class="content">
+        <div class="kicker"><span class="num">10</span> &middot; Governance</div>
+        <h2>Make the pattern impossible to break</h2>
+        <div class="canvas">
+          <div class="policy">
+            <div class="pcode">
+<pre><code data-trim data-noescape class="language-json">// Azure Policy: deny-model-deployments
+{
+  "if": {
+    "field": "type",
+    "equals": "Microsoft.CognitiveServices/accounts/deployments"
+  },
+  "then": { "effect": "deny" }
+}</code></pre>
+            </div>
+            <div class="pside">
+              <div class="scope">
+                <div class="scope-row"><span class="rg">rg-foundry-core</span><span class="st exempt">EXEMPT</span></div>
+                <div class="scope-row"><span class="rg">rg-foundry-spoke-alpha</span><span class="st deny">DENIED</span></div>
+                <div class="scope-row"><span class="rg">rg-foundry-multi</span><span class="st deny">DENIED</span></div>
+              </div>
+              <div class="policy-err">Deploy a model into a spoke and Azure returns<br><b>RequestDisallowedByPolicy</b>. Spokes can still <b>use</b> models through the gateway, just never deploy their own.</div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">A one-rule Azure Policy denies <b>Microsoft.CognitiveServices/accounts/deployments</b> in spoke resource groups. The hub stays exempt, so the architecture cannot drift.</p>
+        <aside class="notes">
+          Architecture diagrams do not enforce themselves, so this is the governance that does. A custom Azure Policy,
+          deny-model-deployments, blocks the creation of any deployment resource in the spoke resource groups; the hub
+          resource group is exempt because that is where the platform team deploys the shared models. The rule is genuinely
+          this small: if the resource type is a Cognitive Services account deployment, deny. Try to deploy a model into a
+          spoke and you get RequestDisallowedByPolicy. Spokes can still use the models through the gateway, they just cannot
+          deploy their own, which is exactly what keeps cost, content filters and observability from fragmenting. This is the
+          kind of guardrail an IT or platform team sets once at the management-group or subscription level.
+        </aside>
+      </section>
+
+      <!-- 13 - DEPLOY A MODEL -->
+      <section class="content">
+        <div class="kicker"><span class="num">11</span> &middot; Deploy</div>
+        <h2>Deploying a model: pick a type, get an endpoint</h2>
+        <div class="canvas">
+          <div class="dep">
+            <div class="dep-types">
+              <div class="dep-card std">
+                <div class="dc-t">Standard <small>pay per token</small></div>
+                <ul>
+                  <li>Elastic, no commitment, billed per token</li>
+                  <li>The default: <b>global standard</b>, one click</li>
+                  <li>Best for spiky or early workloads</li>
+                </ul>
+              </div>
+              <div class="dep-card ptu">
+                <div class="dc-t">Provisioned / PTU <small>reserved capacity</small></div>
+                <ul>
+                  <li>Predictable latency and throughput</li>
+                  <li>One PTU pool can be <b>shared</b> across different provisioned models</li>
+                  <li>Best for steady, latency-sensitive production</li>
+                </ul>
+              </div>
+            </div>
+            <div class="dep-scope">
+              <div class="dep-chip"><div class="ds-t">Global</div><div class="ds-d">max throughput, data may leave region</div></div>
+              <div class="dep-chip"><div class="ds-t">Data Zone</div><div class="ds-d">stays within a geography (EU / US)</div></div>
+              <div class="dep-chip"><div class="ds-t">Regional</div><div class="ds-d">pinned to one region for residency</div></div>
+            </div>
+            <div class="dep-note"><b>Defaults vs custom:</b> accept global standard + default quota, or customise SKU, quota (TPM) and guardrails. Partner models (Llama, Claude) need an <b>Azure Marketplace</b> subscription; models sold directly by Azure do not.</div>
+          </div>
+        </div>
+        <p class="takeaway">A deployment is a <b>model + a deployment type</b>. The type sets the cost model (per-token vs reserved) and the data-residency and throughput guarantees; quota is tracked per region and subscription, as <b>TPM</b> (standard) or <b>PTU</b> (provisioned).</p>
+        <aside class="notes">
+          Deploying a model is choosing the model plus a deployment type, and the type is the decision that matters. Standard
+          is pay-per-token and elastic, the default being global standard with one click, ideal for spiky or early workloads.
+          Provisioned, or PTU, is reserved capacity for predictable latency and throughput, and PTU is fungible, you can move
+          that capacity across provisioned deployments. Orthogonal to that is scope: global maximises throughput but data may
+          leave the region; data-zone keeps it within a geography like the EU; regional pins it to one region for residency.
+          You can take defaults or customise the SKU, quota and guardrails. Two gotchas for admins: quota is tracked as tokens
+          per minute per region and subscription, and partner models such as Llama or Claude require an Azure Marketplace
+          subscription, whereas models sold directly by Azure do not.
+        </aside>
+      </section>
+
+      <!-- 14 - THREE DEPLOYMENT TABS -->
+      <section class="content">
+        <div class="kicker"><span class="num">12</span> &middot; Test</div>
+        <h2>Try it, then watch it: three tabs per deployment</h2>
+        <div class="canvas">
+          <div class="dpl">
+            <div class="dpl-bar">
+              <span class="dpl-name">&#9670; gpt-4.1-mini</span>
+              <span class="dpl-tabs"><span class="dpl-tab active">Playground</span><span class="dpl-tab">Details</span><span class="dpl-tab">Monitor</span><span class="dpl-tab">Evaluation</span></span>
+              <span class="dpl-act">Save as agent</span>
+            </div>
+            <div class="dpl-body">
+              <div class="dpl-cfg">
+                <div class="cfg-card"><div class="cc-h">Instructions</div><div class="cc-d">You are an AI assistant that helps people find information.</div></div>
+                <div class="cfg-card hot"><div class="cc-h">Tools</div><div class="cc-d">Ground the model in live data.</div><span class="tool">&#9737; Web search</span></div>
+                <div class="cfg-card"><div class="cc-h">Knowledge <span class="pv">PREVIEW</span></div><div class="cc-d">Attach a Foundry IQ knowledge base.</div></div>
+                <div class="cfg-card"><div class="cc-h">Memory <span class="pv">PREVIEW</span></div><div class="cc-d">Recall across sessions.</div></div>
+              </div>
+              <div class="dpl-chat">
+                <div class="msg u">Use web search to summarise today's AI headlines.</div>
+                <div class="msg a">Here are today's top items, grounded on live results, with sources cited inline. <span class="cite">[1] [2] [3]</span></div>
+                <div class="msg u">Now chart deployments by region.</div>
+                <div class="msg a">Generated a bar chart via code interpreter and attached it.</div>
+              </div>
+            </div>
+          </div>
+          <div class="dpl-tabsinfo">
+            <div class="tabinfo"><div class="ti-t">Details</div><div class="ti-d">Target URI, API key (if enabled), provisioning state, and TPM / RPM rate limits.</div></div>
+            <div class="tabinfo"><div class="ti-t">Monitor</div><div class="ti-d">Requests, input / output tokens, estimated cost, and time to first byte, by time window.</div></div>
+          </div>
+        </div>
+        <p class="takeaway">The <b>Playground</b> is where you set the system prompt and attach tools (web search, code interpreter); <b>Details</b> gives you the endpoint and limits; <b>Monitor</b> shows tokens, cost and latency.</p>
+        <aside class="notes">
+          Every deployment has the same three working tabs. Playground is where you try it: set the system prompt, adjust
+          temperature and max tokens, and attach tools to extend the model, web search for grounding in live data, a code
+          interpreter for things like charting an Excel file, or SharePoint retrieval. Details is the integration tab: the
+          target URI, the API key if you have enabled key auth, provisioning state, and the TPM and RPM rate limits. Monitor
+          is the operations tab: total requests, input and output token counts, estimated cost, and time to first byte over a
+          time window, and you can ask AI canned questions over those metrics. So one screen takes you from trying a model to
+          running it in production.
+        </aside>
+      </section>
+
+      <!-- 15 - INFERENCE PATHS -->
+      <section class="content">
+        <div class="kicker"><span class="num">13</span> &middot; Inference</div>
+        <h2>Two clients, one Responses API</h2>
+        <div class="canvas">
+          <div class="codecompare">
+            <div>
+              <span class="cc-label">Direct OpenAI-compatible client</span>
+<pre><code data-trim data-noescape class="language-python">token = get_bearer_token_provider(
+    DefaultAzureCredential(),
+    "https://ai.azure.com/.default")
+
+client = OpenAI(base_url=f"{gateway}/openai/v1/",
+                api_key=token)         # keyless
+client.responses.create(
+    model="gpt-4.1-mini", input="Hello")</code></pre>
+            </div>
+            <div>
+              <span class="cc-label a">Foundry project client</span>
+<pre><code data-trim data-noescape class="language-python">project = AIProjectClient(endpoint=PROJECT_EP,
+    credential=DefaultAzureCredential())
+client = project.get_openai_client()
+
+r = client.responses.create(
+    model="gpt-4.1-mini", input="Hello")
+client.responses.create(model="gpt-4.1-mini",
+    input="and again",
+    previous_response_id=r.id)   # server-side state</code></pre>
+            </div>
+          </div>
+          <div class="surfaces">
+            <span class="surf">Chat completions</span>
+            <span class="surf">Embeddings</span>
+            <span class="surf">Responses API</span>
+            <span class="surf">Streaming</span>
+            <span class="surf">Model router</span>
+            <span class="surf">Deep research</span>
+          </div>
+        </div>
+        <p class="takeaway">Call models keyless with <b>DefaultAzureCredential</b> over the gateway, or through the <b>Foundry project client</b> for connections and tracing. Multi-turn is server-side via <b>previous_response_id</b>.</p>
+        <aside class="notes">
+          Once models live in the hub, how do teams call them? Two clients, same surface. On the left, the direct
+          OpenAI-compatible client: get a bearer token from DefaultAzureCredential scoped to ai.azure.com, point the base URL
+          at the gateway's v1 route, and call responses.create, no API keys anywhere. On the right, the Foundry project
+          client: AIProjectClient gives you connections, project properties and tracing, and get_openai_client hands you the
+          same OpenAI surface. Either way you get the Responses API, and multi-turn is server-side, you pass
+          previous_response_id rather than resending history. The same gateway also fronts chat completions, embeddings,
+          streaming, the server-side model router, and the deep-research model. Keyless auth via managed identity is the
+          enterprise default.
+        </aside>
+      </section>
+
+      <!-- 16 - LIVE DEMO: INFERENCE -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Call the gateway, both ways</h2>
+        <p class="demo-sub">Direct client vs project client, across chat, embeddings, streaming and the Responses API.</p>
+        <div class="demo-steps">
+          <div class="demo-step"><span class="n">1</span> Call <b>chat completions</b> with the direct OpenAI client (keyless)</div>
+          <div class="demo-step"><span class="n">2</span> Switch to the <b>Foundry project client</b> and run the <b>Responses API</b></div>
+          <div class="demo-step"><span class="n">3</span> Show <b>streaming</b> tokens and a <b>multi-turn</b> follow-up via previous_response_id</div>
+          <div class="demo-step"><span class="n">4</span> Hit the <b>model router</b> and the deep-research model, routed by APIM</div>
+        </div>
+        <div class="demo-where">notebook &middot; <b>07-01 models-inference-examples</b></div>
+        <aside class="notes">
+          Live: run the inference notebook. Call chat completions with the direct client to prove keyless auth, switch to the
+          project client and run the Responses API, show streaming and a multi-turn follow-up using previous_response_id, then
+          hit the model router and the deep-research model to show APIM routing requests to the right regional hub. The point:
+          one gateway, many surfaces, no keys.
+        </aside>
+      </section>
+
+      <!-- 17 - MODELS EVOLVE: MIGRATION -->
+      <section class="content">
+        <div class="kicker"><span class="num">14</span> &middot; Migrate</div>
+        <h2>When the model class changes under you</h2>
+        <div class="canvas">
+          <div class="gotchas">
+            <div class="gcard"><div class="gc-s">Rejected parameters</div><div class="gc-f">temperature and top_p get an <b>HTTP 400</b>. Drop them; steer with <b>reasoning_effort</b>.</div></div>
+            <div class="gcard"><div class="gc-s">Hidden reasoning tokens</div><div class="gc-f">billed and counted against TPM. <b>Re-baseline</b> cost and quota.</div></div>
+            <div class="gcard"><div class="gc-s">The empty-output trap</div><div class="gc-f">reasoning eats the budget, you get nothing back. <b>Raise max_output_tokens</b>.</div></div>
+            <div class="gcard"><div class="gc-s">API surface moved</div><div class="gc-f">Chat Completions &rarr; <b>Responses API</b> for reasoning controls.</div></div>
+            <div class="gcard"><div class="gc-s">Prompt regressions</div><div class="gc-f">4o prompts over-steer a reasoner. <b>Simplify</b> the instructions.</div></div>
+            <div class="gcard good"><div class="gc-s">The clean default</div><div class="gc-f">latency-sensitive 4o job &rarr; <b>gpt-5.1, reasoning_effort: none</b>, plus caching.</div></div>
+          </div>
+        </div>
+        <p class="takeaway">GPT-4o to GPT-5 is a <b>model-class change</b> (chat to reasoning), not a version bump. The hub-and-spoke gateway absorbs it: you swap the model, not the plumbing.</p>
+        <aside class="notes">
+          Models do not stand still, and GPT-4o to GPT-5 is the instructive case: it is a class change, non-reasoning chat to a
+          reasoning model, not a version bump. Six things bite. Sampling params like temperature and top_p are rejected with a
+          400, so drop them and steer with reasoning_effort. Reasoning tokens are hidden but billed and counted against TPM, so
+          re-baseline cost and quota. The empty-output trap: reasoning consumes your max_output_tokens and you get nothing, so
+          raise the budget. The API surface moves from Chat Completions to the Responses API for full reasoning control. 4o-era
+          prompts over-steer a reasoner, so simplify. And the clean default for a latency- and cost-sensitive 4o workload is
+          gpt-5.1 with reasoning_effort none plus caching. The reassuring part: because inference is centralised behind the
+          gateway, you change the model, not the plumbing.
+        </aside>
+      </section>
+
+      <!-- 18 - WHAT IS AN AGENT -->
+      <section class="content">
+        <div class="kicker"><span class="num">15</span> &middot; Agents</div>
+        <h2>An agent is a model, instructions and tools</h2>
+        <div class="canvas">
+          <div class="agentdiag">
+            <div class="agt-row">
+              <div class="agt-box">
+                <div class="ab-h">Input</div>
+                <div class="agt-items">
+                  <div class="agt-item">User messages</div>
+                  <div class="agt-item">System events</div>
+                  <div class="agt-item">Agent messages</div>
+                </div>
+              </div>
+              <span class="agt-arrow">&rarr;</span>
+              <div class="agt-box agent">
+                <div class="ab-h">Agent</div>
+                <div class="agt-slots">
+                  <div class="agt-slot">LLM</div>
+                  <div class="agt-slot">Instructions</div>
+                  <div class="agt-slot">Tools</div>
+                </div>
+              </div>
+              <span class="agt-arrow">&rarr;</span>
+              <div class="agt-box">
+                <div class="ab-h">Output</div>
+                <div class="agt-items">
+                  <div class="agt-item">Agent messages</div>
+                  <div class="agt-item">Structured output</div>
+                </div>
+              </div>
+            </div>
+            <div class="agt-bidir">&darr; tool call &nbsp;&nbsp;&nbsp; &uarr; result</div>
+            <div class="agt-box">
+              <div class="ab-h">Tool calls</div>
+              <div class="agt-items horiz">
+                <div class="agt-item">Retrieval</div>
+                <div class="agt-item">Actions</div>
+                <div class="agt-item">Memory</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">It takes unstructured input, <b>reasons</b> with the model under your instructions, calls <b>tools</b> mid-flight to retrieve or act, and returns a message or structured output.</p>
+        <aside class="notes">
+          Strip away the hype and an agent is three things: a model for reasoning and language, instructions that set its
+          goals and constraints, and tools that let it retrieve knowledge or take action. It receives unstructured inputs,
+          user messages, system events, even messages from other agents, and produces outputs, either a message or structured
+          output. The important bit is the loop at the bottom: mid-flight the agent calls tools, retrieval to fetch knowledge,
+          actions to do something in the world, memory to recall, then folds the result back into its reasoning. This three-part
+          model is the mental picture for everything in this act.
+        </aside>
+      </section>
+
+      <!-- 19 - SIX STAGE LIFECYCLE -->
+      <section class="content">
+        <div class="kicker"><span class="num">16</span> &middot; Lifecycle</div>
+        <h2>Foundry is an assembly line for agents</h2>
+        <div class="canvas">
+          <div class="ringwrap">
+            <svg viewBox="0 0 900 410" class="ring" role="img" aria-label="Six stages of the Microsoft Foundry agent lifecycle: models, customizability, knowledge and tools, orchestration, observability, trust">
+              <defs>
+                <marker id="rh" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#a48cff"/></marker>
+              </defs>
+              <circle cx="450" cy="215" r="130" class="rg-ring"/>
+              <path class="arc" d="M 470 88 A 128 128 0 0 1 568 150" marker-end="url(#rh)"/>
+              <path class="arc" d="M 430 342 A 128 128 0 0 1 332 280" marker-end="url(#rh)"/>
+              <circle cx="450" cy="215" r="86" class="rg-core"/>
+              <text x="450" y="188" class="rg-logo">&#9670;</text>
+              <text x="450" y="214" class="rg-core-t">Microsoft</text>
+              <text x="450" y="236" class="rg-core-t">Foundry</text>
+              <g><circle cx="450" cy="85" r="16" class="disc"/><text x="450" y="90" class="rg-num">1</text><text x="450" y="56" class="rg-lab" text-anchor="middle">Models</text></g>
+              <g><circle cx="562.6" cy="150" r="16" class="disc"/><text x="562.6" y="155" class="rg-num">2</text><text x="586" y="155" class="rg-lab">Customizability</text></g>
+              <g><circle cx="562.6" cy="280" r="16" class="disc"/><text x="562.6" y="285" class="rg-num">3</text><text x="586" y="285" class="rg-lab">Knowledge and tools</text></g>
+              <g><circle cx="450" cy="345" r="16" class="disc hot"/><text x="450" y="350" class="rg-num">4</text><text x="450" y="380" class="rg-lab" text-anchor="middle">Orchestration</text></g>
+              <g><circle cx="337.4" cy="280" r="16" class="disc"/><text x="337.4" y="285" class="rg-num">5</text><text x="314" y="285" class="rg-lab" text-anchor="end">Observability</text></g>
+              <g><circle cx="337.4" cy="150" r="16" class="disc"/><text x="337.4" y="155" class="rg-num">6</text><text x="314" y="155" class="rg-lab" text-anchor="end">Trust</text></g>
+            </svg>
+          </div>
+        </div>
+        <p class="takeaway">Six stages, secure and testable end to end: <b>models</b> &rarr; <b>customization</b> &rarr; <b>knowledge and tools</b> &rarr; <b>orchestration</b> &rarr; <b>observability</b> &rarr; <b>trust</b>.</p>
+        <aside class="notes">
+          Microsoft frames Foundry as an assembly line for intelligent agents, six stages that take you from idea to
+          production-ready. One, models, the raw intelligence. Two, customizability, fine-tuning, domain prompts, your own
+          data. Three, knowledge and tools, enterprise knowledge like Bing, SharePoint and Azure AI Search plus actions like
+          Logic Apps and Functions. Four, orchestration, the workflow layer that manages tool calls, conversation state,
+          retries and logging, that is the magenta node because it is the part that ties everything together. Five,
+          observability, logs, traces and evaluations. Six, trust, identity, RBAC, content filters, encryption and network
+          isolation. The deck has already touched models and tools; this act is mostly stages three and four, and the control
+          plane act is stages five and six.
+        </aside>
+      </section>
+
+      <!-- 20 - FOUNDRY AGENT SERVICE RUNTIME -->
+      <section class="content">
+        <div class="kicker"><span class="num">17</span> &middot; Runtime</div>
+        <h2>The Agent Service runs the loop, not your code</h2>
+        <div class="canvas">
+          <div class="svcflow">
+            <div class="svc-node code">your code &middot; client.responses.create(model, input, <b>agent_reference</b>)</div>
+            <span class="svc-arrow">&darr;</span>
+            <div class="svc-core">
+              <div class="sc-h">Foundry Agent Service &middot; on the Responses API</div>
+              <div class="svc-steps">
+                <div class="svc-step"><span class="n">1</span><b>Load the agent version</b>: system prompt, tools, model binding</div>
+                <div class="svc-step"><span class="n">2</span><b>Persist the conversation</b>: resume via previous_response_id</div>
+                <div class="svc-step"><span class="n">3</span><b>Call the model</b> through the gateway, RBAC-scoped, no keys</div>
+                <div class="svc-step"><span class="n">4</span><b>Dispatch tools</b>: Code Interpreter, File Search, MCP server-side</div>
+                <div class="svc-step"><span class="n">5</span><b>Stream and trace</b>: output deltas plus OpenTelemetry spans</div>
+                <div class="svc-step"><span class="n">6</span><b>Content safety</b> on input and output</div>
+              </div>
+            </div>
+            <span class="svc-arrow">&darr;</span>
+            <div class="svc-node code">grounded result + citations &middot; <b>FunctionTool</b> calls handed back to you for human-in-the-loop</div>
+          </div>
+        </div>
+        <p class="takeaway">For a prompt agent there is <b>nothing to deploy</b>: you submit a request and the service owns thread state, tool dispatch, retries and content safety server-side.</p>
+        <aside class="notes">
+          A common misconception is that you run the agent loop. You do not. The Foundry Agent Service is the runtime. You
+          submit a request via the Responses API against an agent reference, and the service does the rest: loads the agent
+          version with its prompt, tools and model binding; persists the conversation so you resume with previous_response_id
+          rather than resending history; calls the bound model through the project's gateway, RBAC-scoped with no admin keys;
+          dispatches tools, where Code Interpreter, File Search and MCP run server-side while your FunctionTool calls are handed
+          back to your code, which is the basis of human-in-the-loop; streams output deltas while emitting OpenTelemetry spans;
+          and applies content safety on input and output. For a prompt agent there is no container, no pod, nothing to deploy.
+          Which raises the obvious question: what if you DO want to bring your own runtime?
+        </aside>
+      </section>
+
+      <!-- 21 - KNOWLEDGE AND TOOLS CATALOG -->
+      <section class="content">
+        <div class="kicker"><span class="num">18</span> &middot; Knowledge &amp; tools</div>
+        <h2>What an agent can know and do</h2>
+        <div class="canvas">
+          <div class="cat3">
+            <div class="catcol k">
+              <h4>Knowledge (grounding)</h4>
+              <div class="catrow"><span class="nm">Azure AI Search</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">File search</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Web / Bing grounding</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Foundry IQ knowledge base</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">SharePoint</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Microsoft Fabric</span><span class="pv">preview</span></div>
+            </div>
+            <div class="catcol t">
+              <h4>Tools &amp; actions</h4>
+              <div class="catrow"><span class="nm">Code Interpreter</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Function calling</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Azure Functions</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Logic Apps connectors</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Image generation</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Browser / computer use</span><span class="pv">preview</span></div>
+            </div>
+            <div class="catcol c">
+              <h4>Custom &amp; protocols</h4>
+              <div class="catrow"><span class="nm">Model Context Protocol</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">OpenAPI tools</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Agent-to-Agent (A2A)</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Toolbox</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Agent memory</span><span class="pv">preview</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Grounding sources and actions plug in by configuration. <b>MCP is GA</b>, so an agent can call any compliant tool server; A2A and Toolbox are still in preview.</p>
+        <aside class="notes">
+          This is the current, web-verified catalog of what an agent can know and do, with honest GA-versus-preview labels.
+          Knowledge sources for grounding: Azure AI Search, file search and web grounding are GA, Foundry IQ knowledge bases
+          are GA, SharePoint and Microsoft Fabric are in preview. Tools and actions: Code Interpreter, function calling, Azure
+          Functions and Logic Apps connectors are GA, image generation and browser or computer use are preview. The custom and
+          protocol column is the extensibility story: the Model Context Protocol is now generally available, so your agent can
+          call any compliant tool server, while A2A, Toolbox and agent memory are still preview. The headline for builders is
+          that knowledge and tools are configuration, not custom plumbing.
+        </aside>
+      </section>
+
+      <!-- 22 - HOSTED AGENTS -->
+      <section class="content">
+        <div class="kicker"><span class="num">19</span> &middot; Hosted</div>
+        <h2>When you want to bring your own runtime</h2>
+        <div class="canvas">
+          <div class="hosted">
+            <div class="hosted-cmp">
+              <div class="hc-card prompt">
+                <div class="hc-h">Prompt agent <small>declarative, runs on the Agent Service</small></div>
+                <ul>
+                  <li>You define model + instructions + tools</li>
+                  <li>Nothing to deploy, no container</li>
+                  <li>The service owns the loop</li>
+                </ul>
+              </div>
+              <div class="hc-card host">
+                <span class="hc-pv">PUBLIC PREVIEW</span>
+                <div class="hc-h">Hosted agent <small>bring your own code and runtime</small></div>
+                <ul>
+                  <li>Ship a container, or zip your Python / C# source</li>
+                  <li>Foundry provisions compute and a dedicated endpoint</li>
+                  <li>Per-session VM sandbox, scale to zero, OpenTelemetry</li>
+                  <li>Gets its own Microsoft Entra agent identity</li>
+                </ul>
+              </div>
+            </div>
+            <div class="frameworks">
+              <span class="fw-label">Bring your framework</span>
+              <span class="fw">Microsoft Agent Framework</span>
+              <span class="fw">LangGraph</span>
+              <span class="fw">OpenAI Agents SDK</span>
+              <span class="fw">Anthropic Agent SDK</span>
+              <span class="fw">GitHub Copilot SDK</span>
+              <span class="fw">your own code</span>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Most agents need <b>no container</b>. When you want full control, <b>hosted agents</b> (preview) run your own runtime with a managed identity and a sandbox, in any supported framework.</p>
+        <aside class="notes">
+          Prompt agents cover most cases with nothing to deploy. But sometimes you want your own runtime, your own agent loop,
+          your own framework, and that is hosted agents, currently public preview with GA expected mid-2026. You ship a
+          container or just zip your Python or C-sharp source and let Foundry build it; Foundry then provisions compute,
+          assigns the agent a dedicated Microsoft Entra identity and endpoint, and runs it in a per-session VM-isolated sandbox
+          with scale-to-zero and built-in OpenTelemetry. Crucially the framework is your choice: Microsoft Agent Framework,
+          LangGraph, the OpenAI Agents SDK, the Anthropic Agent SDK, the GitHub Copilot SDK, or your own code. The next slide
+          shows exactly what that looks like with the Copilot SDK.
+        </aside>
+      </section>
+
+      <!-- 23 - COPILOT SDK TWO-LOOP -->
+      <section class="content">
+        <div class="kicker"><span class="num">20</span> &middot; Hosted SDK</div>
+        <h2>A whole agent harness inside one container</h2>
+        <div class="canvas">
+          <div class="nest">
+            <div class="nest-l1">
+              <div class="nest-cap">Foundry hosted runtime &middot; your container</div>
+              <div class="nest-l2">
+                <div class="nest-cap">main.py + InvocationAgentServerHost &middot; outer loop</div>
+                <div class="nest-loop"><span class="step">POST /invocations</span><span class="ar">&rarr;</span><span class="step">one user turn</span><span class="ar">&rarr;</span><span class="step">stream events out as SSE</span></div>
+                <div class="nest-l3">
+                  <div class="nest-cap">spawned Copilot CLI subprocess &middot; inner agentic loop</div>
+                  <div class="nest-loop"><span class="step">model call</span><span class="ar">&rarr;</span><span class="step">tool?</span><span class="ar">&rarr;</span><span class="step">run shell / python</span><span class="ar">&rarr;</span><span class="step">feed result back</span><span class="ar">&#8635;</span><span class="step">idle</span></div>
+                </div>
+              </div>
+              <div class="byok">inference <span class="ar">&rarr;</span> <span class="b-model">&#9670; your Foundry gpt-5.x</span> via managed identity &middot; /openai/v1/responses &middot; no secrets in the container</div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">main.py is a thin <b>invocations shell</b>; the real reason-act-observe loop runs in a <b>spawned CLI subprocess</b>. Inference is <b>bring-your-own-key</b> to your own Foundry model, so no secrets ship in the image.</p>
+        <aside class="notes">
+          Here is the shape of a serious hosted agent: the GitHub Copilot SDK, the engine behind Copilot CLI, running inside a
+          Foundry container. There are two nested loops. The outer loop is main.py with the invocations server host: Foundry
+          calls POST /invocations once per user turn, and main.py just bridges events out as a stream. The inner loop, the
+          actual agentic reason-act-observe cycle, runs inside a Copilot CLI subprocess that the SDK spawns: model call, decide
+          if a tool is needed, run shell or Python, feed the result back, repeat until idle. So main.py is a thin protocol
+          shell, not the brains. And inference is bring-your-own-key: the SDK points at your own Foundry model over the
+          Responses API using the container's managed identity, so no GitHub or OpenAI keys ever ship in the image. Sovereign,
+          observable, and the same demo you would run locally.
+        </aside>
+      </section>
+
+      <!-- 24 - SCALE 1:N AND GENERALISE -->
+      <section class="content">
+        <div class="kicker"><span class="num">21</span> &middot; Scale &amp; generalise</div>
+        <h2>Same container, three placements</h2>
+        <div class="canvas">
+          <table class="cmptbl">
+            <thead>
+              <tr><th>Dimension</th><th class="a">Standalone (08-10)</th><th class="v">On the 1:N account (08-10b)</th><th class="p">Claude variant (08-11)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Foundry account</td><td>new, dedicated</td><td>shared aif-spoke-multi</td><td>new, dedicated</td></tr>
+              <tr><td>Where inference runs</td><td>local model</td><td>APIM core gateway</td><td>local Claude model</td></tr>
+              <tr><td>Reaches model via</td><td>project endpoint, MI</td><td>gateway, api-key header</td><td>project endpoint, MI</td></tr>
+              <tr><td>Model surface</td><td>/openai/v1/responses</td><td>gateway /openai</td><td>/anthropic/v1/messages</td></tr>
+              <tr><td>SDK swapped</td><td>GitHub Copilot SDK</td><td>GitHub Copilot SDK</td><td>Claude Agent SDK</td></tr>
+            </tbody>
+          </table>
+          <div class="dep-note" style="margin-top:14px;">Gateway-connection BYO-model is <b>prompt-agents-only</b>, so on the shared account the hosted container points <b>straight at the gateway</b>. The Claude variant changes only the <b>SDK and the model surface</b>.</div>
+        </div>
+        <p class="takeaway">The hosting shell is constant; only the <b>SDK and model surface</b> change. The same agent runs standalone, on a shared 1:N account through the gateway, or on Claude over the Anthropic surface.</p>
+        <aside class="notes">
+          The pattern generalises in two directions. First, scale: the byte-identical container drops onto the shared
+          one-to-many account, but instead of a local model it points straight at the APIM core gateway, because Foundry's
+          bring-your-own-model-via-connection is supported only for prompt agents, not hosted ones. It keeps the one-to-many
+          governance intact: no model on the shared account, a dedicated gateway subscription for quota isolation, and minimal
+          RBAC. Second, generality: the Claude variant swaps the GitHub Copilot SDK for the Claude Agent SDK and points at a
+          Foundry Claude model over the native Anthropic messages surface, no translation shim. Everything else, the hosting
+          shell, the invocations protocol, the identity dance, the demo, is the same. One pattern, three placements.
+        </aside>
+      </section>
+
+      <!-- 25 - LIVE DEMO: AGENT PLAYGROUND -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Build and run an agent</h2>
+        <p class="demo-sub">From the agent builder to a hosted agent that runs tools and renders a chart.</p>
+        <div class="demo-steps">
+          <div class="demo-step"><span class="n">1</span> In <b>Build</b>, create a prompt agent; set instructions, attach <b>web search</b> + a knowledge base</div>
+          <div class="demo-step"><span class="n">2</span> Run a few prompts in the <b>playground</b>; watch the <b>tool calls</b> and traces</div>
+          <div class="demo-step"><span class="n">3</span> Invoke the <b>hosted Copilot SDK agent</b>: upload a CSV, ask for cost-by-department</div>
+          <div class="demo-step"><span class="n">4</span> Watch it run shell / python in its sandbox and <b>render a chart</b> back</div>
+        </div>
+        <div class="demo-where">portal <b>Build &rarr; agent playground</b> &middot; notebook <b>08-10-01</b></div>
+        <aside class="notes">
+          Live: start in the agent builder, create a prompt agent, give it instructions and attach web search and a knowledge
+          base, then run a few prompts in the playground and show the tool calls and traces. Then invoke the hosted Copilot SDK
+          agent from the notebook: upload a CSV of licence data, ask for a cost-by-department breakdown, and watch it run shell
+          and Python inside its sandbox and render a chart that we pull back out. That chart, produced by tools inside a hosted
+          container, is the whole agent story made visible.
+        </aside>
+      </section>
+
+      <!-- 26 - FOUNDRY IQ OVERVIEW -->
+      <section class="content">
+        <div class="kicker"><span class="num">22</span> &middot; Foundry IQ</div>
+        <h2>Grounded knowledge, as a managed layer</h2>
+        <div class="canvas">
+          <div class="iq">
+            <div class="iq-flow">
+              <div class="iq-sources">
+                <div class="iq-col-h">Knowledge sources</div>
+                <div class="iq-src">Azure Blob &middot; OneLake</div>
+                <div class="iq-src">SharePoint</div>
+                <div class="iq-src">Existing search indexes</div>
+                <div class="iq-src">Web (Grounding with Bing)</div>
+              </div>
+              <div class="iq-arrow">&rarr;</div>
+              <div class="iq-kb">
+                <div class="kb-h">&#9670; Knowledge base</div>
+                <div class="kb-d">One endpoint, shareable across many agents. Permission-aware: honours ACLs and Purview sensitivity labels under the caller's identity.</div>
+                <div class="kb-eng">engine: <b>Azure AI Search agentic retrieval</b></div>
+              </div>
+              <div class="iq-arrow">&rarr;</div>
+              <div class="iq-right">
+                <div class="iq-col-h">Agents attach via MCP</div>
+                <div class="iq-agent">prompt agent</div>
+                <div class="iq-agent">multi-agent system</div>
+                <div class="iq-stat"><div class="num">+36%</div><div class="lbl">response quality vs single-shot RAG (Microsoft benchmark)</div></div>
+              </div>
+            </div>
+            <div class="iq-fam">
+              <span class="f on">Foundry IQ &middot; enterprise knowledge</span>
+              <span class="f">Fabric IQ &middot; analytics</span>
+              <span class="f">Work IQ &middot; M365</span>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Foundry IQ is a <b>managed knowledge layer</b> over Azure AI Search. You build a <b>knowledge base</b> from your sources once and any agent grounds on it, with citations and permissions enforced.</p>
+        <aside class="notes">
+          Foundry IQ, announced at Ignite, is Microsoft's managed knowledge layer for agents, and underneath it is Azure AI
+          Search's agentic retrieval. The core object is a knowledge base: a single, shareable endpoint composed of one or more
+          knowledge sources, indexed ones like Blob, OneLake, SharePoint and existing search indexes, and remote ones like web
+          via Grounding with Bing. Agents attach it as a tool over MCP. Two things to stress for this room: it is
+          permission-aware, it enforces ACLs and honours Purview sensitivity labels under the caller's Entra identity, so
+          retrieval respects who is asking; and Microsoft's own benchmark puts agentic retrieval about thirty-six percent above
+          single-shot RAG on response quality. Foundry IQ is the enterprise-knowledge sibling of Fabric IQ for analytics and
+          Work IQ for Microsoft 365. Next, how the LLM actually lives inside the retrieval path.
+        </aside>
+      </section>
+
+      <!-- 27 - AGENTIC RETRIEVAL DATA FLOW -->
+      <section class="content">
+        <div class="kicker"><span class="num">23</span> &middot; Retrieval</div>
+        <h2>The model lives inside the search, not just after it</h2>
+        <div class="canvas">
+          <div class="flowlane">
+            <div class="lane ingest">
+              <div class="lane-h">Ingest &middot; build time</div>
+              <div class="lane-steps">
+                <span class="lstep">documents<small>your corpus</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep emb">embed<small>integrated vectorizer</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep">index<small>vector + semantic + ACLs</small></span>
+              </div>
+            </div>
+            <div class="lane query">
+              <div class="lane-h">Query &middot; run time &middot; agentic retrieval</div>
+              <div class="lane-steps">
+                <span class="lstep">query</span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep llm">decompose<small>LLM plans sub-queries</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep emb">vectorize<small>parallel sub-queries</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep">hybrid search<small>BM25 + vector</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep">rerank<small>semantic</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep llm">synthesize<small>LLM, optional</small></span>
+                <span class="larrow">&rarr;</span>
+                <span class="lstep out">cited answer</span>
+              </div>
+            </div>
+            <div class="flow-legend">
+              <span class="lg"><span class="sw llm"></span> LLM (plan &amp; synthesize)</span>
+              <span class="lg"><span class="sw emb"></span> embedding model</span>
+              <span class="lg"><span class="sw out"></span> grounded output</span>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">An LLM <b>decomposes</b> the question into parallel sub-queries and (optionally) <b>synthesizes</b> a cited answer; a <b>reasoning-effort</b> knob (minimal / low / medium) trades depth for latency and cost.</p>
+        <aside class="notes">
+          This is the slide that explains why agentic retrieval beats plain RAG, and where the model sits. Two lanes. At
+          ingest, build time, your documents are embedded by the integrated vectorizer and written into an index that carries
+          vectors, a semantic configuration and ACLs. At query, run time, the agentic pipeline kicks in: an LLM decomposes the
+          question into focused sub-queries and picks which sources to hit; those run in parallel, each embedded at search time
+          by the integrated vectorizer; results come back via hybrid BM25-plus-vector search; a semantic reranker orders them;
+          and optionally an LLM synthesizes a cited natural-language answer. So the model is used twice inside search, to plan
+          and to synthesize, not just bolted on afterwards. You control depth with a reasoning-effort knob, minimal does no LLM
+          planning, low and medium add planning and more sub-queries, trading latency and cost for relevance.
+        </aside>
+      </section>
+
+      <!-- 28 - FOUNDRY IQ SCALES OUT -->
+      <section class="content">
+        <div class="kicker"><span class="num">24</span> &middot; At scale</div>
+        <h2>One knowledge base, many shapes of agent</h2>
+        <div class="canvas">
+          <div class="iqscale">
+            <div class="iqs-panel ma">
+              <div class="iqs-h">Multi-agent <small>router + specialists, each on its own KB</small></div>
+              <div class="router">
+                <div class="orch">orchestrator &middot; classify &amp; route</div>
+                <div class="down">&darr;</div>
+                <div class="spec">
+                  <div class="sp">HR<small>contoso-kb-hr</small></div>
+                  <div class="sp">Marketing<small>contoso-kb-mkt</small></div>
+                  <div class="sp">Products<small>contoso-kb-prod</small></div>
+                </div>
+              </div>
+              <div class="rm-note">Answer-synthesis mode per KB (Standard-SKU search). Built with the Microsoft Agent Framework.</div>
+            </div>
+            <div class="iqs-panel dr">
+              <div class="iqs-h">Deep research <small>a reasoning model in an agentic loop</small></div>
+              <div class="drloop">
+                <div class="dn model">o3-deep-research<small>plans, calls tools</small></div>
+                <div class="cyc">&#8635; search / fetch over the KB</div>
+                <div class="dn">gpt-4.1-mini<small>synthesises a cited report</small></div>
+              </div>
+              <div class="rm-note">Same Foundry IQ index. APIM routes the reasoning model to Norway East.</div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">The same knowledge base powers a simple agent, a <b>router-and-specialist</b> multi-agent system, and a <b>deep-research</b> reasoning loop, with the gateway routing models by region underneath.</p>
+        <aside class="notes">
+          The payoff of building knowledge once is reuse. Same knowledge base, three shapes of consumer. A simple prompt agent,
+          which we saw. A multi-agent system, where a lightweight orchestrator classifies each query and routes it to an HR,
+          marketing or products specialist, each grounded on its own knowledge base in answer-synthesis mode, built with the
+          Microsoft Agent Framework, and note that answer-synthesis needs the Standard search SKU. And a deep-research loop,
+          where a reasoning model, o3-deep-research, plans and calls search and fetch tools against the same index, iterates,
+          then hands off to a cheaper model to synthesise a cited report, with the APIM gateway transparently routing the
+          reasoning model to its region. Build the knowledge base once, reuse it everywhere.
+        </aside>
+      </section>
+
+      <!-- 29 - CONTROL PLANE: WHAT IT IS -->
+      <section class="content">
+        <div class="kicker"><span class="num">25</span> &middot; Control plane</div>
+        <h2>One agent is easy. A fleet is the hard part.</h2>
+        <div class="canvas">
+          <div class="cpwhat">
+            <div class="plane-split">
+              <div class="plane data">
+                <div class="pn-k">Data plane</div>
+                <div class="pn-h">Agents in action</div>
+                <div class="pn-d">Chatting, calling tools, retrieving data, generating responses. The work running.</div>
+              </div>
+              <div class="plane ctrl">
+                <div class="pn-k">Control plane</div>
+                <div class="pn-h">See, govern, act</div>
+                <div class="pn-d">One surface for identity, policies, security, observability and cost, across every project and cloud.</div>
+              </div>
+            </div>
+            <div class="fails">
+              <div class="fail"><div class="fl-t">Prompt injection</div><div class="fl-d">Untrusted content in a tool result hijacks the agent's instructions.</div></div>
+              <div class="fail"><div class="fl-t">Task drift</div><div class="fl-d">The agent quietly does something other than what it was asked.</div></div>
+              <div class="fail"><div class="fl-t">Data leakage</div><div class="fl-d">Access plus a confused instruction plus an outbound channel equals exfiltration.</div></div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Agents add failure modes apps never had, and they <b>compound</b> as you add tools and data. A picture: an injected document had an agent weave customer data into replies for <b>three days</b>, unnoticed.</p>
+        <aside class="notes">
+          Here is the pivot of the whole talk: from building one agent to running a fleet. In cloud terms, the data plane is the
+          work running, agents chatting, calling tools, retrieving data. The control plane is the management surface above it:
+          see, govern, act, one place for identity, policy, security, observability and cost, across every project and every
+          cloud. Why you need it: agents add failure modes traditional apps never had. Prompt injection, where untrusted content
+          in a tool result hijacks the instructions. Task drift, where the agent quietly does the wrong thing. Sensitive-data
+          leakage, where access plus a confused instruction plus an outbound channel equals exfiltration. And these compound as
+          you add tools, data and multi-agent workflows. The canonical story: a company had about ten agents in production, one
+          retrieved a document carrying a hidden instruction, and it wove customer names and transactions into its answers for
+          three days before anyone noticed. No single team owns this, which is why it needs a dedicated surface.
+        </aside>
+      </section>
+
+      <!-- 30 - THE FOUR PILLARS -->
+      <section class="content">
+        <div class="kicker"><span class="num">26</span> &middot; The pillars</div>
+        <h2>What the control plane brings together</h2>
+        <div class="canvas">
+          <div class="pillars">
+            <div class="pillar ctrl"><span class="pl-n">CONTROLS</span><span class="pl-t">Guardrails</span><span class="pl-d">Runtime checks on inputs, outputs, tool calls and tool responses.</span></div>
+            <div class="pillar obs"><span class="pl-n">OBSERVABILITY</span><span class="pl-t">See inside</span><span class="pl-d">Tracing, continuous evaluation on live traffic, per-agent cost.</span></div>
+            <div class="pillar sec"><span class="pl-n">SECURITY</span><span class="pl-t">Identity &amp; data</span><span class="pl-d">Entra Agent ID, Microsoft Defender, Microsoft Purview.</span></div>
+            <div class="pillar flt"><span class="pl-n">FLEET OPS</span><span class="pl-t">At scale</span><span class="pl-d">One inventory and to-do list across projects, frameworks and clouds.</span></div>
+          </div>
+          <div class="cvp">
+            <div class="cvp-card ctrl"><div class="cv-t">Half one &middot; <b>Agent 365</b></div><div class="cv-d">Treat each agent as a new kind of identity, governed with the stack you already run: Entra, Defender, Purview, Intune. For IT and security admins.</div></div>
+            <div class="cvp-card pol"><div class="cv-t">Half two &middot; <b>new runtime defences</b></div><div class="cv-d">Purpose-built controls and continuous evaluation for risks that are new to agents. For developers, in the build flow.</div></div>
+          </div>
+        </div>
+        <p class="takeaway">Four pillars, two halves that meet here: govern agents as <b>identities</b> with the existing Microsoft stack, and add <b>new runtime defences</b> for the risks that are genuinely new.</p>
+        <aside class="notes">
+          The control plane brings together four essentials. Controls: runtime guardrails not just on prompts and responses
+          but on tool calls and tool responses too. Observability: tracing, continuous evaluation on live traffic, and
+          per-agent cost. Security: a durable Entra identity per agent, plus Defender and Purview. And fleet-wide operations:
+          one inventory and to-do list across projects, frameworks and clouds. Underneath, Microsoft's approach is two halves
+          that meet in this plane. Half one, Agent 365: treat each agent as a new kind of identity and govern it with the stack
+          you already run, Entra, Defender, Purview, Intune, aimed at IT and security. Half two, new runtime defences:
+          purpose-built controls and continuous evaluation for risks that are new to agents, aimed at developers. We will walk
+          each pillar with a demo.
+        </aside>
+      </section>
+
+      <!-- 31 - CONTROLS / GUARDRAILS -->
+      <section class="content">
+        <div class="kicker"><span class="num">27</span> &middot; Controls</div>
+        <h2>Guardrails on inputs, outputs and tool traffic</h2>
+        <div class="canvas">
+          <div class="guard">
+            <div class="gpipe">
+              <div class="gp-node">User input</div>
+              <div class="gp-arr">&darr;</div>
+              <div class="gp-gate">INPUT <small>prompt shields &middot; PII</small></div>
+              <div class="gp-arr">&darr;</div>
+              <div class="gp-node">Agent + model</div>
+              <div class="gp-arr">&darr;</div>
+              <div class="gp-gate pv">TOOL CALL / RESPONSE <small>indirect injection &middot; sensitive data &middot; preview</small></div>
+              <div class="gp-arr">&darr;</div>
+              <div class="gp-gate">OUTPUT <small>groundedness &middot; protected material</small></div>
+              <div class="gp-arr">&darr;</div>
+              <div class="gp-node">Response</div>
+            </div>
+            <div class="gctrls">
+              <h4>Control types</h4>
+              <div class="catrow"><span class="nm">Prompt Shields (jailbreak + indirect)</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Protected material (text + code)</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Custom blocklists</span><span class="ga">GA</span></div>
+              <div class="catrow"><span class="nm">Groundedness detection</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Sensitive data / PII</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Task adherence &middot; spotlighting</span><span class="pv">preview</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">A guardrail is a set of <b>controls</b> at four intervention points. The new part is <b>tool call and tool response</b> checks, which catch indirect prompt injection before behaviour changes. <span class="accent">&#9654; LIVE DEMO: trigger a Prompt Shield block.</span></p>
+        <aside class="notes">
+          Controls, the first pillar. A guardrail is a named collection of controls, each control being a risk, an intervention
+          point and an action. The four intervention points are user input and output, both GA, and tool call and tool
+          response, in preview and the genuinely new part: Foundry can detect and block indirect prompt injection at the
+          tool-response level, before the behaviour changes. Control types, with honest status: Prompt Shields for jailbreak
+          and indirect attacks, protected material, and custom blocklists are GA; groundedness, PII and task adherence with
+          spotlighting are preview. Default policy is Microsoft.DefaultV2. In the demo we paste an injection and a fake SSN into
+          the bank agent and watch the input shield block them before the model ever sees them, at zero token cost.
+        </aside>
+      </section>
+
+      <!-- 32 - OBSERVABILITY -->
+      <section class="content">
+        <div class="kicker"><span class="num">28</span> &middot; Observability</div>
+        <h2>Trace it, evaluate it, cost it</h2>
+        <div class="canvas">
+          <div class="cards3">
+            <div class="card3">
+              <span class="c3-t">Tracing</span>
+              <span class="c3-d">OpenTelemetry spans, prompt to model to tool, into Application Insights.</span>
+              <ul><li>Walk back any run, step by step</li><li>Auto-traced for Agent Framework, LangChain, LangGraph</li></ul>
+            </div>
+            <div class="card3 g">
+              <span class="c3-t">Continuous evaluation</span>
+              <span class="c3-d">Score live production traffic, not just a pre-ship test suite.</span>
+              <ul><li>Set a threshold, alert when quality drops</li><li>Groundedness, task adherence, tool-call accuracy</li></ul>
+            </div>
+            <div class="card3 v">
+              <span class="c3-t">Cost</span>
+              <span class="c3-d">Per-agent token spend across the fleet, near real time.</span>
+              <ul><li>Agents burn tokens fast: watch them</li><li>Sort the fleet by cost or error rate</li></ul>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">You cannot human-review every step, so you <b>evaluate live traffic against a threshold</b> and trace what crosses it, while watching cost per agent. <span class="accent">&#9654; LIVE DEMO: open a trace and an eval run.</span></p>
+        <aside class="notes">
+          Observability, the second pillar. You cannot put a human on every agent step, that defeats the purpose, so the model
+          is: trace everything, evaluate continuously, and watch cost. Tracing is OpenTelemetry, prompt to model inference to
+          the specific tool call, landing in your Application Insights, and it is automatic for the Microsoft Agent Framework,
+          LangChain and LangGraph. Continuous evaluation runs against real production traffic, not just a pre-ship suite: set a
+          threshold and get alerted when groundedness or task adherence drops, with agent-specific evaluators like tool-call
+          accuracy. And cost: per-agent token spend across the fleet, because agents burn tokens fast. In the demo we open a
+          code-interpreter trace and an evaluation run in the portal.
+        </aside>
+      </section>
+
+      <!-- 33 - SECURITY -->
+      <section class="content">
+        <div class="kicker"><span class="num">29</span> &middot; Security</div>
+        <h2>Every agent gets a real identity</h2>
+        <div class="canvas">
+          <div class="cards3">
+            <div class="card3 p">
+              <span class="c3-t">Entra Agent ID</span>
+              <span class="c3-d">Publish an agent and it gets a Microsoft Entra identity, automatically.</span>
+              <ul><li>Access control like any principal</li><li>Ownership: know who to call at 2am</li><li>Lineage across its lifecycle</li></ul>
+            </div>
+            <div class="card3">
+              <span class="c3-t">Microsoft Defender</span>
+              <span class="c3-d">AI security posture and threat detection extended to agents.</span>
+              <ul><li>Attack-path analysis, gap recommendations</li><li>A jailbreak surfaces as a security alert</li></ul>
+            </div>
+            <div class="card3 v">
+              <span class="c3-t">Microsoft Purview</span>
+              <span class="c3-d">Agent interactions available for audit and compliance.</span>
+              <ul><li>Org-wide content-safety policies</li><li>Sensitivity labels honoured</li></ul>
+            </div>
+          </div>
+          <div class="cvp">
+            <div class="cvp-card ctrl"><div class="cv-t"><b>Controls</b> = each developer configures</div><div class="cv-d">Opt in or out on your own agent.</div></div>
+            <div class="cvp-card pol"><div class="cv-t"><b>Policies</b> = the organisation mandates</div><div class="cv-d">"Every agent must have indirect-injection protection on", scanned continuously, like Intune device compliance.</div></div>
+          </div>
+        </div>
+        <p class="takeaway">Publishing an agent issues an <b>Entra identity</b> (app + object id) for access, ownership and lineage. <b>Policies</b> turn a developer's optional control into an org-wide mandate. <span class="accent">&#9654; LIVE DEMO: the agent's Entra id + a policy.</span></p>
+        <aside class="notes">
+          Security, the third pillar, and the headline is identity. The moment you publish an agent it gets a Microsoft Entra
+          identity, an application id and an object id, automatically, with no extra steps. That buys three things: access
+          control, you govern it like any user or service principal; ownership, it is tied to a named team so when it breaks at
+          2am you know who to call; and lineage, the identity follows the agent through its lifecycle. Defender extends to
+          agents with posture management, attack-path analysis and threat detection, so a jailbreak shows up as a security
+          alert with full context. Purview makes agent interactions auditable and honours sensitivity labels. And the key
+          distinction: controls are what each developer configures on their own agent, opt in or out, whereas policies are an
+          organisation-level mandate, every agent in this subscription must have indirect-injection protection on, scanned
+          continuously, exactly like Intune device-compliance policies but for agents.
+        </aside>
+      </section>
+
+      <!-- 34 - RED TEAMING -->
+      <section class="content">
+        <div class="kicker"><span class="num">30</span> &middot; Red teaming</div>
+        <h2>Attack your own agents, on purpose</h2>
+        <div class="canvas">
+          <div class="asr">
+            <div class="asr-chart">
+              <div class="asr-title">Attack success rate <span class="ill">illustrative</span></div>
+              <div class="asr-bar before"><div class="ab-l">Before the guardrail policy</div><div class="track"><div class="fill"></div></div></div>
+              <div class="asr-bar after"><div class="ab-l">After the guardrail policy</div><div class="track"><div class="fill"></div></div></div>
+            </div>
+            <div class="asr-side">
+              <div class="asr-box">
+                <h5>Attack strategies (PyRIT)</h5>
+                <div class="asr-chips"><span class="asr-chip">Base64</span><span class="asr-chip">ROT13</span><span class="asr-chip">Unicode confusables</span><span class="asr-chip">Crescendo</span><span class="asr-chip">multi-language</span></div>
+              </div>
+              <div class="asr-box">
+                <h5>Risk categories</h5>
+                <div class="asr-chips"><span class="asr-chip">Hate</span><span class="asr-chip">Violence</span><span class="asr-chip">Self-harm</span><span class="asr-chip">Sensitive-data leakage</span><span class="asr-chip">Prohibited actions</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">The <b>AI Red Teaming Agent</b> (built on PyRIT, preview) runs automated adversarial scans and scores an <b>Attack Success Rate</b>, so you can prove a guardrail policy actually moved the needle. <span class="accent">&#9654; LIVE DEMO: before vs after.</span></p>
+        <aside class="notes">
+          Guardrails are defence; red teaming is offence, and you want both. The AI Red Teaming Agent, in preview, is built on
+          Microsoft's open-source PyRIT. It runs automated adversarial scans against a model or agent endpoint, scores each
+          attack-response pair, and produces a scorecard with Attack Success Rate as the headline metric, broken down by attack
+          technique and risk category. Strategies include obfuscation like Base64, ROT13 and Unicode confusables, the
+          multi-turn Crescendo attack, and multi-language prompts; categories span the safety harms plus agent-specific ones
+          like sensitive-data leakage and prohibited actions. The powerful move, shown in the demo, is running the same scan
+          before and after attaching a guardrail policy: the attack-success-rate drop is your evidence the control works. The
+          bars here are illustrative; your numbers depend on your agent and corpus.
+        </aside>
+      </section>
+
+      <!-- 35 - LIVE DEMO: GUARDRAILS, EVALS, RED TEAM -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Guardrails, evaluations and red teaming</h2>
+        <p class="demo-sub">Defence and offence on the same bank agent, in the control plane.</p>
+        <div class="demo-steps">
+          <div class="demo-step"><span class="n">1</span> Paste an injection, a fake SSN and a codename into <b>contoso-bank-agent</b>: watch <b>Prompt Shields</b> block them pre-model</div>
+          <div class="demo-step"><span class="n">2</span> Open an <b>evaluation run</b> and the evaluator catalog (groundedness, tool-call accuracy)</div>
+          <div class="demo-step"><span class="n">3</span> Run the <b>AI Red Teaming Agent</b> against the un-guardrailed deployment</div>
+          <div class="demo-step"><span class="n">4</span> Re-run against the guardrailed deployment: compare the <b>Attack Success Rate</b></div>
+        </div>
+        <div class="demo-where">Operate &middot; Controls + Evaluations + Red team &middot; notebooks <b>13 / 14</b></div>
+        <aside class="notes">
+          Live, all on the same bank agent. First defence: paste a jailbreak, a fake SSN and an internal codename and watch the
+          input Prompt Shields and blocklist intercept them before the model runs. Then open an evaluation run and the evaluator
+          catalog to show continuous quality and safety scoring. Then offence: run the AI Red Teaming Agent against the
+          deployment with no guardrail policy, then against the guardrailed deployment, and compare the attack-success-rate
+          drop. Defence plus offence, proven, in one sitting.
+        </aside>
+      </section>
+
+      <!-- 36 - FLEET-WIDE OPERATIONS -->
+      <section class="content">
+        <div class="kicker"><span class="num">31</span> &middot; Fleet ops</div>
+        <h2>One to-do list for every agent, any cloud</h2>
+        <div class="canvas">
+          <div class="fleet">
+            <div class="fleet-todo">
+              <h4>Fleet to-do</h4>
+              <div class="todo"><span class="dot b"></span> Jailbreak attempt blocked &middot; contoso-bank-agent</div>
+              <div class="todo"><span class="dot y"></span> Eval below threshold &middot; aria-rm-briefing-agent</div>
+              <div class="todo"><span class="dot r"></span> Policy gap: indirect injection off &middot; 2 agents</div>
+              <div class="todo"><span class="dot y"></span> Cost spike &middot; contoso-pmo-agent, +180% today</div>
+            </div>
+            <div class="fleet-assets">
+              <h4>Assets</h4>
+              <table class="atbl">
+                <thead><tr><th>Agent</th><th>Source</th><th>Status</th><th>Cost</th><th>Risk</th></tr></thead>
+                <tbody>
+                  <tr><td>contoso-bank-agent</td><td class="src">Foundry</td><td class="ok">Active</td><td>$12</td><td>Low</td></tr>
+                  <tr><td>aria-rm-briefing-agent</td><td class="src">Foundry</td><td class="ok">Active</td><td>$8</td><td>Med</td></tr>
+                  <tr><td>claims-triage</td><td class="src">AI Gateway &middot; LangGraph</td><td class="ok">Active</td><td>$4</td><td>Low</td></tr>
+                  <tr><td>legacy-helpdesk</td><td class="src">AI Gateway &middot; AWS</td><td class="blk">Blocked</td><td>$0</td><td>High</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">Operate is a <b>to-do list for the fleet</b>: blocked jailbreaks, evals below threshold, policy gaps. External agents (LangGraph, AWS) join the same view by routing through the <b>AI Gateway</b>. <span class="accent">&#9654; LIVE DEMO.</span></p>
+        <aside class="notes">
+          Fleet-wide operations, the fourth pillar. The Operate view is best thought of as a to-do list for the whole fleet:
+          blocked jailbreak attempts, evaluation scores below threshold, policy-compliance gaps, cost spikes, sortable by error
+          rate or token cost across every project. The assets inventory lists every agent with its source, status, cost and
+          risk, and from an alert you jump straight into that agent's build experience to fix it, no context switching. The big
+          one for this room: non-Foundry agents, a LangGraph app, something on AWS, join the exact same view by routing their
+          traffic through the AI Gateway, which is Azure API Management, and you can block or unblock them at the gateway even
+          though Foundry does not run their infrastructure.
+        </aside>
+      </section>
+
+      <!-- 37 - LIVE DEMO: ADMIN FLEET OVERVIEW -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>The admin fleet overview</h2>
+        <p class="demo-sub">Operate: assets, compliance, quota, and block an agent at the gateway.</p>
+        <div class="demo-steps">
+          <div class="demo-step"><span class="n">1</span> <b>Operate &rarr; Overview</b>: fleet to-do list, cost hero stats, usage trends</div>
+          <div class="demo-step"><span class="n">2</span> <b>Assets</b>: a Foundry agent and an external agent registered via AI Gateway, side by side</div>
+          <div class="demo-step"><span class="n">3</span> <b>Compliance</b>: a policy ("indirect injection must be on") and the deployments violating it</div>
+          <div class="demo-step"><span class="n">4</span> Update status &rarr; <b>Block</b> an agent at the gateway; show <b>Quota</b> (TPM) per deployment</div>
+        </div>
+        <div class="demo-where">portal &middot; <b>Operate</b> (New Foundry on)</div>
+        <aside class="notes">
+          Live in Operate. Start on Overview for the fleet to-do list and cost hero stats. Open Assets to show a Foundry-built
+          agent and an externally-hosted agent, registered through the AI Gateway, in one inventory. Open Compliance to show an
+          org policy and the deployments that violate it, and fix one. Then block an agent at the gateway to show you can stop
+          traffic without owning its infrastructure, and finish on Quota to show per-deployment token limits. This is the IT and
+          security admin's home base.
+        </aside>
+      </section>
+
+      <!-- 38 - PROVISIONING AND RBAC QUICK-REF -->
+      <section class="content">
+        <div class="kicker"><span class="num">32</span> &middot; Provisioning</div>
+        <h2>The admin essentials, on one card</h2>
+        <div class="canvas">
+          <div class="refgrid">
+            <div class="refcard">
+              <h4>Four Foundry roles</h4>
+              <div class="rc-row"><b>Foundry User</b> &middot; build &amp; call</div>
+              <div class="rc-row"><b>Project Manager</b> &middot; manage projects</div>
+              <div class="rc-row"><b>Account Owner</b> &middot; deploy, control plane</div>
+              <div class="rc-row"><b>Owner</b> &middot; unrestricted</div>
+              <div class="rc-row"><span class="ac">tip:</span> assign to groups, not people</div>
+            </div>
+            <div class="refcard">
+              <h4>Two-layer RBAC</h4>
+              <div class="rc-row"><b>Layer 1</b> Foundry plane &middot; portal, projects, build</div>
+              <div class="rc-row"><b>Layer 2</b> Cognitive Services plane &middot; quota, content filters</div>
+              <div class="rc-row"><span class="ac">gotcha:</span> the second layer is commonly missed</div>
+            </div>
+            <div class="refcard">
+              <h4>Regions &amp; quota</h4>
+              <div class="rc-row">Pick by <b>model availability</b> + residency</div>
+              <div class="rc-row">Quota is <b>TPM</b> per region + subscription</div>
+              <div class="rc-row">Azure Government portal: <span class="ac">ai.azure.us</span></div>
+            </div>
+            <div class="refcard">
+              <h4>Cost &amp; SDK</h4>
+              <div class="rc-row">Platform is <b>free</b>; pay per deployment</div>
+              <div class="rc-row">No hard spend cutoffs &middot; <b>budget alerts</b></div>
+              <div class="rc-row">SDK: <span class="ac">azure-ai-projects</span> + OpenAI client</div>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">For platform owners: four roles (assigned to <b>groups</b>), a <b>two-layer</b> RBAC model, TPM quota by region, and a free platform you meter at the deployment level.</p>
+        <aside class="notes">
+          One reference card for the platform owners in the room. Four built-in Foundry roles, recently renamed: Foundry User
+          to build and call, Project Manager to manage projects, Account Owner for deployment and the control plane, and Owner
+          for unrestricted access, and you assign them to Entra groups, not individuals. RBAC is two layers that are configured
+          separately: the Foundry plane for portal and build, and the underlying Cognitive Services plane for quota and content
+          filters, and the second layer is the one people forget. Regions are chosen by model availability and data residency,
+          quota is tokens per minute per region and subscription, and Azure Government lives at ai.azure.us with a reduced
+          feature set. Cost: the platform itself is free, you pay at the deployment level, there are no hard spending cutoffs so
+          you wire up budget alerts, and the SDK story is the unified azure-ai-projects package plus the standard OpenAI client.
+        </aside>
+      </section>
+
+      <!-- 39 - RECAP -->
+      <section class="content">
+        <div class="kicker"><span class="num">33</span> &middot; Why Foundry</div>
+        <h2>One platform, two jobs done well</h2>
+        <div class="canvas">
+          <div class="recap">
+            <div class="recap-col bd">
+              <h4>Build</h4>
+              <ul>
+                <li>Deploy any model behind one governed gateway</li>
+                <li>Agents on the Responses API and one SDK</li>
+                <li>Knowledge and tools by config, MCP-native</li>
+                <li>Hosted runtimes in the framework you choose</li>
+                <li>Grounded, cited answers with Foundry IQ</li>
+              </ul>
+            </div>
+            <div class="recap-col op">
+              <h4>Operate</h4>
+              <ul>
+                <li>A Microsoft Entra identity for every agent</li>
+                <li>Guardrails on inputs, outputs and tool traffic</li>
+                <li>Tracing and continuous evaluation on live traffic</li>
+                <li>Red teaming that measures attack success</li>
+                <li>One fleet view across projects and clouds</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="takeaway">The pitch is not a single feature, it is the <b>seam</b>: you build with rich primitives and govern them from the same place, build and operate in one flow.</p>
+        <aside class="notes">
+          Pulling it together. The reason Foundry is worth your attention is not any single feature, it is the seam between
+          build and operate. On the build side: deploy any model behind one governed gateway; build agents on the Responses API
+          with one SDK; add knowledge and tools by configuration, MCP-native; host your own runtime in whatever framework you
+          like; and ground answers with Foundry IQ. On the operate side: every agent gets a real Entra identity; guardrails sit
+          on inputs, outputs and tool traffic; you trace and continuously evaluate live traffic; you red-team to measure attack
+          success; and you see the whole fleet, including non-Foundry agents, in one place. Most platforms give you one half.
+          Foundry's bet is that you need both, in the same flow.
+        </aside>
+      </section>
+
+      <!-- 40 - CLOSING -->
+      <section class="closing">
+        <div class="kicker"><span class="num">&rarr;</span> &middot; Where to go next</div>
+        <h2>Build boldly. <span class="accent">Govern from day one.</span></h2>
+        <div class="closing-grid">
+          <ul>
+            <li>Start in the portal: deploy a model, build a prompt agent.</li>
+            <li>Centralise inference behind a gateway before it sprawls.</li>
+            <li>Turn on guardrails and an Entra identity from the first agent.</li>
+            <li>Treat the control plane as part of shipping, not an afterthought.</li>
+          </ul>
+          <div class="reslist">
+            <div class="res"><div class="r-t">Microsoft Foundry docs</div><div class="r-u">learn.microsoft.com/azure/foundry</div></div>
+            <div class="res"><div class="r-t">Foundry IQ &middot; agentic retrieval</div><div class="r-u">.../foundry/agents/concepts/what-is-foundry-iq</div></div>
+            <div class="res"><div class="r-t">AI Red Teaming Agent</div><div class="r-u">.../foundry/concepts/ai-red-teaming-agent</div></div>
+            <div class="res"><div class="r-t">This field guide &amp; labs</div><div class="r-u">github.com/corticalstack/awesome-foundry-nextgen</div></div>
+          </div>
+        </div>
+        <aside class="notes">
+          Where to go next. Four habits to leave with: start small in the portal, deploy a model and build a prompt agent;
+          centralise inference behind a gateway before deployments sprawl across teams; turn on guardrails and an Entra identity
+          from your very first agent, not after an incident; and treat the control plane as part of shipping, not an
+          afterthought. Resources are on screen: the Microsoft Foundry docs, the Foundry IQ and AI Red Teaming Agent concept
+          pages, and this repository, which has runnable labs for everything we demoed. Thank you. Questions?
+        </aside>
+      </section>
+
+      <!-- ============ APPEND NEW SECTIONS BELOW ============ -->
+
+    </div>
+  </div>
+
+  <!-- Reveal.js core + plugins (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      width: 1280,
+      height: 720,
+      margin: 0.045,
+      hash: true,
+      controls: true,
+      progress: true,
+      center: true,
+      slideNumber: 'c/t',
+      transition: 'fade',
+      transitionSpeed: 'default',
+      plugins: [ RevealHighlight, RevealNotes ]
+    });
+  </script>
+</body>
+</html>
