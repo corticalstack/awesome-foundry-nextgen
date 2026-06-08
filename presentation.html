@@ -426,39 +426,23 @@
     .dep-note { font-size: 12px; color: #ffce8a; border: 1px dashed rgba(255, 170, 60, 0.5); border-radius: 9px; padding: 8px 13px; background: rgba(255, 170, 60, 0.05); }
     .dep-note b { color: var(--c-amber-bright); }
 
-    /* ========== Act 4: deployment tabs (playground / details / monitor) ========== */
-    .dpl { width: min(1010px, 99%); border: 1px solid var(--c-line); border-radius: 12px; background: #0a0f13; overflow: hidden; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45); }
-    .dpl-bar { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--c-line); background: rgba(255, 255, 255, 0.04); }
-    .dpl-name { font: 700 13px var(--c-mono); color: var(--c-accent-bright); }
-    .dpl-tabs { display: flex; gap: 16px; margin-left: 8px; }
-    .dpl-tab { font: 600 11.5px var(--c-mono); color: var(--c-muted); }
-    .dpl-tab.active { color: var(--c-accent-bright); border-bottom: 2px solid var(--c-accent); padding-bottom: 3px; }
-    .dpl-act { margin-left: auto; font: 600 10px var(--c-mono); color: #04222b; background: var(--c-accent); border-radius: 6px; padding: 4px 11px; }
-    .dpl-body { display: flex; }
-    .dpl-cfg { flex: 0 0 40%; border-right: 1px solid var(--c-line); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
-    .cfg-card { border: 1px solid var(--c-line); border-radius: 9px; padding: 9px 11px; background: rgba(255, 255, 255, 0.02); }
-    .cfg-card.hot { border-color: var(--c-accent); background: rgba(96, 220, 246, 0.07); }
-    .cfg-card .cc-h { font: 600 11px var(--c-mono); color: var(--c-fg); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
-    .cfg-card .cc-h .pv { font: 700 8px var(--c-mono); color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); border-radius: 99px; padding: 0 6px; }
-    .cfg-card .cc-d { font-size: 10.5px; color: var(--c-muted); line-height: 1.3; }
-    .cfg-card .tool { font-size: 10px; color: var(--c-accent-bright); border: 1px solid rgba(96, 220, 246, 0.4); border-radius: 6px; padding: 3px 8px; display: inline-block; margin-top: 4px; }
-    .dpl-chat { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-    .msg { font-size: 11px; border-radius: 8px; padding: 7px 10px; line-height: 1.35; }
-    .msg.u { background: rgba(96, 220, 246, 0.1); color: var(--c-accent-bright); align-self: flex-end; max-width: 78%; }
-    .msg.a { background: rgba(255, 255, 255, 0.04); color: var(--c-fg); max-width: 94%; }
-    .msg .cite { color: var(--c-accent); font-size: 9px; }
-    .dpl-tabsinfo { display: flex; gap: 12px; width: min(1010px, 99%); margin-top: 10px; }
-    .tabinfo { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 9px; padding: 9px 13px; background: rgba(255, 255, 255, 0.02); }
-    .tabinfo .ti-t { font: 700 11px var(--c-mono); color: var(--c-accent-bright); margin-bottom: 4px; }
-    .tabinfo .ti-d { font-size: 10.5px; color: var(--c-muted); line-height: 1.35; }
-
-    /* ========== Act 4: code compare + surfaces ========== */
-    .codecompare { display: flex; gap: 16px; width: 100%; align-items: stretch; }
-    .codecompare > div { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-    .cc-label { font: 700 11px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
-    .cc-label.a { color: var(--c-accent-bright); }
-    .surfaces { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
-    .surf { font: 600 11px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 99px; padding: 5px 13px; background: rgba(96, 220, 246, 0.05); }
+    /* ========== Act 4: inference paths ========== */
+    .infer { width: min(1040px, 99%); display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    .inf-paths { display: flex; gap: 16px; width: 100%; }
+    .inf-path { flex: 1 1 0; box-sizing: border-box; border: 1px solid var(--c-line); border-top: 3px solid var(--c-accent); border-radius: 12px; background: rgba(255, 255, 255, 0.03); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .inf-path.fdry { border-top-color: var(--c-green); }
+    .inf-path .ip-t { font: 700 15px var(--c-sans); color: var(--c-fg); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .inf-path .ip-badge { font: 700 8.5px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+    .inf-path.direct .ip-badge { color: var(--c-accent-bright); }
+    .inf-path.fdry .ip-badge { color: var(--c-green); }
+    .inf-path .ip-code { font: 500 11px var(--c-mono); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.06); border: 1px solid var(--c-line); border-radius: 6px; padding: 5px 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inf-path .ip-d { font-size: 12px; color: var(--c-muted); line-height: 1.35; }
+    .inf-gw { font: 600 10.5px var(--c-mono); letter-spacing: 0.04em; color: var(--c-accent-bright); border: 1px dashed rgba(96, 220, 246, 0.45); border-radius: 8px; padding: 6px 16px; background: rgba(96, 220, 246, 0.05); }
+    .inf-path .ip-surfs { display: flex; flex-wrap: wrap; gap: 5px; }
+    .inf-path .ip-chip { font: 600 9.5px var(--c-mono); border: 1px solid var(--c-line); border-radius: 99px; padding: 2px 9px; color: var(--c-muted); white-space: nowrap; }
+    .inf-path.direct .ip-chip { color: var(--c-accent-bright); border-color: rgba(96, 220, 246, 0.4); }
+    .inf-path.fdry .ip-chip { color: var(--c-green); border-color: rgba(90, 209, 154, 0.4); }
+    .inf-path .ip-d b { color: var(--c-fg); }
 
     /* ========== Act 4: migration gotchas ========== */
     .gotchas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
@@ -732,6 +716,20 @@
     .res { border: 1px solid var(--c-line); border-left: 3px solid var(--c-accent); border-radius: 9px; padding: 10px 14px; }
     .res .r-t { font: 600 14px var(--c-sans); color: var(--c-fg); }
     .res .r-u { font: 500 11.5px var(--c-mono); color: var(--c-accent-bright); margin-top: 2px; }
+
+    /* ========== Act 4: endpoints & SDKs ========== */
+    .endp { width: min(1080px, 99%); display: flex; flex-direction: column; gap: 14px; align-items: center; }
+    .endp-row { display: flex; gap: 14px; width: 100%; }
+    .endp-card { flex: 1 1 0; box-sizing: border-box; border: 1px solid var(--c-line); border-top: 3px solid var(--c-accent); border-radius: 12px; background: rgba(255, 255, 255, 0.03); padding: 13px 15px; display: flex; flex-direction: column; gap: 6px; }
+    .endp-card.fdry { border-top-color: var(--c-green); }
+    .endp-card.tools { border-top-color: var(--c-violet); }
+    .endp-card .ec-sdk { font: 700 13.5px var(--c-sans); color: var(--c-fg); }
+    .endp-card .ec-host { font: 600 10px var(--c-mono); color: var(--c-accent-bright); background: rgba(96, 220, 246, 0.06); border: 1px solid var(--c-line); border-radius: 6px; padding: 4px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .endp-card.fdry .ec-host { color: var(--c-green); }
+    .endp-card.tools .ec-host { color: var(--c-violet); }
+    .endp-card .ec-d { font-size: 11.5px; color: var(--c-muted); line-height: 1.35; flex: 1; }
+    .endp-card .ec-auth { font: 600 9px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
+    .endp-note { font: 600 11px var(--c-mono); color: var(--c-accent-bright); border: 1px dashed rgba(96, 220, 246, 0.45); border-radius: 8px; padding: 6px 16px; background: rgba(96, 220, 246, 0.05); text-align: center; }
 
     /* ======= APPEND COMPONENT CSS ABOVE THIS LINE ======= */
   </style>
@@ -1036,6 +1034,7 @@
                   <span class="n">Fine-tune</span>
                   <span class="n">Tools</span>
                   <span class="n">Knowledge</span>
+                  <span class="n">Memory</span>
                   <span class="n">Data</span>
                   <span class="n">Evaluations</span>
                   <span class="n">Guardrails</span>
@@ -1060,7 +1059,7 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">Build is where developers manage <b>every asset</b> they deploy or create: models, agents, tools, knowledge, fine-tunes, evaluations and guardrails, and it is the home of the <b>playgrounds</b>.</p>
+        <p class="takeaway">Build is where developers manage <b>every asset</b> they deploy or create, and it is the home of the <b>model and agent playgrounds</b>.</p>
         <aside class="notes">
           Build is where developers create and manage every asset. Everything you deploy or create shows up here: deployed models, agents,
           workflows, fine-tuned models, tools, knowledge bases, evaluations and guardrails, all the building blocks of an
@@ -1142,7 +1141,7 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">The Foundry <b>resource</b> is the billing, networking and quota boundary; the <b>project</b> is the isolated workspace (its own agents, data and connections). New capabilities slot in as <b>new projects</b>, not new accounts.</p>
+        <p class="takeaway">The <b>Foundry resource</b> is the billing, networking and quota boundary.<br>The <b>project</b> is the isolated workspace (its own agents, data and connections).</p>
         <aside class="notes">
           The new resource model is two levels: a single Foundry resource, the account, contains one or more projects. The
           resource is the boundary for billing, networking, Azure Policy and model-deployment quota; the project is the
@@ -1273,7 +1272,7 @@
                 <ul>
                   <li>Predictable latency and throughput</li>
                   <li>One PTU pool can be <b>shared</b> across different provisioned models</li>
-                  <li>Best for steady, latency-sensitive production</li>
+                  <li>Best for consistently high utilisation, latency-sensitive production</li>
                 </ul>
               </div>
             </div>
@@ -1285,7 +1284,7 @@
             <div class="dep-note"><b>Defaults vs custom:</b> accept global standard + default quota, or customise SKU, quota (TPM) and guardrails. Partner models (Llama, Claude) need an <b>Azure Marketplace</b> subscription; models sold directly by Azure do not.</div>
           </div>
         </div>
-        <p class="takeaway">A deployment is a <b>model + a deployment type</b>. The type sets the cost model (per-token vs reserved) and the data-residency and throughput guarantees; quota is tracked per region and subscription, as <b>TPM</b> (standard) or <b>PTU</b> (provisioned).</p>
+        <p class="takeaway">A deployment is a <b>model + a deployment type</b>. The type sets the cost model (per-token vs reserved) and the data-residency and throughput guarantees; quota is tracked per region and subscription, as <b>PayGo</b> (standard) or <b>PTU</b> (provisioned).</p>
         <aside class="notes">
           Deploying a model is choosing the model plus a deployment type, and the type is the decision that matters. Standard
           is pay-per-token and elastic, the default being global standard with one click, ideal for spiky or early workloads.
@@ -1298,38 +1297,12 @@
         </aside>
       </section>
 
-      <!-- 14 - THREE DEPLOYMENT TABS -->
-      <section class="content">
-        <div class="kicker"><span class="num">12</span> &middot; Test</div>
-        <h2>Try it, then watch it: three tabs per deployment</h2>
-        <div class="canvas">
-          <div class="dpl">
-            <div class="dpl-bar">
-              <span class="dpl-name">&#9670; gpt-4.1-mini</span>
-              <span class="dpl-tabs"><span class="dpl-tab active">Playground</span><span class="dpl-tab">Details</span><span class="dpl-tab">Monitor</span><span class="dpl-tab">Evaluation</span></span>
-              <span class="dpl-act">Save as agent</span>
-            </div>
-            <div class="dpl-body">
-              <div class="dpl-cfg">
-                <div class="cfg-card"><div class="cc-h">Instructions</div><div class="cc-d">You are an AI assistant that helps people find information.</div></div>
-                <div class="cfg-card hot"><div class="cc-h">Tools</div><div class="cc-d">Ground the model in live data.</div><span class="tool">&#9737; Web search</span></div>
-                <div class="cfg-card"><div class="cc-h">Knowledge <span class="pv">PREVIEW</span></div><div class="cc-d">Attach a Foundry IQ knowledge base.</div></div>
-                <div class="cfg-card"><div class="cc-h">Memory <span class="pv">PREVIEW</span></div><div class="cc-d">Recall across sessions.</div></div>
-              </div>
-              <div class="dpl-chat">
-                <div class="msg u">Use web search to summarise today's AI headlines.</div>
-                <div class="msg a">Here are today's top items, grounded on live results, with sources cited inline. <span class="cite">[1] [2] [3]</span></div>
-                <div class="msg u">Now chart deployments by region.</div>
-                <div class="msg a">Generated a bar chart via code interpreter and attached it.</div>
-              </div>
-            </div>
-          </div>
-          <div class="dpl-tabsinfo">
-            <div class="tabinfo"><div class="ti-t">Details</div><div class="ti-d">Target URI, API key (if enabled), provisioning state, and TPM / RPM rate limits.</div></div>
-            <div class="tabinfo"><div class="ti-t">Monitor</div><div class="ti-d">Requests, input / output tokens, estimated cost, and time to first byte, by time window.</div></div>
-          </div>
-        </div>
-        <p class="takeaway">The <b>Playground</b> is where you set the system prompt and attach tools (web search, code interpreter); <b>Details</b> gives you the endpoint and limits; <b>Monitor</b> shows tokens, cost and latency.</p>
+      <!-- 14 - LIVE DEMO: DEPLOYMENT PLAYGROUND -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Model Deployment Playground</h2>
+        <p class="demo-sub">Set the system prompt, attach web search + code interpreter &rarr; Monitor for tokens, cost and latency.</p>
+        <div class="demo-where">in the portal &middot; <b>ai.azure.com</b> &rarr; Build &rarr; Deployments &rarr; Playground</div>
         <aside class="notes">
           Every deployment has the same three working tabs. Playground is where you try it: set the system prompt, adjust
           temperature and max tokens, and attach tools to extend the model, web search for grounding in live data, a code
@@ -1341,55 +1314,82 @@
         </aside>
       </section>
 
-      <!-- 15 - INFERENCE PATHS -->
+      <!-- 14b - ENDPOINTS AND SDKS -->
       <section class="content">
-        <div class="kicker"><span class="num">13</span> &middot; Inference</div>
-        <h2>Two clients, one Responses API</h2>
+        <div class="kicker"><span class="num">12</span> &middot; Endpoints</div>
+        <h2>One resource, three endpoint surfaces</h2>
         <div class="canvas">
-          <div class="codecompare">
-            <div>
-              <span class="cc-label">Direct OpenAI-compatible client</span>
-<pre><code data-trim data-noescape class="language-python">token = get_bearer_token_provider(
-    DefaultAzureCredential(),
-    "https://ai.azure.com/.default")
-
-client = OpenAI(base_url=f"{gateway}/openai/v1/",
-                api_key=token)         # keyless
-client.responses.create(
-    model="gpt-4.1-mini", input="Hello")</code></pre>
+          <div class="endp">
+            <div class="endp-row">
+              <div class="endp-card direct">
+                <div class="ec-sdk">OpenAI SDK</div>
+                <div class="ec-host">*.openai.azure.com/openai/v1</div>
+                <div class="ec-d">Full OpenAI API surface: chat completions, embeddings, Responses, fine-tuning. No agents or evaluations.</div>
+                <div class="ec-auth">key or token</div>
+              </div>
+              <div class="endp-card fdry">
+                <div class="ec-sdk">Foundry SDK</div>
+                <div class="ec-host">*.services.ai.azure.com/api/projects/*</div>
+                <div class="ec-d">Foundry-native: agents, evaluations, connections, tracing. Responses API on its /openai route.</div>
+                <div class="ec-auth">token only &middot; Entra</div>
+              </div>
+              <div class="endp-card tools">
+                <div class="ec-sdk">Foundry Tools SDKs</div>
+                <div class="ec-host">*.cognitiveservices.azure.com</div>
+                <div class="ec-d">The other AI services: Speech, Vision, Language, Content Safety (formerly Azure AI Services).</div>
+                <div class="ec-auth">key or token</div>
+              </div>
             </div>
-            <div>
-              <span class="cc-label a">Foundry project client</span>
-<pre><code data-trim data-noescape class="language-python">project = AIProjectClient(endpoint=PROJECT_EP,
-    credential=DefaultAzureCredential())
-client = project.get_openai_client()
-
-r = client.responses.create(
-    model="gpt-4.1-mini", input="Hello")
-client.responses.create(model="gpt-4.1-mini",
-    input="and again",
-    previous_response_id=r.id)   # server-side state</code></pre>
-            </div>
-          </div>
-          <div class="surfaces">
-            <span class="surf">Chat completions</span>
-            <span class="surf">Embeddings</span>
-            <span class="surf">Responses API</span>
-            <span class="surf">Streaming</span>
-            <span class="surf">Model router</span>
-            <span class="surf">Deep research</span>
+            <div class="endp-note">One Foundry resource exposes all three &middot; an Azure OpenAI resource has only /openai/v1</div>
           </div>
         </div>
-        <p class="takeaway">Call models keyless with <b>DefaultAzureCredential</b> over the gateway, or through the <b>Foundry project client</b> for connections and tracing. Multi-turn is server-side via <b>previous_response_id</b>.</p>
+        <p class="takeaway">A Foundry resource is multi-surface: the <b>OpenAI</b> endpoint for raw inference, the <b>project</b> endpoint for Foundry-native agents and evals (token-only via Entra), and <b>Cognitive Services</b> for the other AI tools. Match the SDK to the endpoint.</p>
         <aside class="notes">
-          Once models live in the hub, how do teams call them? Two clients, same surface. On the left, the direct
-          OpenAI-compatible client: get a bearer token from DefaultAzureCredential scoped to ai.azure.com, point the base URL
-          at the gateway's v1 route, and call responses.create, no API keys anywhere. On the right, the Foundry project
-          client: AIProjectClient gives you connections, project properties and tracing, and get_openai_client hands you the
-          same OpenAI surface. Either way you get the Responses API, and multi-turn is server-side, you pass
-          previous_response_id rather than resending history. The same gateway also fronts chat completions, embeddings,
-          streaming, the server-side model router, and the deep-research model. Keyless auth via managed identity is the
-          enterprise default.
+          A quick reference that resolves a common point of confusion. A single Foundry resource exposes three endpoint
+          surfaces, and you pick the SDK to match. The OpenAI host, resource.openai.azure.com/openai/v1, is the pure
+          OpenAI-compatible surface: chat completions, embeddings, Responses and fine-tuning, with maximum client
+          compatibility, but no Foundry-native features. The project host, resource.services.ai.azure.com/api/projects, is the
+          Foundry SDK surface for agents, evaluations, connections and tracing, and it requires token auth via Entra, no keys.
+          The Cognitive Services host, resource.cognitiveservices.azure.com, is the older multi-service surface, now called
+          Foundry Tools, for Speech, Vision, Language and Content Safety. The key point: an Azure OpenAI resource only gives
+          you the openai endpoint, whereas a Foundry resource gives you all three. Source: the Foundry API and SDKs reference,
+          04-03.
+        </aside>
+      </section>
+
+      <!-- 15 - MODEL INFERENCE PATHS -->
+      <section class="content">
+        <div class="kicker"><span class="num">13</span> &middot; Inference</div>
+        <h2>Calling models through the gateway</h2>
+        <div class="canvas">
+          <div class="infer">
+            <div class="inf-paths">
+              <div class="inf-path direct">
+                <div class="ip-t">Direct client <span class="ip-badge">gateway key</span></div>
+                <div class="ip-code">AzureOpenAI(base_url=gateway, api_key=key)</div>
+                <div class="ip-surfs"><span class="ip-chip">Chat completions</span><span class="ip-chip">Embeddings</span><span class="ip-chip">Deep research</span></div>
+                <div class="ip-d">Full Azure OpenAI surface; the team holds the gateway key.</div>
+              </div>
+              <div class="inf-path fdry">
+                <div class="ip-t">Foundry project client <span class="ip-badge">keyless</span></div>
+                <div class="ip-code">responses.create(model="core-alpha/gpt-4.1-mini")</div>
+                <div class="ip-surfs"><span class="ip-chip">Responses API</span><span class="ip-chip">Multi-turn</span><span class="ip-chip">Streaming</span></div>
+                <div class="ip-d">Keyless via Entra; routes through the project's <b>core-{team}</b> connection, which speaks the Responses API only.</div>
+              </div>
+            </div>
+            <div class="inf-gw">&#8595; both paths reach the models through one APIM gateway &middot; managed identity onward &#8595;</div>
+          </div>
+        </div>
+        <p class="takeaway">Pick by surface and auth: the <b>direct client</b> (gateway key) for the full OpenAI surface, or the <b>Foundry project client</b> (keyless via Entra) whose <b>core-{team}</b> connection speaks the <b>Responses API</b>. Both reach the same models through the one gateway.</p>
+        <aside class="notes">
+          Once models are deployed centrally, teams call them two ways, both through the one APIM gateway. The direct Azure
+          OpenAI client points at the gateway with a subscription key and gives you the classic surfaces: chat completions,
+          embeddings and the deep-research model. The Foundry project client uses DefaultAzureCredential, so no keys, and
+          because the project's gateway connection is an API Management connection it speaks the Responses API specifically:
+          the path for agents, server-side multi-turn via previous_response_id, and a simpler input parameter. Both are keyless
+          to the models themselves; key-based access to the hub accounts is disabled by policy. Multi-turn keeps state
+          server-side, so you pass previous_response_id rather than resending history, though every prior input token is billed
+          on each call. Streaming reads output_text.delta events for incremental tokens.
         </aside>
       </section>
 
