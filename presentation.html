@@ -202,10 +202,6 @@
     @keyframes recpulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
     .reveal section.demo h2 { font-size: 52px; margin: 22px 0 8px; max-width: 86%; }
     .reveal section.demo .demo-sub { font-size: 20px; color: var(--c-muted); max-width: 64%; margin: 0 auto; line-height: 1.4; }
-    .demo-steps { margin-top: 26px; display: flex; flex-direction: column; gap: 8px; width: min(800px, 90%); text-align: left; }
-    .demo-step { font-family: var(--c-mono); font-size: 14.5px; color: var(--c-fg); border: 1px solid var(--c-line); border-left: 3px solid var(--c-accent); border-radius: 8px; background: rgba(255, 255, 255, 0.03); padding: 9px 14px; }
-    .demo-step b { color: var(--c-accent-bright); }
-    .demo-step .n { color: var(--c-muted); margin-right: 8px; }
     .demo-where { margin-top: 18px; font: 600 12px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); }
     .demo-where b { color: var(--c-accent-bright); }
     .reveal section.demo a { color: var(--c-accent-bright); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
@@ -500,8 +496,6 @@
     .catrow:last-child { border-bottom: none; }
     .catrow .nm { color: var(--c-fg); }
     .catrow .nm a { color: var(--c-accent-bright); text-decoration: underline; text-underline-offset: 2px; }
-    .catrow .ga { font-size: 8px; color: var(--c-green); border: 1px solid rgba(90, 209, 154, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
-    .catrow .pv { font-size: 8px; color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
 
     /* ========== Act 5: hosted agents ========== */
     .hosted { width: 100%; display: flex; flex-direction: column; gap: 14px; }
@@ -627,16 +621,14 @@
     .cvp-card.pol .cv-t b { color: var(--c-pink); }
     .cvp-card .cv-d { font-size: 12.5px; color: var(--c-muted); margin-top: 4px; line-height: 1.35; }
 
-    /* ========== Act 7: red-team ASR (illustrative) ========== */
+    /* ========== Act 7: red-team loop ========== */
     .asr { display: flex; gap: 18px; width: 100%; align-items: stretch; }
-    .asr-chart { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 18px; justify-content: center; }
-    .asr-title { font: 700 12px var(--c-mono); color: var(--c-fg); display: flex; justify-content: space-between; align-items: center; }
-    .asr-title .ill { font-size: 8.5px; color: var(--c-muted); border: 1px solid var(--c-line); border-radius: 99px; padding: 1px 8px; letter-spacing: 0.05em; }
-    .asr-bar .ab-l { font: 600 11px var(--c-mono); color: var(--c-muted); margin-bottom: 6px; }
-    .asr-bar .track { height: 24px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; overflow: hidden; }
-    .asr-bar .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font: 700 10px var(--c-mono); color: #04222b; }
-    .asr-bar.before .fill { background: var(--c-amber); width: 72%; }
-    .asr-bar.after .fill { background: var(--c-green); width: 14%; }
+    .rt-loop { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 13px; justify-content: center; }
+    .rt-head { font: 700 14.5px var(--c-sans); color: var(--c-accent-bright); line-height: 1.3; }
+    .rt-loop .rt-steps { list-style: none; counter-reset: rt; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+    .rt-steps li { counter-increment: rt; font-size: 12.5px; color: var(--c-muted); line-height: 1.3; padding-left: 25px; position: relative; }
+    .rt-steps li::before { content: counter(rt); position: absolute; left: 0; top: 1px; width: 17px; height: 17px; box-sizing: border-box; border-radius: 50%; border: 1px solid var(--c-accent); color: var(--c-accent-bright); font: 700 9.5px var(--c-mono); display: flex; align-items: center; justify-content: center; }
+    .rt-steps li b { color: var(--c-fg); }
     .asr-side { flex: 1 1 0; display: flex; flex-direction: column; gap: 10px; }
     .asr-box { border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 14px; }
     .asr-box h5 { font: 700 11px var(--c-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-accent-bright); margin: 0 0 6px; }
@@ -655,13 +647,21 @@
     .todo .dot.y { background: var(--c-accent); }
     .fleet-assets { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 12px; padding: 12px 15px; }
     .fleet-assets h4 { font: 700 12px var(--c-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-bright); margin: 0 0 6px; }
-    .atbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 11px; }
-    .atbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; padding: 5px 8px; border-bottom: 1px solid var(--c-line); }
-    .atbl td { padding: 6px 8px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
-    .atbl td:first-child { color: var(--c-accent-bright); }
-    .atbl .src { color: var(--c-muted); }
-    .atbl .ok { color: var(--c-green); }
-    .atbl .blk { color: var(--c-amber-bright); }
+    .atbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 10px; }
+    .atbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 8px; text-transform: uppercase; letter-spacing: 0.03em; padding: 4px 6px; border-bottom: 1px solid var(--c-line); white-space: nowrap; }
+    .atbl td { padding: 3.5px 6px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.06); white-space: nowrap; }
+    .atbl td.name { color: var(--c-accent-bright); }
+    .atbl td.src, .atbl td.proj { color: var(--c-muted); }
+    .atbl td.num { color: var(--c-muted); }
+    .atbl .st { display: inline-flex; align-items: center; gap: 5px; }
+    .atbl .st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
+    .atbl .st.run { color: var(--c-green); }
+    .atbl .st.run::before { background: var(--c-green); }
+    .atbl .st.unk { color: var(--c-muted); }
+    .atbl .st.unk::before { background: rgba(255, 255, 255, 0.35); }
+    .atbl .st.blk { color: var(--c-amber-bright); }
+    .atbl .st.blk::before { background: var(--c-amber); }
+    .atbl td.err.hi { color: var(--c-amber-bright); }
 
     /* ========== Act 7: provisioning quick-ref ========== */
     .refgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
@@ -698,7 +698,7 @@
     .endp-card.fdry .ec-host { color: var(--c-green); }
     .endp-card.tools .ec-host { color: var(--c-violet); }
     .endp-card .ec-d { font-size: 12.5px; color: var(--c-muted); line-height: 1.35; flex: 1; }
-    .endp-card .ec-auth { font: 600 12px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
+    .endp-card .ec-auth { font: 600 12.5px var(--c-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-muted); }
     .endp-note { font: 600 11px var(--c-mono); color: var(--c-accent-bright); border: 1px dashed rgba(96, 220, 246, 0.45); border-radius: 8px; padding: 6px 16px; background: rgba(96, 220, 246, 0.05); text-align: center; }
 
     /* ======= APPEND COMPONENT CSS ABOVE THIS LINE ======= */
@@ -1898,7 +1898,7 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">You cannot human-review every step, so you <b>evaluate live traffic against a threshold</b> and trace what crosses it, while watching cost per agent. <span class="accent">&#9654; LIVE DEMO: open a trace and an eval run.</span></p>
+        <p class="takeaway">You cannot human-review every step, so you <b>evaluate live traffic against a threshold</b> and trace what crosses it, while watching cost per agent.</p>
         <aside class="notes">
           Observability, the second pillar. You cannot put a human on every agent step, that defeats the purpose, so the model
           is: trace everything, evaluate continuously, and watch cost. Tracing is OpenTelemetry, prompt to model inference to
@@ -1907,6 +1907,20 @@
           threshold and get alerted when groundedness or task adherence drops, with agent-specific evaluators like tool-call
           accuracy. And cost: per-agent token spend across the fleet, because agents burn tokens fast. In the demo we open a
           code-interpreter trace and an evaluation run in the portal.
+        </aside>
+      </section>
+
+      <!-- 32b - LIVE DEMO: OBSERVABILITY -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Open a trace, read an eval run</h2>
+        <p class="demo-sub">Walk one run's trace in Application Insights, prompt to model to tool &rarr; then read a continuous-eval run scoring live traffic.</p>
+        <aside class="notes">
+          Live: take one agent run and open its trace in Application Insights. Walk the span tree top to bottom, the prompt, the
+          model call with its tokens and latency, then each tool call and what it returned, so the whole decision path is
+          visible after the fact. Then open an evaluation run: continuous evaluation samples production traffic and scores it on
+          groundedness, task adherence and tool-call accuracy against a threshold, the signal that fires an alert when quality
+          drops. One run traced, live traffic scored.
         </aside>
       </section>
 
@@ -1933,11 +1947,11 @@
             </div>
           </div>
           <div class="cvp">
-            <div class="cvp-card ctrl"><div class="cv-t"><b>Controls</b> = each developer configures</div><div class="cv-d">Opt in or out on your own agent.</div></div>
-            <div class="cvp-card pol"><div class="cv-t"><b>Policies</b> = the organisation mandates</div><div class="cv-d">"Every agent must have indirect-injection protection on", scanned continuously, like Intune device compliance.</div></div>
+            <div class="cvp-card ctrl"><div class="cv-t"><b>Controls</b> = each developer configures</div><div class="cv-d">Opt in or out on your own agent, e.g. Prompt Shields, content filters, a PII blocklist.</div></div>
+            <div class="cvp-card pol"><div class="cv-t"><b>Policies</b> = the organisation mandates</div><div class="cv-d">"Every agent must have indirect-injection protection on", scanned continuously.</div></div>
           </div>
         </div>
-        <p class="takeaway">Publishing an agent issues an <b>Entra identity</b> (app + object id) for access, ownership and lineage. <b>Policies</b> turn a developer's optional control into an org-wide mandate. <span class="accent">&#9654; LIVE DEMO: the agent's Entra id + a policy.</span></p>
+        <p class="takeaway">Publishing an agent issues an <b>Entra identity</b> (app + object id) for access, ownership and lineage.<br><b>Policies</b> turn a developer's optional control into an org-wide mandate.</p>
         <aside class="notes">
           Security, the third pillar, and the headline is identity. The moment you publish an agent it gets a Microsoft Entra
           identity, an application id and an object id, automatically, with no extra steps. That buys three things: access
@@ -1947,7 +1961,21 @@
           alert with full context. Purview makes agent interactions auditable and honours sensitivity labels. And the key
           distinction: controls are what each developer configures on their own agent, opt in or out, whereas policies are an
           organisation-level mandate, every agent in this subscription must have indirect-injection protection on, scanned
-          continuously, exactly like Intune device-compliance policies but for agents.
+          continuously across every agent in scope.
+        </aside>
+      </section>
+
+      <!-- 33b - LIVE DEMO: CREATE A POLICY -->
+      <section class="demo">
+        <span class="demo-badge"><span class="rec"></span> Live demo</span>
+        <h2>Mandate a control across the fleet</h2>
+        <p class="demo-sub">Create a policy in Operate / Compliance &rarr; mandate a control across a subscription &rarr; scanned continuously across every agent.</p>
+        <aside class="notes">
+          Live: take a control a developer would set on a single agent and make it an org-wide rule. In Operate, Compliance,
+          create a policy, choose the control type, say indirect-injection protection or a content filter, set its threshold,
+          then set the scope to a subscription or resource group with optional exceptions, and activate. From then on the
+          control plane scans every agent in scope continuously and flags any that fall out of compliance. A developer's
+          optional control becomes a mandate nobody can quietly switch off.
         </aside>
       </section>
 
@@ -1957,10 +1985,15 @@
         <h2>Attack your own agents, on purpose</h2>
         <div class="canvas">
           <div class="asr">
-            <div class="asr-chart">
-              <div class="asr-title">Attack success rate <span class="ill">illustrative</span></div>
-              <div class="asr-bar before"><div class="ab-l">Before the guardrail policy</div><div class="track"><div class="fill"></div></div></div>
-              <div class="asr-bar after"><div class="ab-l">After the guardrail policy</div><div class="track"><div class="fill"></div></div></div>
+            <div class="rt-loop">
+              <div class="rt-head">Find the holes before someone else does</div>
+              <ul class="rt-steps">
+                <li><b>Probe</b>: automated attacks, every category and strategy</li>
+                <li><b>Score</b>: an Attack Success Rate baseline, by technique</li>
+                <li><b>Harden</b>: add or tighten guardrails where attacks land</li>
+                <li><b>Re-scan</b>: the same suite, and watch the ASR fall</li>
+                <li><b>Gate</b>: re-run on every release, in CI/CD</li>
+              </ul>
             </div>
             <div class="asr-side">
               <div class="asr-box">
@@ -1969,42 +2002,36 @@
               </div>
               <div class="asr-box">
                 <h5>Risk categories</h5>
-                <div class="asr-chips"><span class="asr-chip">Hate</span><span class="asr-chip">Violence</span><span class="asr-chip">Self-harm</span><span class="asr-chip">Sensitive-data leakage</span><span class="asr-chip">Prohibited actions</span></div>
+                <div class="asr-chips"><span class="asr-chip">Hate</span><span class="asr-chip">Violence</span><span class="asr-chip">Sexual</span><span class="asr-chip">Self-harm</span></div>
               </div>
             </div>
           </div>
         </div>
-        <p class="takeaway">The <b>AI Red Teaming Agent</b> (built on PyRIT, preview) runs automated adversarial scans and scores an <b>Attack Success Rate</b>, so you can prove a guardrail policy actually moved the needle. <span class="accent">&#9654; LIVE DEMO: before vs after.</span></p>
+        <p class="takeaway">The <b>AI Red Teaming Agent</b> (built on PyRIT, preview) runs automated adversarial scans and scores an <b>Attack Success Rate</b>, so you can prove a guardrail policy actually moved the needle.</p>
         <aside class="notes">
           Guardrails are defence; red teaming is offence, and you want both. The AI Red Teaming Agent, in preview, is built on
           Microsoft's open-source PyRIT. It runs automated adversarial scans against a model or agent endpoint, scores each
           attack-response pair, and produces a scorecard with Attack Success Rate as the headline metric, broken down by attack
           technique and risk category. Strategies include obfuscation like Base64, ROT13 and Unicode confusables, the
-          multi-turn Crescendo attack, and multi-language prompts; categories span the safety harms plus agent-specific ones
-          like sensitive-data leakage and prohibited actions. The powerful move, shown in the demo, is running the same scan
+          multi-turn Crescendo attack, and multi-language prompts; categories are the four content-safety harms: hate, violence,
+          sexual and self-harm. The powerful move, shown in the demo, is running the same scan
           before and after attaching a guardrail policy: the attack-success-rate drop is your evidence the control works. The
           bars here are illustrative; your numbers depend on your agent and corpus.
         </aside>
       </section>
 
-      <!-- 35 - LIVE DEMO: GUARDRAILS, EVALS, RED TEAM -->
+      <!-- 34b - LIVE DEMO: RED-TEAM SCAN -->
       <section class="demo">
         <span class="demo-badge"><span class="rec"></span> Live demo</span>
-        <h2>Guardrails, evaluations and red teaming</h2>
-        <p class="demo-sub">Defence and offence on the same bank agent, in the control plane.</p>
-        <div class="demo-steps">
-          <div class="demo-step"><span class="n">1</span> Paste an injection, a fake SSN and a codename into <b>contoso-bank-agent</b>: watch <b>Prompt Shields</b> block them pre-model</div>
-          <div class="demo-step"><span class="n">2</span> Open an <b>evaluation run</b> and the evaluator catalog (groundedness, tool-call accuracy)</div>
-          <div class="demo-step"><span class="n">3</span> Run the <b>AI Red Teaming Agent</b> against the un-guardrailed deployment</div>
-          <div class="demo-step"><span class="n">4</span> Re-run against the guardrailed deployment: compare the <b>Attack Success Rate</b></div>
-        </div>
-        <div class="demo-where">Operate &middot; Controls + Evaluations + Red team &middot; notebooks <b>13 / 14</b></div>
+        <h2>Run the advanced attack suite</h2>
+        <p class="demo-sub">Mutate attacks with encodings (Base64, ROT13, Unicode) and other languages &rarr; add your own attack prompts &rarr; score the ASR per category and strategy.</p>
         <aside class="notes">
-          Live, all on the same bank agent. First defence: paste a jailbreak, a fake SSN and an internal codename and watch the
-          input Prompt Shields and blocklist intercept them before the model runs. Then open an evaluation run and the evaluator
-          catalog to show continuous quality and safety scoring. Then offence: run the AI Red Teaming Agent against the
-          deployment with no guardrail policy, then against the guardrailed deployment, and compare the attack-success-rate
-          drop. Defence plus offence, proven, in one sitting.
+          Live: the advanced scan. The AI Red Teaming Agent takes a set of attack objectives and mutates them with PyRIT
+          converters, Base64, ROT13, character-space and Unicode confusables, plus composite chains, then translates them into
+          other languages like Spanish and French, and folds in custom attack objectives seeded from a JSON file. It fires the
+          whole suite at the gpt-4.1-mini deployment through the APIM gateway, scores every attack-response pair, and produces a
+          scorecard with the Attack Success Rate broken down by strategy and risk category. Re-running the same scan after a
+          guardrail policy is your before-and-after evidence.
         </aside>
       </section>
 
@@ -2020,22 +2047,30 @@
               <div class="todo"><span class="dot y"></span> Eval below threshold &middot; aria-rm-briefing-agent</div>
               <div class="todo"><span class="dot r"></span> Policy gap: indirect injection off &middot; 2 agents</div>
               <div class="todo"><span class="dot y"></span> Cost spike &middot; contoso-pmo-agent, +180% today</div>
+              <div class="todo"><span class="dot r"></span> Error rate 100% &middot; contoso-bank-agent</div>
+              <div class="todo"><span class="dot y"></span> 2 agents in Unknown state &middot; github-copilot</div>
             </div>
             <div class="fleet-assets">
-              <h4>Assets</h4>
+              <h4>Assets &middot; Agents</h4>
               <table class="atbl">
-                <thead><tr><th>Agent</th><th>Source</th><th>Status</th><th>Cost</th><th>Risk</th></tr></thead>
+                <thead><tr><th>Name</th><th>Source</th><th>Project</th><th>Status</th><th>Errors</th><th>Tokens</th><th>Runs</th></tr></thead>
                 <tbody>
-                  <tr><td>contoso-bank-agent</td><td class="src">Foundry</td><td class="ok">Active</td><td>$12</td><td>Low</td></tr>
-                  <tr><td>aria-rm-briefing-agent</td><td class="src">Foundry</td><td class="ok">Active</td><td>$8</td><td>Med</td></tr>
-                  <tr><td>claims-triage</td><td class="src">AI Gateway &middot; LangGraph</td><td class="ok">Active</td><td>$4</td><td>Low</td></tr>
-                  <tr><td>legacy-helpdesk</td><td class="src">AI Gateway &middot; AWS</td><td class="blk">Blocked</td><td>$0</td><td>High</td></tr>
+                  <tr><td class="name">github-copilot</td><td class="src">Foundry</td><td class="proj">project-copilot-sdk</td><td><span class="st unk">Unknown</span></td><td class="num err">0.00%</td><td class="num">-</td><td class="num">18</td></tr>
+                  <tr><td class="name">aria-rm-briefing-agent</td><td class="src">Foundry</td><td class="proj">project-admin-c2676f</td><td><span class="st run">Running</span></td><td class="num err">1.92%</td><td class="num">153.8K</td><td class="num">52</td></tr>
+                  <tr><td class="name">contoso-bank-agent</td><td class="src">Foundry</td><td class="proj">project-admin-c2676f</td><td><span class="st run">Running</span></td><td class="num err hi">100.00%</td><td class="num">-</td><td class="num">40</td></tr>
+                  <tr><td class="name">contoso-pmo-agent</td><td class="src">Foundry</td><td class="proj">project-admin-c2676f</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">15.3K</td><td class="num">4</td></tr>
+                  <tr><td class="name">SpaceExpert</td><td class="src">Foundry</td><td class="proj">project-alpha-mesh</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">860</td><td class="num">3</td></tr>
+                  <tr><td class="name">arxiv-nlp-agent</td><td class="src">Foundry</td><td class="proj">iq-project</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">27K</td><td class="num">5</td></tr>
+                  <tr><td class="name">team-beta-agent</td><td class="src">Foundry</td><td class="proj">project-beta-c2676f</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">56</td><td class="num">1</td></tr>
+                  <tr><td class="name">team-delta-agent</td><td class="src">Foundry</td><td class="proj">project-delta-c2676f</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">56</td><td class="num">1</td></tr>
+                  <tr><td class="name">claims-triage</td><td class="src">AI Gateway</td><td class="proj">LangGraph</td><td><span class="st run">Running</span></td><td class="num err">0.00%</td><td class="num">4.1K</td><td class="num">12</td></tr>
+                  <tr><td class="name">legacy-helpdesk</td><td class="src">AI Gateway</td><td class="proj">AWS</td><td><span class="st blk">Blocked</span></td><td class="num err">-</td><td class="num">-</td><td class="num">0</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <p class="takeaway">Operate is a <b>to-do list for the fleet</b>: blocked jailbreaks, evals below threshold, policy gaps. External agents (LangGraph, AWS) join the same view by routing through the <b>AI Gateway</b>. <span class="accent">&#9654; LIVE DEMO.</span></p>
+        <p class="takeaway">Operate is a <b>to-do list for the fleet</b>: blocked jailbreaks, evals below threshold, policy gaps. External agents (e.g., AWS) join the same view by routing through the <b>AI Gateway</b>.</p>
         <aside class="notes">
           Fleet-wide operations, the fourth pillar. The Operate view is best thought of as a to-do list for the whole fleet:
           blocked jailbreak attempts, evaluation scores below threshold, policy-compliance gaps, cost spikes, sortable by error
@@ -2051,19 +2086,11 @@
       <section class="demo">
         <span class="demo-badge"><span class="rec"></span> Live demo</span>
         <h2>The admin fleet overview</h2>
-        <p class="demo-sub">Operate: assets, compliance, quota, and block an agent at the gateway.</p>
-        <div class="demo-steps">
-          <div class="demo-step"><span class="n">1</span> <b>Operate &rarr; Overview</b>: fleet to-do list, cost hero stats, usage trends</div>
-          <div class="demo-step"><span class="n">2</span> <b>Assets</b>: a Foundry agent and an external agent registered via AI Gateway, side by side</div>
-          <div class="demo-step"><span class="n">3</span> <b>Compliance</b>: a policy ("indirect injection must be on") and the deployments violating it</div>
-          <div class="demo-step"><span class="n">4</span> Update status &rarr; <b>Block</b> an agent at the gateway; show <b>Quota</b> (TPM) per deployment</div>
-        </div>
-        <div class="demo-where">portal &middot; <b>Operate</b> (New Foundry on)</div>
+        <p class="demo-sub">Operate: the fleet overview and assets inventory.</p>
+        <div class="demo-where">portal &middot; <b>Operate</b></div>
         <aside class="notes">
           Live in Operate. Start on Overview for the fleet to-do list and cost hero stats. Open Assets to show a Foundry-built
-          agent and an externally-hosted agent, registered through the AI Gateway, in one inventory. Open Compliance to show an
-          org policy and the deployments that violate it, and fix one. Then block an agent at the gateway to show you can stop
-          traffic without owning its infrastructure, and finish on Quota to show per-deployment token limits. This is the IT and
+          agent and an externally-hosted agent, registered through the AI Gateway, in one inventory. This is the IT and
           security admin's home base.
         </aside>
       </section>
