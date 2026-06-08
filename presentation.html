@@ -544,9 +544,6 @@
     .iq-kb .kb-eng b { color: var(--c-accent-bright); }
     .iq-right { flex: 0 0 24%; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
     .iq-agent { border: 1px solid var(--c-line); border-radius: 8px; padding: 8px 11px; font: 600 11px var(--c-mono); color: var(--c-fg); text-align: center; background: rgba(255, 255, 255, 0.03); }
-    .iq-stat { border: 1px solid rgba(90, 209, 154, 0.5); border-radius: 10px; background: rgba(90, 209, 154, 0.06); padding: 9px; text-align: center; }
-    .iq-stat .num { font: 700 24px var(--c-sans); color: var(--c-green); }
-    .iq-stat .lbl { font-size: 9.5px; color: var(--c-muted); line-height: 1.3; }
     .iq-fam { display: flex; gap: 8px; justify-content: center; }
     .iq-fam .f { font: 600 11px var(--c-mono); border: 1px solid var(--c-line); border-radius: 99px; padding: 4px 13px; color: var(--c-muted); }
     .iq-fam .f.on { color: var(--c-accent-bright); border-color: var(--c-accent); background: rgba(96, 220, 246, 0.06); }
@@ -1658,20 +1655,13 @@
       <section class="demo">
         <span class="demo-badge"><span class="rec"></span> Live demo</span>
         <h2>Build and run an agent</h2>
-        <p class="demo-sub">From the agent builder to a hosted agent that runs tools and renders a chart.</p>
-        <div class="demo-steps">
-          <div class="demo-step"><span class="n">1</span> In <b>Build</b>, create a prompt agent; set instructions, attach <b>web search</b> + a knowledge base</div>
-          <div class="demo-step"><span class="n">2</span> Run a few prompts in the <b>playground</b>; watch the <b>tool calls</b> and traces</div>
-          <div class="demo-step"><span class="n">3</span> Invoke the <b>hosted Copilot SDK agent</b>: upload a CSV, ask for cost-by-department</div>
-          <div class="demo-step"><span class="n">4</span> Watch it run shell / python in its sandbox and <b>render a chart</b> back</div>
-        </div>
-        <div class="demo-where">portal <b>Build &rarr; agent playground</b> &middot; notebook <b>08-10-01</b></div>
+        <p class="demo-sub">Build a prompt agent in the playground, then invoke the example hosted Copilot SDK agent.</p>
+        <div class="demo-where">portal <b>Build &rarr; playground</b></div>
         <aside class="notes">
-          Live: start in the agent builder, create a prompt agent, give it instructions and attach web search and a knowledge
-          base, then run a few prompts in the playground and show the tool calls and traces. Then invoke the hosted Copilot SDK
-          agent from the notebook: upload a CSV of licence data, ask for a cost-by-department breakdown, and watch it run shell
-          and Python inside its sandbox and render a chart that we pull back out. That chart, produced by tools inside a hosted
-          container, is the whole agent story made visible.
+          Live, in two parts. First, build a prompt agent in the agent builder: set its instructions, attach the tools and
+          knowledge it needs, and try it in the playground, watching the tool calls and traces. Second, invoke the example
+          hosted Copilot SDK agent and watch it run tools inside its own per-session sandbox. The use case is generic on
+          purpose; for a given audience we prepare a relevant scenario, instructions and tools beforehand.
         </aside>
       </section>
 
@@ -1700,7 +1690,6 @@
                 <div class="iq-col-h">Agents attach via MCP</div>
                 <div class="iq-agent">prompt agent</div>
                 <div class="iq-agent">multi-agent system</div>
-                <div class="iq-stat"><div class="num">+36%</div><div class="lbl">response quality vs single-shot RAG (Microsoft benchmark)</div></div>
               </div>
             </div>
             <div class="iq-fam">
