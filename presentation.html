@@ -576,24 +576,6 @@
     .iqkb-note { font: 500 10px var(--c-mono); color: var(--c-muted); text-align: center; line-height: 1.4; }
     .iqkb-note b { color: var(--c-accent-bright); }
 
-    /* ========== Act 6: scales out (multi-agent + deep research) ========== */
-    .iqscale { width: 100%; display: flex; gap: 16px; align-items: stretch; }
-    .iqs-panel { flex: 1 1 0; border: 1px solid var(--c-line); border-radius: 13px; padding: 14px 17px; display: flex; flex-direction: column; gap: 11px; }
-    .iqs-panel.ma { border-top: 3px solid var(--c-accent); }
-    .iqs-panel.dr { border-top: 3px solid var(--c-violet); }
-    .iqs-h { font: 700 16px var(--c-sans); color: var(--c-fg); }
-    .iqs-h small { display: block; font-size: 11.5px; color: var(--c-muted); font-weight: 400; margin-top: 2px; }
-    .router { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .router .orch { font: 600 11px var(--c-mono); color: var(--c-accent-bright); border: 1px solid var(--c-accent); border-radius: 8px; padding: 6px 13px; background: rgba(96, 220, 246, 0.06); }
-    .router .down { color: var(--c-muted); font-size: 12px; }
-    .router .spec { display: flex; gap: 8px; }
-    .router .sp { font: 600 10px var(--c-mono); color: var(--c-fg); border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 10px; text-align: center; background: rgba(255, 255, 255, 0.03); }
-    .router .sp small { display: block; color: var(--c-muted); font-size: 8px; margin-top: 2px; }
-    .drloop { display: flex; flex-direction: column; gap: 7px; align-items: center; font: 600 11px var(--c-mono); }
-    .drloop .dn { border: 1px solid var(--c-line); border-radius: 7px; padding: 6px 12px; color: var(--c-fg); background: rgba(255, 255, 255, 0.03); text-align: center; }
-    .drloop .dn small { display: block; color: var(--c-muted); font-size: 8px; font-weight: 400; }
-    .drloop .dn.model { color: var(--c-violet); border-color: rgba(164, 140, 255, 0.5); background: rgba(164, 140, 255, 0.06); }
-    .drloop .cyc { color: var(--c-violet); font-size: 12px; }
 
     /* ========== Act 7: data plane vs control plane ========== */
     .cpwhat { width: 100%; display: flex; flex-direction: column; gap: 14px; }
@@ -1779,48 +1761,6 @@
           minimal effort with no LLM and kb-standard at low effort with gpt-4.1-mini, then run retrieval against each and watch
           how the reasoning-effort knob changes the results, before wiring a knowledge base to an agent. Same corpus, two
           latency-and-relevance trade-offs.
-        </aside>
-      </section>
-
-      <!-- 28 - FOUNDRY IQ SCALES OUT -->
-      <section class="content">
-        <div class="kicker"><span class="num">24</span> &middot; At scale</div>
-        <h2>One knowledge base, many shapes of agent</h2>
-        <div class="canvas">
-          <div class="iqscale">
-            <div class="iqs-panel ma">
-              <div class="iqs-h">Multi-agent <small>router + specialists, each on its own KB</small></div>
-              <div class="router">
-                <div class="orch">orchestrator &middot; classify &amp; route</div>
-                <div class="down">&darr;</div>
-                <div class="spec">
-                  <div class="sp">HR<small>contoso-kb-hr</small></div>
-                  <div class="sp">Marketing<small>contoso-kb-mkt</small></div>
-                  <div class="sp">Products<small>contoso-kb-prod</small></div>
-                </div>
-              </div>
-              <div class="rm-note">Answer-synthesis mode per KB (Standard-SKU search). Built with the Microsoft Agent Framework.</div>
-            </div>
-            <div class="iqs-panel dr">
-              <div class="iqs-h">Deep research <small>a reasoning model in an agentic loop</small></div>
-              <div class="drloop">
-                <div class="dn model">o3-deep-research<small>plans, calls tools</small></div>
-                <div class="cyc">&#8635; search / fetch over the KB</div>
-                <div class="dn">gpt-4.1-mini<small>synthesises a cited report</small></div>
-              </div>
-              <div class="rm-note">Same Foundry IQ index. APIM routes the reasoning model to Norway East.</div>
-            </div>
-          </div>
-        </div>
-        <p class="takeaway">The same knowledge base powers a simple agent, a <b>router-and-specialist</b> multi-agent system, and a <b>deep-research</b> reasoning loop, with the gateway routing models by region underneath.</p>
-        <aside class="notes">
-          The payoff of building knowledge once is reuse. Same knowledge base, three shapes of consumer. A simple prompt agent,
-          which we saw. A multi-agent system, where a lightweight orchestrator classifies each query and routes it to an HR,
-          marketing or products specialist, each grounded on its own knowledge base in answer-synthesis mode, built with the
-          Microsoft Agent Framework, and note that answer-synthesis needs the Standard search SKU. And a deep-research loop,
-          where a reasoning model, o3-deep-research, plans and calls search and fetch tools against the same index, iterates,
-          then hands off to a cheaper model to synthesise a cited report, with the APIM gateway transparently routing the
-          reasoning model to its region. Build the knowledge base once, reuse it everywhere.
         </aside>
       </section>
 
