@@ -444,15 +444,6 @@
     .inf-path.fdry .ip-chip { color: var(--c-green); border-color: rgba(90, 209, 154, 0.4); }
     .inf-path .ip-d b { color: var(--c-fg); }
 
-    /* ========== Act 4: migration gotchas ========== */
-    .gotchas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
-    .gcard { border: 1px solid var(--c-line); border-radius: 10px; padding: 11px 15px; border-left: 3px solid var(--c-amber); }
-    .gcard.good { border-left-color: var(--c-green); }
-    .gcard .gc-s { font: 700 13.5px var(--c-sans); color: var(--c-fg); }
-    .gcard .gc-f { font-size: 12px; color: var(--c-muted); margin-top: 3px; line-height: 1.32; }
-    .gcard .gc-f b { color: var(--c-accent-bright); }
-    .gcard.good .gc-f b { color: var(--c-green); }
-
     /* ========== Act 5: agent components ========== */
     .agentdiag { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .agt-row { display: flex; align-items: center; gap: 16px; justify-content: center; }
@@ -503,6 +494,7 @@
     .catrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font: 600 12px var(--c-mono); padding: 5px 0; border-bottom: 1px solid rgba(96, 220, 246, 0.07); }
     .catrow:last-child { border-bottom: none; }
     .catrow .nm { color: var(--c-fg); }
+    .catrow .nm a { color: var(--c-accent-bright); text-decoration: underline; text-underline-offset: 2px; }
     .catrow .ga { font-size: 8px; color: var(--c-green); border: 1px solid rgba(90, 209, 154, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
     .catrow .pv { font-size: 8px; color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.4); border-radius: 99px; padding: 1px 7px; white-space: nowrap; }
 
@@ -514,10 +506,10 @@
     .hc-card.host { border-top: 3px solid var(--c-violet); }
     .hc-h { font: 700 16px var(--c-sans); color: var(--c-fg); }
     .hc-h small { display: block; color: var(--c-muted); font-weight: 400; font-size: 11.5px; margin-top: 2px; }
-    .hc-pv { position: absolute; top: 13px; right: 15px; font: 700 8px var(--c-mono); color: var(--c-amber-bright); border: 1px solid rgba(255, 170, 60, 0.5); border-radius: 99px; padding: 1px 8px; }
     .hc-card ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
     .hc-card li { font-size: 12px; color: var(--c-muted); padding-left: 14px; position: relative; line-height: 1.3; }
     .hc-card li::before { content: "+"; position: absolute; left: 0; color: var(--c-accent); font-weight: 700; }
+    .hc-card a { color: var(--c-accent-bright); text-decoration: underline; text-underline-offset: 2px; }
     .hc-card.host li::before { color: var(--c-violet); }
     .frameworks { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; }
     .fw-label { font: 700 10px var(--c-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-muted); margin-right: 4px; }
@@ -537,15 +529,6 @@
     .byok { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 9px; font-size: 11px; color: var(--c-muted); flex-wrap: wrap; }
     .byok .b-model { border: 1px solid var(--c-violet); border-radius: 8px; padding: 6px 11px; color: var(--c-violet); background: rgba(164, 140, 255, 0.07); }
     .byok .ar { color: var(--c-accent); }
-
-    /* ========== Act 5: scale compare table ========== */
-    .cmptbl { width: 100%; border-collapse: collapse; font-family: var(--c-mono); font-size: 12px; }
-    .cmptbl th { text-align: left; color: var(--c-muted); font-weight: 600; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; border-bottom: 1px solid var(--c-line); }
-    .cmptbl th.a { color: var(--c-accent-bright); }
-    .cmptbl th.v { color: var(--c-violet); }
-    .cmptbl th.p { color: var(--c-pink); }
-    .cmptbl td { padding: 8px 12px; color: var(--c-fg); border-bottom: 1px solid rgba(96, 220, 246, 0.07); vertical-align: top; line-height: 1.3; }
-    .cmptbl td:first-child { color: var(--c-muted); }
 
     /* ========== Act 6: Foundry IQ overview ========== */
     .iq { width: 100%; display: flex; flex-direction: column; gap: 15px; }
@@ -1408,33 +1391,6 @@
         </aside>
       </section>
 
-      <!-- 17 - MODELS EVOLVE: MIGRATION -->
-      <section class="content">
-        <div class="kicker"><span class="num">14</span> &middot; Migrate</div>
-        <h2>When the model class changes under you</h2>
-        <div class="canvas">
-          <div class="gotchas">
-            <div class="gcard"><div class="gc-s">Rejected parameters</div><div class="gc-f">temperature and top_p get an <b>HTTP 400</b>. Drop them; steer with <b>reasoning_effort</b>.</div></div>
-            <div class="gcard"><div class="gc-s">Hidden reasoning tokens</div><div class="gc-f">billed and counted against TPM. <b>Re-baseline</b> cost and quota.</div></div>
-            <div class="gcard"><div class="gc-s">The empty-output trap</div><div class="gc-f">reasoning eats the budget, you get nothing back. <b>Raise max_output_tokens</b>.</div></div>
-            <div class="gcard"><div class="gc-s">API surface moved</div><div class="gc-f">Chat Completions &rarr; <b>Responses API</b> for reasoning controls.</div></div>
-            <div class="gcard"><div class="gc-s">Prompt regressions</div><div class="gc-f">4o prompts over-steer a reasoner. <b>Simplify</b> the instructions.</div></div>
-            <div class="gcard good"><div class="gc-s">The clean default</div><div class="gc-f">latency-sensitive 4o job &rarr; <b>gpt-5.1, reasoning_effort: none</b>, plus caching.</div></div>
-          </div>
-        </div>
-        <p class="takeaway">GPT-4o to GPT-5 is a <b>model-class change</b> (chat to reasoning), not a version bump. The hub-and-spoke gateway absorbs it: you swap the model, not the plumbing.</p>
-        <aside class="notes">
-          Models do not stand still, and GPT-4o to GPT-5 is the instructive case: it is a class change, non-reasoning chat to a
-          reasoning model, not a version bump. Six things bite. Sampling params like temperature and top_p are rejected with a
-          400, so drop them and steer with reasoning_effort. Reasoning tokens are hidden but billed and counted against TPM, so
-          re-baseline cost and quota. The empty-output trap: reasoning consumes your max_output_tokens and you get nothing, so
-          raise the budget. The API surface moves from Chat Completions to the Responses API for full reasoning control. 4o-era
-          prompts over-steer a reasoner, so simplify. And the clean default for a latency- and cost-sensitive 4o workload is
-          gpt-5.1 with reasoning_effort none plus caching. The reassuring part: because inference is centralised behind the
-          gateway, you change the model, not the plumbing.
-        </aside>
-      </section>
-
       <!-- 18 - WHAT IS AN AGENT -->
       <section class="content">
         <div class="kicker"><span class="num">15</span> &middot; Agents</div>
@@ -1573,41 +1529,47 @@
           <div class="cat3">
             <div class="catcol k">
               <h4>Knowledge (grounding)</h4>
-              <div class="catrow"><span class="nm">Azure AI Search</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">File search</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Web / Bing grounding</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Foundry IQ knowledge base</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">SharePoint</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Microsoft Fabric</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Azure AI Search</span></div>
+              <div class="catrow"><span class="nm">File search</span></div>
+              <div class="catrow"><span class="nm">Web / Bing grounding</span></div>
+              <div class="catrow"><span class="nm">Foundry IQ knowledge base</span></div>
+              <div class="catrow"><span class="nm">Work IQ (Microsoft 365)</span></div>
+              <div class="catrow"><span class="nm">Microsoft Fabric (Fabric IQ)</span></div>
+              <div class="catrow"><span class="nm">SharePoint</span></div>
             </div>
             <div class="catcol t">
               <h4>Tools &amp; actions</h4>
-              <div class="catrow"><span class="nm">Code Interpreter</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Function calling</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Azure Functions</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Logic Apps connectors</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Image generation</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Browser / computer use</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Code Interpreter</span></div>
+              <div class="catrow"><span class="nm">Function calling</span></div>
+              <div class="catrow"><span class="nm">Azure Functions</span></div>
+              <div class="catrow"><span class="nm">Logic Apps connectors</span></div>
+              <div class="catrow"><span class="nm">Image generation</span></div>
+              <div class="catrow"><span class="nm"><a href="https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/computer-use?tabs=prompt-agents&amp;pivots=python" target="_blank" rel="noopener">Browser / computer use</a></span></div>
             </div>
             <div class="catcol c">
               <h4>Custom &amp; protocols</h4>
-              <div class="catrow"><span class="nm">Model Context Protocol</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">OpenAPI tools</span><span class="ga">GA</span></div>
-              <div class="catrow"><span class="nm">Agent-to-Agent (A2A)</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Toolbox</span><span class="pv">preview</span></div>
-              <div class="catrow"><span class="nm">Agent memory</span><span class="pv">preview</span></div>
+              <div class="catrow"><span class="nm">Model Context Protocol</span></div>
+              <div class="catrow"><span class="nm">OpenAPI tools</span></div>
+              <div class="catrow"><span class="nm">Agent-to-Agent (A2A)</span></div>
+              <div class="catrow"><span class="nm"><a href="https://learn.microsoft.com/en-gb/azure/foundry/agents/how-to/tools/toolbox?pivots=python" target="_blank" rel="noopener">Toolbox</a> (curated set of tools)</span></div>
+              <div class="catrow"><span class="nm">Tool catalog</span></div>
+              <div class="catrow"><span class="nm"><a href="https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/skills" target="_blank" rel="noopener">Skills</a> (reusable instructions)</span></div>
+              <div class="catrow"><span class="nm">Agent memory</span></div>
             </div>
           </div>
         </div>
-        <p class="takeaway">Grounding sources and actions plug in by configuration. <b>MCP is GA</b>, so an agent can call any compliant tool server; A2A and Toolbox are still in preview.</p>
+        <p class="takeaway">Grounding sources and actions plug in by <b>configuration</b>, not custom plumbing. <b>MCP</b> and <b>OpenAPI</b> let an agent call almost any tool server or API, and the <b>IQ</b> family (Foundry, Work, Fabric) grounds it in your data.</p>
         <aside class="notes">
-          This is the current, web-verified catalog of what an agent can know and do, with honest GA-versus-preview labels.
-          Knowledge sources for grounding: Azure AI Search, file search and web grounding are GA, Foundry IQ knowledge bases
-          are GA, SharePoint and Microsoft Fabric are in preview. Tools and actions: Code Interpreter, function calling, Azure
-          Functions and Logic Apps connectors are GA, image generation and browser or computer use are preview. The custom and
-          protocol column is the extensibility story: the Model Context Protocol is now generally available, so your agent can
-          call any compliant tool server, while A2A, Toolbox and agent memory are still preview. The headline for builders is
-          that knowledge and tools are configuration, not custom plumbing.
+          What an agent can know and do, configured rather than coded. Knowledge for grounding: Azure AI Search, uploaded
+          files, the web via Bing, SharePoint, and your enterprise data through the IQ family - Foundry IQ over your Azure and
+          web sources, Work IQ over live Microsoft 365 data like email, chat, meetings and files through Microsoft Graph with
+          permissions enforced, and Fabric IQ over your Fabric lakehouse and semantic models. Tools and actions: a code
+          interpreter, your own functions, Azure Functions and Logic Apps connectors, image generation, and browser or
+          computer use. Extensibility: the Model Context Protocol and OpenAPI let an agent call almost any tool server or
+          external API, agent-to-agent handles multi-agent calls, the Toolbox and tool catalog package and govern tools, skills
+          add reusable behavioral guidance as versioned files, and agents have built-in memory. The headline: knowledge and tools are configuration, not custom plumbing. These
+          capabilities move between preview and GA quickly, so the status labels are intentionally left off - check the docs
+          for the current state.
         </aside>
       </section>
 
@@ -1627,10 +1589,9 @@
                 </ul>
               </div>
               <div class="hc-card host">
-                <span class="hc-pv">PUBLIC PREVIEW</span>
                 <div class="hc-h">Hosted agent <small>bring your own code and runtime</small></div>
                 <ul>
-                  <li>Ship a container, or zip your Python / C# source</li>
+                  <li><a href="https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent-code" target="_blank" rel="noopener">Deploy from source</a> (Foundry builds it, no Docker), or ship your own container</li>
                   <li>Foundry provisions compute and a dedicated endpoint</li>
                   <li>Per-session VM sandbox, scale to zero, OpenTelemetry</li>
                   <li>Gets its own Microsoft Entra agent identity</li>
@@ -1648,11 +1609,11 @@
             </div>
           </div>
         </div>
-        <p class="takeaway">Most agents need <b>no container</b>. When you want full control, <b>hosted agents</b> (preview) run your own runtime with a managed identity and a sandbox, in any supported framework.</p>
+        <p class="takeaway">Most agents need <b>no container</b>. For your own runtime, <b>hosted agents</b> run any framework with a managed identity and a sandbox: deploy <b>straight from source</b> (no Docker), or bring your own container.</p>
         <aside class="notes">
           Prompt agents cover most cases with nothing to deploy. But sometimes you want your own runtime, your own agent loop,
-          your own framework, and that is hosted agents, currently public preview with GA expected mid-2026. You ship a
-          container or just zip your Python or C-sharp source and let Foundry build it; Foundry then provisions compute,
+          your own framework, and that is hosted agents. You ship a container, or just zip your Python or C-sharp source and
+          let Foundry build it with no Dockerfile; Foundry then provisions compute,
           assigns the agent a dedicated Microsoft Entra identity and endpoint, and runs it in a per-session VM-isolated sandbox
           with scale-to-zero and built-in OpenTelemetry. Crucially the framework is your choice: Microsoft Agent Framework,
           LangGraph, the OpenAI Agents SDK, the Anthropic Agent SDK, the GitHub Copilot SDK, or your own code. The next slide
@@ -1690,37 +1651,6 @@
           shell, not the brains. And inference is bring-your-own-key: the SDK points at your own Foundry model over the
           Responses API using the container's managed identity, so no GitHub or OpenAI keys ever ship in the image. Sovereign,
           observable, and the same demo you would run locally.
-        </aside>
-      </section>
-
-      <!-- 24 - SCALE 1:N AND GENERALISE -->
-      <section class="content">
-        <div class="kicker"><span class="num">21</span> &middot; Scale &amp; generalise</div>
-        <h2>Same container, three placements</h2>
-        <div class="canvas">
-          <table class="cmptbl">
-            <thead>
-              <tr><th>Dimension</th><th class="a">Standalone (08-10)</th><th class="v">On the 1:N account (08-10b)</th><th class="p">Claude variant (08-11)</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Foundry account</td><td>new, dedicated</td><td>shared aif-spoke-multi</td><td>new, dedicated</td></tr>
-              <tr><td>Where inference runs</td><td>local model</td><td>APIM core gateway</td><td>local Claude model</td></tr>
-              <tr><td>Reaches model via</td><td>project endpoint, MI</td><td>gateway, api-key header</td><td>project endpoint, MI</td></tr>
-              <tr><td>Model surface</td><td>/openai/v1/responses</td><td>gateway /openai</td><td>/anthropic/v1/messages</td></tr>
-              <tr><td>SDK swapped</td><td>GitHub Copilot SDK</td><td>GitHub Copilot SDK</td><td>Claude Agent SDK</td></tr>
-            </tbody>
-          </table>
-          <div class="dep-note" style="margin-top:14px;">Gateway-connection BYO-model is <b>prompt-agents-only</b>, so on the shared account the hosted container points <b>straight at the gateway</b>. The Claude variant changes only the <b>SDK and the model surface</b>.</div>
-        </div>
-        <p class="takeaway">The hosting shell is constant; only the <b>SDK and model surface</b> change. The same agent runs standalone, on a shared 1:N account through the gateway, or on Claude over the Anthropic surface.</p>
-        <aside class="notes">
-          The pattern generalises in two directions. First, scale: the byte-identical container drops onto the shared
-          one-to-many account, but instead of a local model it points straight at the APIM core gateway, because Foundry's
-          bring-your-own-model-via-connection is supported only for prompt agents, not hosted ones. It keeps the one-to-many
-          governance intact: no model on the shared account, a dedicated gateway subscription for quota isolation, and minimal
-          RBAC. Second, generality: the Claude variant swaps the GitHub Copilot SDK for the Claude Agent SDK and points at a
-          Foundry Claude model over the native Anthropic messages surface, no translation shim. Everything else, the hosting
-          shell, the invocations protocol, the identity dance, the demo, is the same. One pattern, three placements.
         </aside>
       </section>
 
