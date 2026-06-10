@@ -5,7 +5,7 @@ Microsoft Foundry unifies agents, models, and tools under a single management gr
 
 The platform provides streamlined management through unified Role-based access control (RBAC), networking, and policies under one Azure resource provider namespace.
 
-![alt text](../docs/screenshots/foundry-high-level-overview.png)
+![alt text](../docs/screenshots/foundry-overview-june-2026.jpg)
 
 ## Microsoft Foundry portals
 
