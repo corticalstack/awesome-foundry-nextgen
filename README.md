@@ -17,7 +17,7 @@ Foundry unifies agents, models, and tools under one Azure resource provider name
 with built-in tracing, monitoring, evaluations, and a single RBAC/networking/policy
 surface. These labs put that platform through its paces end-to-end.
 
-![Microsoft Foundry high-level overview](docs/screenshots/foundry-high-level-overview.png)
+![Microsoft Foundry high-level overview](docs/screenshots/foundry-overview-june-2026.jpg)
 
 
 
@@ -56,7 +56,7 @@ you. Most capability labs assume the multi-project spoke from the [project patte
 | 04 | [Control plane](04-foundry-control-plane/) | Operating a fleet of agents - provisioning, regions, SDKs, costs, custom-agent registration, publishing, the VS Code extension. |
 | 05 | [Project pattern setup](05-foundry-project-pattern-setup/) | Hub/spoke architecture with Bicep: deploy the core gateway, a single-project spoke, and a multi-project spoke. |
 | 06 | [Governance policy](06-governance-policy/) | Azure Policy that denies model deployments in spokes, forcing all traffic through the core APIM gateway. |
-| 07 | [Model inference](07-model-inference/) | Inference paths behind APIM - Azure OpenAI vs Foundry project clients, chat/embeddings/responses, server-side router, deep-research, streaming. |
+| 07 | [Model inference](07-model-inference/) | Inference paths behind APIM - Azure OpenAI vs Foundry project clients, chat/embeddings/responses, server-side router, deep-research, streaming. Includes a live GPT-4o to GPT-5 reasoning-model migration with its parameter, token, and API-surface gotchas. |
 | 08 | [Agents](08-agents/) | Agent fundamentals across eleven sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop, REST invocation, and a hosted Copilot SDK agent. |
 | 09 | [Content Understanding integration](09-content-understanding-integration/) | Plumb Azure AI Content Understanding behind the core APIM with managed-identity backend auth. |
 | 10 | [Foundry IQ](10-foundry-iq/) | Managed knowledge base end-to-end: provision Azure AI Search, ingest 3k arXiv NLP papers, build a KB, ground an agent. |
