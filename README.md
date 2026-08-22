@@ -1,3 +1,5 @@
+
+
 # Awesome Foundry Nextgen [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -35,6 +37,7 @@ git clone https://github.com/corticalstack/awesome-foundry-nextgen.git
 cd awesome-foundry-nextgen
 cp .env.example .env             # then fill in your values
 uv sync
+# optional: uv sync --group finetune for lab 15 (fine-tuning)
 uv run jupyter notebook
 ```
 
