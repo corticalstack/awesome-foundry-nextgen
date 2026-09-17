@@ -2,7 +2,7 @@
 
 # Claude Agent SDK - Invocations Protocol (Streaming)
 
-A getting-started agent using the [Claude Agent SDK](https://pypi.org/project/claude-agent-sdk/) (`ClaudeSDKClient`) with the [azure-ai-agentserver-invocations](https://pypi.org/project/azure-ai-agentserver-invocations/) protocol. It is the Claude counterpart to [`08-10`](../../08-10-hosted-copilot-sdk-agent/)'s GitHub Copilot SDK agent: the Foundry hosting shell is identical, only the agent loop changes.
+A getting-started agent using the [Claude Agent SDK](https://pypi.org/project/claude-agent-sdk/) (`ClaudeSDKClient`) with the [azure-ai-agentserver-invocations](https://pypi.org/project/azure-ai-agentserver-invocations/) protocol. It is the Claude counterpart to [`08-10`](../../../08-10-hosted-copilot-sdk-agent/)'s GitHub Copilot SDK agent: the Foundry hosting shell is identical, only the agent loop changes.
 
 > Deploying this agent to Microsoft Foundry is driven by the lab notebook [`08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb`](../../08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb), which builds the container image with `az acr build` and registers it via the `azure-ai-projects` SDK. This README documents the agent itself and how to run it locally.
 
