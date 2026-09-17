@@ -4,7 +4,10 @@
 // Adds an Azure AI Search service and iq-project to the existing shared
 // AI Foundry account (aif-spoke-multi-{suffix}). No new Foundry account
 // is created - the 1:N multi-project pattern absorbs this workload.
-// All inference routes through the APIM gateway (no local model deployments).
+// All inference routes through the APIM gateway (no local model deployments),
+// except the knowledge base LLM: knowledge base model configurations reject APIM
+// endpoints, so the search service calls the core account directly with its
+// managed identity (see core-search-rbac.bicep).
 // ============================================================================
 targetScope = 'resourceGroup'
 
@@ -21,6 +24,12 @@ param apimSubscriptionKey string
 
 @description('Name of the existing shared AI Foundry account (aif-spoke-multi-{suffix}).')
 param existingAccountName string
+
+@description('Resource group of the core AI Foundry account (rg-foundry-core-{suffix}).')
+param coreResourceGroupName string
+
+@description('Name of the core AI Foundry account that hosts the chat model deployment (aif-core-{suffix}).')
+param coreAccountName string
 
 // Suffix is derived from the resource group - keeps search service name consistent
 // with other resources in this RG (e.g. aif-spoke-multi-gvwiex -> suffix gvwiex).
@@ -156,6 +165,21 @@ resource searchCognitiveServicesUser 'Microsoft.Authorization/roleAssignments@20
     principalId: search.identity.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a97b65f3-24c7-4388-baec-2e87135dc908')
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RBAC: Search service managed identity → core AI Account
+// Required for the knowledge base LLM (query planning), which the search service
+// calls directly on the core account where the chat model is deployed.
+// ─────────────────────────────────────────────────────────────────────────────
+module searchCoreRbac 'core-search-rbac.bicep' = {
+  name: 'iq-search-core-rbac'
+  scope: resourceGroup(coreResourceGroupName)
+  params: {
+    coreAccountName: coreAccountName
+    searchServiceId: search.id
+    searchPrincipalId: search.identity.principalId
   }
 }
 
