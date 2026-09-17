@@ -13,7 +13,7 @@ absorbs a new workload capability without additional infrastructure overhead.
 
 | Notebook | Purpose |
 |----------|---------|
-| [`10-01-deploy-search-and-project.ipynb`](10-01-deploy-search-and-project.ipynb) | Deploys an Azure AI Search service and a new Foundry project (`iq-project`) into the existing multi-account resource group via Bicep. Creates a dedicated APIM subscription key for the IQ workload and writes all `IQ_*` env vars to `.env`. Run once before anything else. |
+| [`10-01-deploy-search-and-project.ipynb`](10-01-deploy-search-and-project.ipynb) | Deploys an Azure AI Search service and a new Foundry project (`iq-project`) into the existing multi-account resource group via Bicep. Grants the search service managed identity Cognitive Services User on the core account (for the knowledge base LLM), creates a dedicated APIM subscription key for the IQ workload, and writes all `IQ_*` env vars to `.env`. Run once before anything else. |
 | [`10-02-index-and-ingest.ipynb`](10-02-index-and-ingest.ipynb) | Creates the `arxiv-nlp` vector + semantic search index (3,072-dim HNSW, integrated vectorizer, semantic configuration, `group_ids` security field) and uploads 3,000 NLP paper abstracts with pre-computed embeddings generated via the APIM gateway. |
 | [`10-03-knowledge-base-setup.ipynb`](10-03-knowledge-base-setup.ipynb) | Builds the Foundry IQ object hierarchy on top of the search index: Knowledge Source → dual Knowledge Bases (minimal and low reasoning effort) → MCP connection → versioned agent. Includes inline KB validation and a security-trimming demonstration via `filterAddOn`. |
 | [`10-04-search-patterns.ipynb`](10-04-search-patterns.ipynb) | Demonstrates the six raw Azure AI Search retrieval patterns in isolation - BM25, vector, hybrid RRF, semantic reranker, OData-filtered, and security-trimmed - to show what the Foundry IQ agentic pipeline does under the hood. |
@@ -34,8 +34,15 @@ not depend on `10-03`.
 
 ## Architecture
 
-The lab uses the hub/spoke model: no model deployments exist in the IQ spoke. All
-embedding and LLM calls route through the APIM gateway (`GATEWAY_URL`).
+The lab uses the hub/spoke model: no model deployments exist in the IQ spoke. Embedding
+calls and the agent's model calls route through the APIM gateway (`GATEWAY_URL`).
+
+The exception is the knowledge base LLM that `arxiv-nlp-kb` uses for query planning.
+Azure AI Search rejects APIM and custom domain endpoints in knowledge base model
+configurations, both when the knowledge base is created and when it is queried. The
+search service therefore calls `gpt-4.1-mini` directly on the core account
+(`aif-core-{suffix}`) with its managed identity, which `10-01` grants Cognitive
+Services User on that account.
 
 ```
 aif-spoke-multi-{suffix}   (existing shared AI Foundry account)
@@ -48,6 +55,7 @@ iq-search-{suffix}         (new Azure AI Search service, Basic SKU)
         └── Knowledge Source  (arxiv-nlp-ks)
               └── Knowledge Base - minimal  (arxiv-nlp-kb-fast)
               └── Knowledge Base - low      (arxiv-nlp-kb)  ← MCP endpoint
+                    └── query planning  →  aif-core-{suffix} / gpt-4.1-mini  (direct, search managed identity)
 ```
 
 ## Background concepts

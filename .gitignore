@@ -38,6 +38,7 @@ docs/05-custom-mcp-server/maestro-mcp/data/
 # Scratch / temp directories
 99-docs/
 99-tmp/
+.playwright-mcp/
 
 # Ralph / tmux tooling
 .ralph/
