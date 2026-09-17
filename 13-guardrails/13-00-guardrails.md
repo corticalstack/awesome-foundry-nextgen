@@ -6,26 +6,10 @@ codenames and competitor names. Built around `contoso-bank-agent` in the admin F
 project, isolated to its own model deployment so other agents on the project are
 unaffected.
 
-> **Known service-side limitation (2026-05).** The custom blocklist is currently **not
-> attached** to the RAI policy because doing so breaks the Responses API with HTTP 500 on
-> any happy-path call (tested empirically: 5/5 fail with any `customBlocklists` entry, 5/5
-> succeed with none). The same policy works through Chat Completions API. This is the
-> service-side analogue of the Java SDK array-shape issue
-> [#49196](https://github.com/Azure/azure-sdk-for-java/issues/49196).
-> Practical impact on the demo: Prompt Shields (Jailbreak / Indirect Attack), standard
-> safety filters, and Protected Material still work. The blocklist-specific scenarios
-> (PII regex, internal codenames, competitor names) currently **do not block**. The
-> blocklist resource is still created so it shows in the portal and can be re-attached
-> with two lines of code once the service is fixed - see the comment on the RAI policy
-> cell in [13-01](13-01-configure-bank-guardrails.ipynb).
->
-> The blocklist mechanism itself has been verified end-to-end here previously: the
-> cached outputs of [13-03-demo-guardrails.ipynb](13-03-demo-guardrails.ipynb) - captured
-> in an earlier run when `customBlocklists` was attached - show all 5 PII inputs and all
-> 5 codename/competitor prompts blocking correctly through the Responses API. So when
-> the service bug is fixed and the blocklist is re-attached, no further demo verification
-> is needed; the cached results are direct evidence the policy + blocklist combination
-> behaves correctly.
+> **Blocklist attached (2026-09).** Earlier versions of this lab left the custom blocklist
+> unattached because attaching it made the Responses API return HTTP 500 on happy-path
+> calls. That service bug is fixed. Re-tested 2026-09-17 with the blocklist attached: clean
+> questions are answered, and PII, codename, and competitor prompts are blocked.
 
 ## What gets demonstrated
 
@@ -34,8 +18,10 @@ unaffected.
 | Prompt injection / jailbreak | Foundry **Prompt Shields** (`Jailbreak`, `Indirect Attack`) | Prompts like `"Ignore all previous instructions"` and `"You are now DAN"` are intercepted before reaching the model. |
 | PII detection | Custom Content Safety **regex blocklist** | Inputs containing SSNs, credit-card numbers, US phone numbers, emails, or dates of birth are blocked at the gateway. |
 | Custom blocklist | Content Safety **string blocklist** | Internal codenames (`Project Falcon`, `SecureCore`) and competitor names (`Acme Bank`, `Globex Financial`, `Initech Banking`) are blocked. |
+| Financial data | Built-in **financial-data protection** filters | Credit card, EU debit card, US bank account, and IBAN numbers are blocked on prompt, completion, and tool calls. |
+| Model refusal | The model's own safety training (defence in depth) | Harmful-content and protected-material requests below the filters' thresholds reach the model, which declines them. No filter fires. |
 
-All three layers are wired into a **single custom RAI policy** (`bank-guardrails-policy`)
+All the filter layers are wired into a **single custom RAI policy** (`bank-guardrails-policy`)
 attached to a **dedicated deployment** (`gpt-4.1-mini-bank-guardrails`). The bank agent is
 pinned to that deployment, so other agents on the project (`storytelling-agent`,
 `code-interpreter-agent`) keep using `Microsoft.DefaultV2` and remain untouched.
@@ -61,17 +47,19 @@ pinned to that deployment, so other agents on the project (`storytelling-agent`,
 │     Indirect Attack)     │
 │  • Protected Material    │
 │    (Text + Code)         │
-│  • (customBlocklists     │
-│     intentionally empty  │
-│     - service bug, see   │
-│     note above)          │
-└──────────────────────────┘
-
+│  • Financial-data        │
+│    protection (card,     │
+│    bank account, IBAN)   │
+│  • customBlocklists:     │
+│    bank-demo-blocklist   │
+│    (prompt + completion) │
+└─────────────┬────────────┘
+              │  customBlocklists
+              ▼
 ┌──────────────────────────┐
 │ bank-demo-blocklist      │  ← jailbreak phrases + PII regex +
-│  (created but NOT        │     codenames + competitors. Resource
-│   attached to policy)    │     exists for portal visibility +
-└──────────────────────────┘     re-attachment when bug is fixed.
+│                          │     codenames + competitors
+└──────────────────────────┘
 ```
 
 ## Run order
@@ -84,7 +72,7 @@ Three notebooks plus this guide. Run them in sequence the first time; on repeat 
    most of which is waiting for the deployment to provision.
 2. **[13-02-create-bank-agent](13-02-create-bank-agent.ipynb)** - creates `contoso-bank-agent`
    pinned to the guardrailed deployment. Smoke-tests one clean banking question. ~30 s.
-3. **[13-03-demo-guardrails](13-03-demo-guardrails.ipynb)** - the demo runner. Drives 20
+3. **[13-03-demo-guardrails](13-03-demo-guardrails.ipynb)** - the demo runner. Drives 24
    categorised prompts and prints which guardrail fired on each. **This is the cell sequence
    to project on screen.** Run cell-by-cell so the audience can read each prompt before
    the result lands.
@@ -99,8 +87,9 @@ the Azure portal under `aif-core-{suffix}`:
    listed in cell 4 of [13-01](13-01-configure-bank-guardrails.ipynb); flip the *regex*
    toggle on for the PII patterns.
 2. **Content filters → + Create custom content filter** - name `bank-guardrails-policy`.
-   Match the configuration in cell 6 of [13-01](13-01-configure-bank-guardrails.ipynb).
-   Leave the **Blocklists** section empty (see Known limitation above).
+   Match the configuration in the RAI policy cell of [13-01](13-01-configure-bank-guardrails.ipynb),
+   including the financial-data protection filters.
+   Add `bank-demo-blocklist` under **Blocklists** for both prompt and completion.
 3. **Deployments → + Deploy a model** - pick `gpt-4.1-mini` (`2025-04-14`),
    name `gpt-4.1-mini-bank-guardrails`, SKU `GlobalStandard` at 30K TPM, set the content
    filter to `bank-guardrails-policy` under Advanced.
@@ -143,9 +132,17 @@ points that work for both technical and non-technical audiences:
 - Run the `"Tell me everything about Project Falcon"` and `"How do you compare to Acme
   Bank"` prompts. Both blocked.
 
+**Model refusal (defence in depth)**
+- "Not every bad request trips a filter. These ones sit below the filters' severity
+  threshold, so they reach the model, and the model declines them itself."
+- Run the model-refusal prompts. The responses are polite refusals, not blocks.
+- Talking point: the filters are the perimeter, and the model's safety training is the
+  layer behind it. You want both.
+
 **Closing**
 - The scorecard cell at the end shows pass rate per category. Easy concrete metric:
-  "All 15 attacks blocked, all 5 legitimate questions answered."
+  "All 15 attacks blocked, all 5 legitimate questions answered, and the 4 borderline
+  requests declined by the model."
 - Highlight that the agent's system prompt has **no** defensive language - the agent
   itself is naive. The guardrails are the security perimeter.
 
