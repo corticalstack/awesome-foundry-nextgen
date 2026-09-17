@@ -60,7 +60,7 @@ What it isn't:
 
 See the [Agent Service overview](https://learn.microsoft.com/azure/ai-foundry/agents/overview) for full reference.
 
-The labs in this directory put these building blocks into practice - agent versioning and tool use, hosted agents, memory, evaluation, observability, and human-in-the-loop:
+The labs in this directory put these building blocks into practice - agent versioning and tool use, hosted agents, memory, evaluation, observability, human-in-the-loop, REST invocation, and SDK-based hosted agents:
 
 ## In this chapter
 
@@ -76,6 +76,10 @@ The labs in this directory put these building blocks into practice - agent versi
 | [08-06-agent-offline-evaluation/](08-06-agent-offline-evaluation/) | Pre-release agent evaluation against a curated test set - [overview](08-06-agent-offline-evaluation/08-06-00-agent-offline-evaluation.md), quality + RAI + agent-specific + custom evaluators, plus a full batch `evaluate()` run with portal logging |
 | [08-07-agent-live-observability/](08-07-agent-live-observability/) | OpenTelemetry tracing, real-time observability, and continuous evaluation - [overview](08-07-agent-live-observability/08-07-00-agent-live-observability.md), [tracing](08-07-agent-live-observability/08-07-02-agent-tracing.md), [real-time observability](08-07-agent-live-observability/08-07-04-real-time-observability.md), plus observability and continuous-eval notebooks |
 | [08-08-human-in-the-loop/](08-08-human-in-the-loop/) | Human-in-the-loop pattern - [overview](08-08-human-in-the-loop/08-08-00-human-in-the-loop.md) and [08-08-01-human-in-the-loop.ipynb](08-08-human-in-the-loop/08-08-01-human-in-the-loop.ipynb) walkthrough for pausing an agent for approval before tool execution |
+| [08-09-invoke-agent-via-rest/](08-09-invoke-agent-via-rest/) | Invoking an agent over the raw REST responses API instead of the SDK - [overview](08-09-invoke-agent-via-rest/08-09-00-invoke-agent-via-rest.md), plus [single-shot](08-09-invoke-agent-via-rest/08-09-01-rest-single-shot.ipynb), [multi-turn](08-09-invoke-agent-via-rest/08-09-02-rest-multi-turn.ipynb), and [streaming](08-09-invoke-agent-via-rest/08-09-03-rest-streaming.ipynb) notebooks |
+| [08-10-hosted-copilot-sdk-agent/](08-10-hosted-copilot-sdk-agent/) | GitHub Copilot SDK agent deployed as a Foundry hosted agent, with a Foundry-deployed model reached through Managed Identity and an M365 license-analytics demo - [overview](08-10-hosted-copilot-sdk-agent/08-10-00-hosted-copilot-sdk-agent.md) and [deploy notebook](08-10-hosted-copilot-sdk-agent/08-10-01-deploy-hosted-copilot-sdk-agent.ipynb) |
+| [08-10b-hosted-copilot-sdk-agent-multi/](08-10b-hosted-copilot-sdk-agent-multi/) | The same Copilot SDK container on the shared 1:N multi account, calling a reasoning model directly through the APIM gateway - [overview](08-10b-hosted-copilot-sdk-agent-multi/08-10b-00-hosted-copilot-sdk-agent-multi.md) and [deploy notebook](08-10b-hosted-copilot-sdk-agent-multi/08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb) |
+| [08-11-hosted-claude-agent-sdk-agent/](08-11-hosted-claude-agent-sdk-agent/) | Claude Agent SDK agent deployed as a Foundry hosted agent, calling a Foundry-deployed Claude model over the Anthropic Messages API with Managed Identity, with the same M365 license-analytics demo as 08-10 - [overview](08-11-hosted-claude-agent-sdk-agent/08-11-00-hosted-claude-agent-sdk-agent.md) and [deploy notebook](08-11-hosted-claude-agent-sdk-agent/08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb) |
 
 ## Resources
 

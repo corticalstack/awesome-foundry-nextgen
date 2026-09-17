@@ -1,0 +1,18 @@
+# The Claude Agent SDK. The wheel bundles a native `claude` CLI binary for the
+# host platform, so no separate Node.js / Claude Code install is needed - the
+# ACR remote build runs on linux/amd64, which matches Foundry's hosted runtime.
+claude-agent-sdk>=0.2.87,<0.3
+
+# Foundry hosted-agent invocations protocol host. Pinned to the 1.1.0 GA release,
+# which caps azure-ai-agentserver-core at <2.2.0. The 1.0.0b4 pin used by 08-10
+# no longer imports: its core dependency resolves to 2.2.0b1, which removed
+# CHAT_ISOLATION_KEY, so the container fails at startup.
+azure-ai-agentserver-invocations==1.1.0
+azure-identity>=1.17.0
+azure-monitor-opentelemetry>=1.6.0
+python-dotenv==1.1.1
+
+# Baked in so the M365 analytics skill can use pandas/matplotlib without a
+# session-time `pip install` (hosted runtimes may have no package egress).
+pandas>=2.0
+matplotlib>=3.7
