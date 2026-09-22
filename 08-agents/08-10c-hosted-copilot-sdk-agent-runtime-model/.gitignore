@@ -1,0 +1,9 @@
+.env
+*.env
+**/.env
+**/.venv/
+**/__pycache__/
+*.log
+
+# Notebook-generated bicep params (substituted at runtime)
+infra/.main.parameters.runtime.json
