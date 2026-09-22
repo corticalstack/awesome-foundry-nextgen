@@ -15,6 +15,7 @@
 ^https?://search\.azure\.com(/.*)?$
 ^https?://.*\.services\.ai\.azure\.com
 ^https?://management\.azure\.com(/|/\.default/?)?$
+^https?://api\.applicationinsights\.io
 
 # Author-deployed Azure Functions used by demo notebooks (may be deleted or slow)
 ^https?://func-[a-z0-9-]+\.azurewebsites\.net
