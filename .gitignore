@@ -8,9 +8,6 @@ __pycache__/
 *.pyo
 *.pyd
 
-# uv
-uv.lock
-
 # Jupyter
 .ipynb_checkpoints/
 
