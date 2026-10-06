@@ -24,6 +24,7 @@
 ^https?://portal\.azure\.com
 ^https?://platform\.openai\.com
 ^https?://msrc\.microsoft\.com
+^https?://(www\.)?taetechnologies\.com
 
 # Azure marketing/pricing pages, heavy JS that times out from CI runners
 ^https?://azure\.microsoft\.com/.*pricing/
@@ -46,3 +47,6 @@
 ^https?://ipywidgets\.readthedocs\.io
 ^https?://go\.microsoft\.com/fwlink
 ^https?://github\.com/Azure/azure-sdk-for-java/issues
+# Any URL ending in a glued "\n": model-written citations in notebook outputs (12-02's
+# out-of-corpus answer) put links right before a newline, and the site varies per run.
+/n(#.*)?$

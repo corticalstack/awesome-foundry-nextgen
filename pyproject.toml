@@ -5,19 +5,21 @@ description = "Hands-on labs for Microsoft Foundry — Azure's unified PaaS for 
 requires-python = ">=3.11"
 dependencies = [
     # Core Foundry SDKs
-    "azure-ai-projects>=2.1.0",
-    "azure-ai-evaluation[redteam]>=1.16.2",
+    # agent-framework-foundry caps azure-ai-projects below 2.8.
+    "azure-ai-projects>=2.7.0",
+    "azure-ai-evaluation[redteam]>=1.18.7",
     # Imported directly by 08-06-01. McpTool only exists on the 1.2 beta line.
-    "azure-ai-agents>=1.2.0b5",
-    "azure-search-documents>=11.7.0b2",
-    "openai>=1.0.0",
-    # Agent Framework — pinned: azure-ai's last release is 1.0.0rc6 (2026-03-30).
-    # Newer core/openai drop BaseContextProvider that azure-ai still imports.
-    "agent-framework-core==1.0.0rc6",
-    "agent-framework-azure-ai==1.0.0rc6",
-    "agent-framework-azure-ai-search==1.0.0b260330",
-    "agent-framework-openai==1.0.0rc6",
-    "agent-framework-foundry==1.0.0rc6",
+    "azure-ai-agents>=1.2.0b6",
+    # Preview line: the Foundry IQ labs use knowledge base answer synthesis,
+    # which agent-framework-azure-ai-search only allows on a preview build.
+    "azure-search-documents>=12.1.0b2",
+    "openai>=3.0.0",
+    # Agent Framework. agent-framework-azure-ai stopped at 1.0.0rc6; the
+    # AzureAISearchContextProvider it provided now ships in -azure-ai-search.
+    "agent-framework-core>=1.20.0",
+    "agent-framework-azure-ai-search>=1.0.0b261002",
+    "agent-framework-openai>=1.15.0",
+    "agent-framework-foundry>=1.14.0",
     # Observability
     "azure-monitor-opentelemetry>=1.6.0",
     "azure-monitor-query>=1.4.0",
@@ -27,7 +29,7 @@ dependencies = [
     "jinja2>=3.0.0",
     "requests>=2.32.0",
     # Auth / config
-    "azure-identity>=1.26.0b2",
+    "azure-identity>=1.26.0",
     "python-dotenv>=1.2.1",
 ]
 
