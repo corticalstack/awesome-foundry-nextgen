@@ -90,7 +90,7 @@ def build_contoso_workflow(
     workflow = (
         WorkflowBuilder(
             start_executor=orchestrator,
-            output_executors=[hr_agent, marketing_agent, products_agent],
+            output_from=[hr_agent, marketing_agent, products_agent],
         )
         .add_switch_case_edge_group(
             source=orchestrator,

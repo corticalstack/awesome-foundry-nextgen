@@ -4,7 +4,7 @@
 
 This is the Claude Agent SDK counterpart to 08-10's GitHub Copilot SDK agent.
 The Foundry hosting shell is identical - ``InvocationAgentServerHost`` registered
-with ``AgentProtocol.INVOCATIONS`` - only the agent loop changes: a singleton
+with ``AgentEndpointProtocol.INVOCATIONS`` - only the agent loop changes: a singleton
 ``ClaudeSDKClient`` drives the reason/act/observe loop inside a bundled
 ``claude`` CLI subprocess.
 
