@@ -77,6 +77,7 @@ Before requesting review:
 - [ ] On a feature branch (not `main`)
 - [ ] Notebook runs top-to-bottom on a clean kernel
 - [ ] `uv sync` succeeds; no new heavyweight deps without justification
+- [ ] `uv run python scripts/check_imports.py` passes (CI runs it on every PR)
 - [ ] New env vars added to [`.env.example`](.env.example)
 - [ ] Lab added (or updated) in the index table of [`README.md`](README.md)
 - [ ] No secrets in committed files (`.env`, keys, connection strings)
