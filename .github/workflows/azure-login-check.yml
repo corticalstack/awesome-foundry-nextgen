@@ -1,0 +1,33 @@
+name: Azure login check
+
+# Proves that a workflow can sign in to Azure through the azure-live
+# environment: GitHub's OIDC token is exchanged for a token of the managed
+# identity whose federated credential trusts this repo's azure-live
+# environment. No password is stored. The environment only accepts main, so
+# run it from main.
+#
+# This repo's logs are public, so the job prints only the principal type and
+# how many resource groups the identity can see.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    environment: azure-live
+    steps:
+      - uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Show what the identity can reach
+        run: |
+          echo "Principal type: $(az account show --query user.type -o tsv)"
+          echo "Resource groups visible: $(az group list --query 'length(@)' -o tsv)"
