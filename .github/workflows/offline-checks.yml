@@ -39,12 +39,15 @@ jobs:
       - name: Imports resolve
         run: uv run --frozen python scripts/check_imports.py
 
+      # One pytest run per suite: 08-05 and 08-05b both have tests/test_kb.py
+      # without an __init__.py, which pytest cannot collect in a single run.
       - name: Unit tests
-        run: >-
-          uv run --frozen pytest -q
-          08-agents/08-05-contoso-pmo-mcp/tests
-          08-agents/08-05b-contoso-private-banking-mcp/tests
-          11-foundry-iq-multi-agent/tests
+        run: |
+          for suite in 08-agents/08-05-contoso-pmo-mcp/tests \
+                       08-agents/08-05b-contoso-private-banking-mcp/tests \
+                       11-foundry-iq-multi-agent/tests; do
+            uv run --frozen pytest -q "$suite"
+          done
 
   containers:
     name: Image ${{ matrix.name }}
