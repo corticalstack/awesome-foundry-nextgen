@@ -1,0 +1,105 @@
+name: Offline checks
+
+# Checks that need no Azure access: the lock matches pyproject.toml, the root
+# environment installs from it, every third-party import in the notebooks and
+# helper modules resolves, the unit tests pass, and each hosted-agent image and
+# Function app installs its pinned requirements with its imports resolving.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  root-env:
+    name: Notebooks and helpers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Same uv version as the one that wrote uv.lock, so `uv lock --check`
+      # compares resolutions rather than lockfile formats. Bump together.
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.11.7"
+          python-version: "3.13"
+
+      - name: Lock matches pyproject.toml
+        run: uv lock --check
+
+      - name: Install from the lock
+        run: uv sync --frozen
+
+      - name: Imports resolve
+        run: uv run --frozen python scripts/check_imports.py
+
+      - name: Unit tests
+        run: >-
+          uv run --frozen pytest -q
+          08-agents/08-05-contoso-pmo-mcp/tests
+          08-agents/08-05b-contoso-private-banking-mcp/tests
+          11-foundry-iq-multi-agent/tests
+
+  containers:
+    name: Image ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 08-03
+            context: 08-agents/08-03-hosted-agents/contoso-wealth-agent
+            app: /app
+          - name: 08-10
+            context: 08-agents/08-10-hosted-copilot-sdk-agent/src/github-copilot-invocations
+            app: /app/user_agent
+          - name: 08-10b
+            context: 08-agents/08-10b-hosted-copilot-sdk-agent-multi/src/github-copilot-invocations
+            app: /app/user_agent
+          - name: 08-10c
+            context: 08-agents/08-10c-hosted-copilot-sdk-agent-runtime-model/src/github-copilot-invocations
+            app: /app/user_agent
+          - name: 08-11
+            context: 08-agents/08-11-hosted-claude-agent-sdk-agent/src/claude-agent-sdk-invocations
+            app: /app/user_agent
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build
+        run: docker build --platform linux/amd64 -t lab-image "${{ matrix.context }}"
+
+      - name: Imports resolve inside the image
+        run: >-
+          docker run --rm --platform linux/amd64
+          -v "$PWD/scripts:/ci:ro" --entrypoint python
+          lab-image /ci/check_imports.py "${{ matrix.app }}"
+
+  function-apps:
+    name: Function app ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: contoso-pmo-mcp
+            dir: 08-agents/08-05-contoso-pmo-mcp/contoso-pmo-mcp
+          - name: private-banking-mcp
+            dir: 08-agents/08-05b-contoso-private-banking-mcp/private-banking-mcp
+    steps:
+      - uses: actions/checkout@v7
+
+      # The Functions runtime version both setup notebooks deploy with.
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install -r "${{ matrix.dir }}/requirements.txt"
+
+      - name: Imports resolve
+        run: python scripts/check_imports.py "${{ matrix.dir }}"
