@@ -5,7 +5,9 @@
 # without anonymous-rate throttling. The image is bigger than python:3.12-slim
 # (it bundles dev tools), but for a hosted-agent demo that's an acceptable
 # tradeoff for a reliable build.
-FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
+# Pinned to the release 3.12-bookworm pointed to on 2026-10-06. requirements.txt
+# is compiled for its glibc (2.36), so recompile it when this changes.
+FROM mcr.microsoft.com/devcontainers/python:3.2.3-3.12-bookworm
 
 WORKDIR /app
 

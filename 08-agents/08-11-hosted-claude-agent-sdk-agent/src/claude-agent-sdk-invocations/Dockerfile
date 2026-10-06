@@ -6,7 +6,9 @@
 # agent's shell may use. Built linux/amd64 to match Foundry's hosted runtime,
 # which is also the platform the claude-agent-sdk wheel's bundled `claude`
 # binary targets.
-FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
+# Pinned to the release 3.12-bookworm pointed to on 2026-10-06. requirements.txt
+# is compiled for its glibc (2.36), so recompile it when this changes.
+FROM mcr.microsoft.com/devcontainers/python:3.2.3-3.12-bookworm
 
 WORKDIR /app
 

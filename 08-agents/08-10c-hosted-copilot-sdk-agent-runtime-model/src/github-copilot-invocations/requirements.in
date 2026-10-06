@@ -1,0 +1,13 @@
+# Pinned to 0.3.0, the version the deployed images were built with. The 1.x
+# releases removed `SubprocessConfig`, which main.py imports, so an unpinned
+# `>=0.2.0` now resolves to 1.x and the container fails at startup.
+github-copilot-sdk==0.3.0
+
+# Pinned to the 1.1.0 GA release, which caps azure-ai-agentserver-core at
+# <2.2.0. The previous 1.0.0b4 pin declared `core>=2.0.0b4` with no upper bound;
+# core now resolves to 2.2.0b1, which removed CHAT_ISOLATION_KEY, so 1.0.0b4
+# fails at import and the container never starts.
+azure-ai-agentserver-invocations==1.1.0
+azure-identity>=1.17.0
+azure-monitor-opentelemetry>=1.6.0
+python-dotenv==1.1.1
