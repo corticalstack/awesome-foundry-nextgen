@@ -16,7 +16,7 @@ new Foundry account, it adds a new `contoso-project` to the existing shared
 
 | Notebook | Purpose |
 |----------|---------|
-| [`11-01-deploy-setup.ipynb`](11-01-deploy-setup.ipynb) | Deploys [`main.bicep`](main.bicep) into the existing `rg-foundry-multi-{suffix}` resource group. Adds a Standard-SKU Azure AI Search service, the `contoso-project`, an APIM connection on the project, and RBAC. Creates a dedicated `foundry-gateway-contoso` APIM subscription for traffic isolation and writes all `CONTOSO_*` env vars to `.env`. |
+| [`11-01-deploy-setup.ipynb`](11-01-deploy-setup.ipynb) | Deploys [`main.bicep`](main.bicep) into the existing `rg-foundry-multi-{suffix}` resource group. Adds a Standard-SKU Azure AI Search service, the `contoso-project`, an APIM connection on the project, and RBAC, including Cognitive Services User for the search service on `aif-core-{suffix}`, which the knowledge bases call directly. Creates a dedicated `foundry-gateway-contoso` APIM subscription for traffic isolation and writes all `CONTOSO_*` env vars to `.env`. |
 | [`11-02-index-and-ingest.ipynb`](11-02-index-and-ingest.ipynb) | Creates three Azure AI Search indexes (`contoso-hr`, `contoso-marketing`, `contoso-products`) with semantic configuration and uploads 24 Contoso Corporation sample documents (8 per domain) from [`sample_data/`](sample_data). |
 | [`11-03-knowledge-base-setup.ipynb`](11-03-knowledge-base-setup.ipynb) | Builds the Foundry IQ stack on top of the indexes: three Knowledge Sources → three Knowledge Bases (`answerSynthesis` / low reasoning effort) → three `RemoteTool` MCP connections on `contoso-project`. Validates each KB with a representative query. |
 | [`11-04-multi-agent-setup.ipynb`](11-04-multi-agent-setup.ipynb) | Instantiates the four agents (orchestrator + HR / Marketing / Products specialists) defined in [`agents/`](agents), builds the `WorkflowBuilder` routing graph, then validates that each specialist returns a grounded answer and that routing sends queries to the correct specialist. |
@@ -51,6 +51,8 @@ contoso-search-{suffix}      (new Azure AI Search service, Standard SKU)
   │     └── contoso-ks-marketing ──→ contoso-kb-marketing (answerSynthesis)
   └── contoso-products index
         └── contoso-ks-products ──→ contoso-kb-products (answerSynthesis)
+
+  knowledge base answer synthesis  →  aif-core-{suffix} / gpt-4.1-mini  (direct, search managed identity)
 ```
 
 The routing graph at runtime:
@@ -69,10 +71,16 @@ The routing graph at runtime:
         contoso-kb-hr  contoso-kb-mkt  contoso-kb-products
 ```
 
-All chat-model inference (orchestrator classification, specialist answers, KB
-answer-synthesis) routes through the APIM gateway. Embeddings (`text-embedding-3-large`)
-are called by the search service's integrated vectorizer at query time, also via APIM.
-No model deployments exist locally on `aif-spoke-multi-{suffix}`.
+The orchestrator's classification and the specialists' answers route through the APIM
+gateway. Embeddings (`text-embedding-3-large`) are called by the search service's
+integrated vectorizer at query time, also via APIM. No model deployments exist locally
+on `aif-spoke-multi-{suffix}`.
+
+The exception is the LLM the knowledge bases use for answer synthesis. Azure AI Search
+rejects APIM and custom domain endpoints in knowledge base model configurations, both when
+a knowledge base is created and when it is queried. The search service therefore calls
+`gpt-4.1-mini` directly on the core account (`aif-core-{suffix}`) with its managed
+identity, which `11-01` grants Cognitive Services User on that account.
 
 ## Background concepts
 
@@ -96,7 +104,7 @@ lab uses:
 
 The three Knowledge Bases use `output_mode=ANSWER_SYNTHESIS` with `low` reasoning
 effort. Each KB call decomposes the question, retrieves from its dedicated index, then
-runs **one LLM pass** through `gpt-4.1-mini` (via APIM) to produce a grounded
+runs **one LLM pass** through `gpt-4.1-mini` (on the core account, see Architecture) to produce a grounded
 natural-language answer with citations. Standard SKU search is required for this
 mode - hence the dedicated `contoso-search-{suffix}` service (the Basic-SKU
 `iq-search-{suffix}` from Foundry IQ cannot be used).
