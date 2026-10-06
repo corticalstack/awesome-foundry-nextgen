@@ -55,4 +55,6 @@ finetune = [
 ]
 
 [tool.uv]
-prerelease = "allow"
+# Pre-releases only where a requirement above asks for one, or where a package
+# has no stable release. "allow" let alphas of unrelated packages into the lock.
+prerelease = "if-necessary-or-explicit"
