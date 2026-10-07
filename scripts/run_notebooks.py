@@ -9,7 +9,8 @@ the notebook's folder. Notebooks that call input() get the scripted `answers=` f
 manifest. Nothing is written back unless --save is given, and then only for notebooks that
 passed and already keep outputs. Output printed here is safe for public CI logs: notebook,
 status, seconds, failing cell index and exception type, never the exception message or any
-cell output (--verbose adds the message for local debugging). --check fails if a tracked
+cell output, and the kernel's own stdout/stderr is discarded (--verbose adds the message
+and lets the kernel's stdout/stderr through, for local debugging). --check fails if a tracked
 notebook is missing from the manifest. Exit code 1 if any notebook fails.
 """
 
@@ -97,8 +98,12 @@ def run(entry, save, verbose):
     start = time.time()
     result = {"notebook": entry["path"], "status": "pass", "failed_cell": None, "error_type": None}
     message = ""
+    # The kernel inherits this process's stdout/stderr, so anything a cell writes there
+    # directly (subprocess.run without capture, logging to sys.__stderr__, native CLIs)
+    # would land in the log. Discard it unless --verbose.
+    quiet = {} if verbose else {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     try:
-        client.execute()
+        client.execute(**quiet)
     except CellExecutionError as e:
         result.update(status="fail", error_type=getattr(e, "ename", None) or "CellExecutionError")
         message = str(getattr(e, "evalue", ""))
@@ -138,7 +143,8 @@ def main():
     parser.add_argument("--only", nargs="+", metavar="PATH", help="run just these manifest paths")
     parser.add_argument("--results", type=Path, help="write a JSON list of results here")
     parser.add_argument("--save", action="store_true", help="write outputs back for notebooks that pass")
-    parser.add_argument("--verbose", action="store_true", help="also print exception messages (not for CI)")
+    parser.add_argument("--verbose", action="store_true",
+                        help="also print exception messages and kernel stdout/stderr (not for CI)")
     parser.add_argument("--list", action="store_true", help="print the selection without running it")
     parser.add_argument("--check", action="store_true", help="verify the manifest lists every notebook")
     parser.add_argument("--before-each", metavar="COMMAND",
