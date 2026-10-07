@@ -1,7 +1,7 @@
 """Execute lab notebooks headless against the live Azure environment.
 
-    uv run --with nbclient --with nbformat python scripts/run_notebooks.py --tags weekly
-    uv run --with nbclient --with nbformat python scripts/run_notebooks.py --only 10-foundry-iq/10-03-knowledge-base-setup.ipynb --save
+    uv run python scripts/run_notebooks.py --tags weekly
+    uv run python scripts/run_notebooks.py --only 10-foundry-iq/10-03-knowledge-base-setup.ipynb --save
     python scripts/run_notebooks.py --check
 
 Notebooks come from scripts/notebooks.txt, in file order, each in a fresh kernel started in

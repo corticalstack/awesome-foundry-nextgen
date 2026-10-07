@@ -91,8 +91,8 @@ Branch from `main`. Open the PR back to `main`.
 Run notebooks locally the same way:
 
 ```bash
-uv run --with nbclient --with nbformat python scripts/run_notebooks.py --tags weekly
-uv run --with nbclient --with nbformat python scripts/run_notebooks.py --only <path> --save --verbose
+uv run python scripts/run_notebooks.py --tags weekly
+uv run python scripts/run_notebooks.py --only <path> --save --verbose
 ```
 
 ## PR checklist

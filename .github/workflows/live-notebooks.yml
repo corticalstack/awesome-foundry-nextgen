@@ -91,7 +91,7 @@ jobs:
         id: first
         continue-on-error: true
         run: >-
-          uv run --frozen --with nbclient --with nbformat
+          uv run --frozen
           python scripts/run_notebooks.py --tags "$TAGS" --results "$RUNNER_TEMP/first.json"
 
       - name: Rerun failures on the committed lock
@@ -103,7 +103,7 @@ jobs:
           failed=$(python3 -c "import json, sys; print(' '.join(r['notebook'] for r in json.load(open(sys.argv[1])) if r['status'] == 'fail'))" "$RUNNER_TEMP/first.json")
           if [ -n "$failed" ]; then
             # shellcheck disable=SC2086  # one argument per notebook path
-            uv run --frozen --with nbclient --with nbformat \
+            uv run --frozen \
               python scripts/run_notebooks.py --only $failed --results "$RUNNER_TEMP/committed.json"
           fi
 
