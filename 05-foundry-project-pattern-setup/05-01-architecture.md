@@ -72,7 +72,6 @@ The shared infrastructure backbone. All team projects route model requests throu
 | `foundry-gateway-delta` | `openai` API | `DELTA_GATEWAY_KEY` | Team Delta |
 | `foundry-gateway-gamma` | `openai` API | `GAMMA_GATEWAY_KEY` | Team Gamma |
 | `foundry-gateway-iq` | `openai` API | `IQ_GATEWAY_KEY` | Foundry IQ - isolated from team quotas; the embedding batch ingest for 3,000 documents generates ~6M tokens and must not compete with team traffic |
-| `foundry-gateway-contoso-pmo` | `openai` API | `CONTOSO_PMO_GATEWAY_KEY` | Contoso PMO KB - dedicated MCP server workload; avoids competing with team inference traffic |
 | `foundry-gateway-cu` | `openai` API | `CU_GATEWAY_KEY` | Content Understanding - dedicated CU workload quota; also gates access to the `/cu` APIM API |
 | `foundry-gateway-obs` | `openai` API | `OBS_GATEWAY_KEY` | Agent Observability - dedicated APIM subscription isolates tracing workload quota from team traffic |
 
@@ -93,9 +92,9 @@ Model access via connection: `core-alpha/gpt-4.1-mini`
 
 ---
 
-### Teams Beta, Delta, Gamma + Foundry IQ Multi-Agent + Foundry IQ + Contoso PMO KB + Agent Observability: `rg-foundry-multi-{suffix}` (1:N pattern)
+### Teams Beta, Delta, Gamma + Foundry IQ Multi-Agent + Foundry IQ + Agent Observability: `rg-foundry-multi-{suffix}` (1:N pattern)
 
-Three teams share one Foundry account (`aif-spoke-multi-{suffix}`). Project-level isolation ensures each team's agents and data remain separate. Foundry IQ Multi-Agent extends this account with a `contoso-project` and a dedicated Standard SKU Azure AI Search service; Foundry IQ extends this account with a fourth project (`iq-project`) and a dedicated Azure AI Search service; Contoso PMO KB adds a fifth project (`contoso-pmo-project`) for the custom MCP server workload; Agent Observability adds a sixth project (`obs-project`) with Application Insights - all demonstrating the 1:N pattern absorbing successive capability workloads without creating new Foundry accounts.
+Three teams share one Foundry account (`aif-spoke-multi-{suffix}`). Project-level isolation ensures each team's agents and data remain separate. Foundry IQ Multi-Agent extends this account with a `contoso-project` and a dedicated Standard SKU Azure AI Search service; Foundry IQ extends this account with a fourth project (`iq-project`) and a dedicated Azure AI Search service; Agent Observability adds a fifth project (`obs-project`) with Application Insights - all demonstrating the 1:N pattern absorbing successive capability workloads without creating new Foundry accounts.
 
 | Resource | Type | `.env` keys | Added by |
 |----------|------|-------------|----------|
@@ -106,7 +105,6 @@ Three teams share one Foundry account (`aif-spoke-multi-{suffix}`). Project-leve
 | `contoso-project` | Foundry Project - Foundry IQ Multi-Agent | `CONTOSO_FOUNDRY_PROJECT`, `CONTOSO_FOUNDRY_PROJECT_ENDPOINT` | Foundry IQ Multi-Agent |
 | `contoso-search-{suffix}` | Azure AI Search (Standard, SystemAssigned identity) | `CONTOSO_SEARCH_ENDPOINT`, `CONTOSO_SEARCH_NAME` | Foundry IQ Multi-Agent |
 | `iq-project` | Foundry Project - Foundry IQ | `IQ_FOUNDRY_PROJECT`, `IQ_FOUNDRY_PROJECT_ENDPOINT` | Foundry IQ |
-| `contoso-pmo-project` | Foundry Project - Contoso PMO KB | `CONTOSO_PMO_FOUNDRY_PROJECT`, `CONTOSO_PMO_FOUNDRY_PROJECT_ENDPOINT` | Contoso PMO KB |
 | `iq-search-{suffix}` | Azure AI Search (Basic, SystemAssigned identity) | `IQ_SEARCH_ENDPOINT`, `IQ_SEARCH_NAME` | Foundry IQ |
 | `obs-project` | Foundry Project - Agent Observability | `OBS_FOUNDRY_PROJECT_ENDPOINT` | Agent Observability |
 | `log-obs-{suffix}` | Log Analytics Workspace | - | Agent Observability |
@@ -120,11 +118,10 @@ Each project connects to the gateway via its own named APIM connection and key:
 | `project-delta-{suffix}` | `core-delta` | `DELTA_FOUNDRY_CORE_CONNECTION` | `DELTA_GATEWAY_KEY` |
 | `project-gamma-{suffix}` | `core-gamma` | `GAMMA_FOUNDRY_CORE_CONNECTION` | `GAMMA_GATEWAY_KEY` |
 | `iq-project` | `landing-zone-apim` | `IQ_APIM_CONNECTION` | `IQ_GATEWAY_KEY` |
-| `contoso-pmo-project` | `landing-zone-apim` | `CONTOSO_PMO_APIM_CONNECTION` | `CONTOSO_PMO_GATEWAY_KEY` |
 | `obs-project` | `landing-zone-apim` | `OBS_APIM_CONNECTION` | `OBS_GATEWAY_KEY` |
 | `cu-project` | `landing-zone-apim` | `CU_APIM_CONNECTION` | `CU_GATEWAY_KEY` |
 
-> **Connection naming**: team core connections follow `core-{team}` (e.g. `core-beta`). The `iq-project`, `contoso-pmo-project`, and `obs-project` connections are named `landing-zone-apim` because `iq`, `contoso-pmo`, and `obs` are capability qualifiers, not team names - all three use descriptive connection names that reflect what they are connecting to.
+> **Connection naming**: team core connections follow `core-{team}` (e.g. `core-beta`). The `iq-project` and `obs-project` connections are named `landing-zone-apim` because `iq` and `obs` are capability qualifiers, not team names - both use descriptive connection names that reflect what they are connecting to.
 
 **`iq-search-{suffix}` - Azure AI Search index details (Foundry IQ):**
 
@@ -279,7 +276,7 @@ Because the hub RG is excluded from the deny policy, model deployments there are
 | Standard agents (no memory tools) | `rg-foundry-spoke-alpha-{suffix}` | `aif-spoke-alpha-{suffix}` | Uses `core-alpha/gpt-4.1-mini` via APIM connection |
 | Hosted agents | `rg-foundry-spoke-alpha-{suffix}` | `aif-spoke-alpha-{suffix}` (East US 2) | Uses existing spoke account - East US 2 is supported for hosted agents |
 | Foundry IQ (KB + agentic retrieval) | `rg-foundry-multi-{suffix}` | `aif-spoke-multi-{suffix}` (existing) | Adds `iq-project` + `iq-search-{suffix}` to the shared account. No model deployments - deny policy is not violated. `iq` is a capability qualifier, not a team name. Dedicated APIM subscription (`foundry-gateway-iq`) isolates embedding batch quota from team traffic. |
-| Custom MCP server (Contoso PMO KB) | `rg-foundry-multi-{suffix}` | `aif-spoke-multi-{suffix}` (existing) | Adds `contoso-pmo-project` to the shared account. Azure Functions app deploys into `rg-foundry-contoso-pmo-mcp`. No model deployments - deny policy unaffected. `contoso-pmo` is a capability qualifier, not a team name. Dedicated APIM subscription (`foundry-gateway-contoso-pmo`) isolates quota. |
+| Custom MCP server (Contoso PMO KB) | `rg-foundry-core-{suffix}` | `aif-core-{suffix}` / `project-admin-{suffix}` (existing) | The agent and its tool catalog entry live on the admin project, which uses the core account's model deployments directly. The Azure Functions MCP server deploys into `rg-foundry-contoso-pmo-mcp`. |
 | Agent Observability | `rg-foundry-multi-{suffix}` | `aif-spoke-multi-{suffix}` (existing) | Adds `obs-project` + `appi-obs-{suffix}` + `log-obs-{suffix}` to the shared account. No model deployments - deny policy unaffected. `obs` is a capability qualifier, not a team name. Dedicated APIM subscription (`foundry-gateway-obs`) isolates tracing workload quota from team traffic. |
 | Memory API + `memory_search` agents | `rg-foundry-memory-{suffix}` | `aif-memory-{suffix}` (new, with local deployments) | Dedicated RG required - local model deployments needed; deny policy must not be assigned to this RG |
 | Content Understanding | `rg-foundry-cu-{suffix}` | `aif-cu-{suffix}` (new, with local deployments) | Dedicated RG required - local model deployments needed for CU field extraction; deny policy must not be assigned. `cu` is a capability qualifier, not a team name. |
@@ -311,9 +308,8 @@ flowchart TD
         DELTA_PROJ["project-delta"]
         GAMMA_PROJ["project-gamma"]
         IQ_PROJ["iq-project<br/>Foundry Project"]
-        CONTOSO_PMO_PROJ["contoso-pmo-project<br/>Foundry Project"]
         OBS_PROJ["obs-project<br/>Foundry Project"]
-        MULTI_ACC --> BETA_PROJ & DELTA_PROJ & GAMMA_PROJ & IQ_PROJ & CONTOSO_PMO_PROJ & OBS_PROJ
+        MULTI_ACC --> BETA_PROJ & DELTA_PROJ & GAMMA_PROJ & IQ_PROJ & OBS_PROJ
     end
 
     IQ_SEARCH["iq-search (rg-foundry-multi)<br/>Azure AI Search Basic<br/>arxiv-nlp index · 3,000 docs<br/>KB: arxiv-nlp-kb / arxiv-nlp-kb-fast<br/>vectorizer: text-embedding-3-large via APIM"]
@@ -377,13 +373,12 @@ flowchart TD
     GAMMA_PROJ -->|"core-gamma - GAMMA_GATEWAY_KEY"| APIM
     MEM_PROJ   -->|"core-alpha - ALPHA_GATEWAY_KEY"| APIM
     IQ_PROJ    -->|"landing-zone-apim - IQ_GATEWAY_KEY"| APIM
-    CONTOSO_PMO_PROJ -->|"landing-zone-apim - CONTOSO_PMO_GATEWAY_KEY"| APIM
     OBS_PROJ    -->|"landing-zone-apim - OBS_GATEWAY_KEY"| APIM
     CU_PROJ     -->|"landing-zone-apim - CU_GATEWAY_KEY"| APIM
 
     class APIM apim
     class ALPHA_ACC,MULTI_ACC,MEM_ACC,CU_ACC account
-    class ALPHA_PROJ,BETA_PROJ,DELTA_PROJ,GAMMA_PROJ,MEM_PROJ,IQ_PROJ,CONTOSO_PMO_PROJ,OBS_PROJ,CU_PROJ project
+    class ALPHA_PROJ,BETA_PROJ,DELTA_PROJ,GAMMA_PROJ,MEM_PROJ,IQ_PROJ,OBS_PROJ,CU_PROJ project
     class H1,H3,R1,O1,MEM_M1,MEM_M2,CU_M1,CU_M2 model
     class IQ_SEARCH search
     class APPI_OBS appi
@@ -427,7 +422,7 @@ flowchart TD
 | Colour | Resource group / container | Description |
 |--------|---------------------------|-------------|
 | Amber | `rg-foundry-spoke-alpha` | 1:1 Spoke - Team Alpha's dedicated Foundry account and project. Contains the spoke account (`aif-spoke-alpha`, East US 2). Hosted agents also run here using the existing account. Model deployments denied by policy. |
-| Green | `rg-foundry-multi` | 1:N Multi-Project - shared Foundry account with projects for Teams Beta, Delta, and Gamma plus the `iq-project` (Foundry IQ) capability workload and `iq-search-{suffix}` Azure AI Search service, the `contoso-pmo-project` (Contoso PMO KB) capability workload, and the `obs-project` (Agent Observability) capability workload with `appi-obs-{suffix}` Application Insights. Model deployments denied by policy (unaffected by the search service, Functions app, or Application Insights, which are different resource types). |
+| Green | `rg-foundry-multi` | 1:N Multi-Project - shared Foundry account with projects for Teams Beta, Delta, and Gamma plus the `iq-project` (Foundry IQ) capability workload and `iq-search-{suffix}` Azure AI Search service, and the `obs-project` (Agent Observability) capability workload with `appi-obs-{suffix}` Application Insights. Model deployments denied by policy (unaffected by the search service, Functions app, or Application Insights, which are different resource types). |
 | Rose | `rg-foundry-memory` | Memory API - dedicated Foundry account (`aif-memory`) with local model deployments for the Memory API. Intentionally excluded from the deny-model-deployments policy. |
 | Sky blue | `rg-foundry-core` | Landing Zone - shared APIM gateway and all hub Foundry accounts with model deployments. Platform team owned; application teams have no write access. |
 | Light blue | `aif-core` | Primary core Foundry Account - hosts general-purpose and routing model deployments (East US 2). |
