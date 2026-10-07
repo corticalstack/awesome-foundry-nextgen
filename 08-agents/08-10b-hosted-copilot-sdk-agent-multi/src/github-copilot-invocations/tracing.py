@@ -154,11 +154,15 @@ def trace_invocation(
                     ("reasoning_tokens", "gen_ai.usage.reasoning_tokens"),
                     ("cache_read_tokens", "gen_ai.usage.cache_read_tokens"),
                     ("cache_write_tokens", "gen_ai.usage.cache_write_tokens"),
-                    ("ttft_ms", "gen_ai.server.time_to_first_token"),
                 ):
                     val = getattr(data, src, None)
                     if val is not None:
                         chat_attrs[dst] = val
+                # SDK 1.x reports time to first token as a timedelta (0.3 had ttft_ms);
+                # keep recording milliseconds.
+                ttft = getattr(data, "time_to_first_token", None)
+                if ttft is not None:
+                    chat_attrs["gen_ai.server.time_to_first_token"] = ttft.total_seconds() * 1000
                 cost = getattr(data, "cost", None)
                 if cost is not None:
                     chat_attrs["gen_ai.usage.cost"] = cost
