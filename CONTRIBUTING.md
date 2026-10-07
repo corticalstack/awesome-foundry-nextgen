@@ -69,6 +69,31 @@ Branch from `main`. Open the PR back to `main`.
    step in the intro.
 6. Add any new env vars to [`.env.example`](.env.example) with placeholder values.
 7. Add the lab to the index table in [`README.md`](README.md).
+8. Add each notebook to [`scripts/notebooks.txt`](scripts/notebooks.txt) with its tags
+   (`weekly` if it only uses resources that are already deployed).
+
+## Automated checks
+
+- **Offline checks** ([`offline-checks.yml`](.github/workflows/offline-checks.yml)) run on
+  every PR and push to `main`: the lock matches `pyproject.toml`, every import and SDK model
+  keyword argument in the notebooks resolves (`scripts/check_imports.py`,
+  `scripts/check_sdk_kwargs.py`), the unit tests pass, each hosted-agent image and Function
+  app installs, and `scripts/notebooks.txt` lists every notebook.
+- **Dependency canary** ([`dependency-canary.yml`](.github/workflows/dependency-canary.yml),
+  Mondays 05:00 UTC) repeats those checks on the newest allowed releases without committing
+  anything, and opens a tracking issue when they fail.
+- **Live notebooks** ([`live-notebooks.yml`](.github/workflows/live-notebooks.yml), Mondays
+  07:00 UTC) runs the `weekly` notebooks against the lab Azure environment, reruns any
+  failure on the committed lock to tell package regressions from Azure drift, and opens a
+  tracking issue when something fails. Other tags (`deploy`, `ingest`, `long`) run on demand
+  from the Actions tab.
+
+Run notebooks locally the same way:
+
+```bash
+uv run --with nbclient --with nbformat python scripts/run_notebooks.py --tags weekly
+uv run --with nbclient --with nbformat python scripts/run_notebooks.py --only <path> --save --verbose
+```
 
 ## PR checklist
 
@@ -78,6 +103,7 @@ Before requesting review:
 - [ ] Notebook runs top-to-bottom on a clean kernel
 - [ ] `uv sync` succeeds; no new heavyweight deps without justification
 - [ ] `uv run python scripts/check_imports.py` passes (CI runs it on every PR)
+- [ ] New notebooks listed in [`scripts/notebooks.txt`](scripts/notebooks.txt) with their tags
 - [ ] New env vars added to [`.env.example`](.env.example)
 - [ ] Lab added (or updated) in the index table of [`README.md`](README.md)
 - [ ] No secrets in committed files (`.env`, keys, connection strings)
