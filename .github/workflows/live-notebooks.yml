@@ -1,0 +1,141 @@
+name: Live notebooks
+
+# Weekly: run the lab notebooks against the lab Azure environment. GitHub signs in
+# through the azure-live environment's federated credential (no stored password;
+# main branch only). Notebooks run first on the newest allowed releases. Any that
+# fail are rerun on the committed lock: passing there means a package regression,
+# failing there too means Azure-side or notebook drift.
+#
+# The repo is public, so its logs and artifacts are too. The run prints only
+# notebook names, pass/fail, the failing cell index and the exception type; no
+# executed notebook, output or error message leaves the runner.
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"   # Mondays 07:00 UTC, after the canary (05:00) and link check (06:00)
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: Manifest tags to run, comma-separated (see scripts/notebooks.txt)
+        required: true
+        default: weekly
+      lock:
+        description: Dependency versions for the first run
+        type: choice
+        options: [newest, committed]
+        default: newest
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-notebooks
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: Notebooks against Azure
+    runs-on: ubuntu-latest
+    environment: azure-live
+    timeout-minutes: 300
+    permissions:
+      contents: read
+      id-token: write   # GitHub OIDC token for azure/login
+      issues: write     # tracking issue
+    env:
+      TAGS: ${{ inputs.tags || 'weekly' }}
+      LOCK: ${{ inputs.lock || 'newest' }}
+      # Make every DefaultAzureCredential use the az login below, without first
+      # probing for a managed identity on the (Azure-hosted) runner.
+      AZURE_TOKEN_CREDENTIALS: AzureCliCredential
+    steps:
+      - uses: actions/checkout@v7
+
+      # setup-uv publishes full version tags only (no moving v10 tag).
+      - uses: astral-sh/setup-uv@v10.2.0
+        with:
+          version: "0.11.7"
+          python-version: "3.13"
+
+      - uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # DOTENV is one multi-line secret, which GitHub does not reliably redact,
+      # so register each secret-shaped value as its own mask. Short, public values
+      # (model names, flags like 0) are left alone: masking them would scramble the log.
+      - name: Write .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          printf '%s\n' "$DOTENV" > .env
+          while IFS='=' read -r key value; do
+            case "$key" in
+              *KEY*|*SECRET*|*TOKEN*|*PASSWORD*|*SAS*|*CONN_STRING*|*SUBSCRIPTION_ID*)
+                [ -n "$value" ] && echo "::add-mask::$value" ;;
+            esac
+          done < .env
+
+      - name: Resolve dependencies
+        run: |
+          cp uv.lock "$RUNNER_TEMP/uv.lock.committed"
+          if [ "$LOCK" = newest ]; then
+            uv lock --upgrade
+            python3 scripts/ci_report.py lock-diff "$RUNNER_TEMP/uv.lock.committed" uv.lock >> "$GITHUB_STEP_SUMMARY"
+          fi
+          uv sync --frozen
+
+      - name: Run notebooks
+        id: first
+        continue-on-error: true
+        run: >-
+          uv run --frozen --with nbclient --with nbformat
+          python scripts/run_notebooks.py --tags "$TAGS" --results "$RUNNER_TEMP/first.json"
+
+      - name: Rerun failures on the committed lock
+        if: steps.first.outcome == 'failure' && env.LOCK == 'newest'
+        continue-on-error: true
+        run: |
+          cp "$RUNNER_TEMP/uv.lock.committed" uv.lock
+          uv sync --frozen
+          failed=$(python3 -c "import json, sys; print(' '.join(r['notebook'] for r in json.load(open(sys.argv[1])) if r['status'] == 'fail'))" "$RUNNER_TEMP/first.json")
+          if [ -n "$failed" ]; then
+            # shellcheck disable=SC2086  # one argument per notebook path
+            uv run --frozen --with nbclient --with nbformat \
+              python scripts/run_notebooks.py --only $failed --results "$RUNNER_TEMP/committed.json"
+          fi
+
+      - name: Summary and tracking issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          OUTCOME: ${{ steps.first.outcome }}
+        run: |
+          title="Live notebooks: the weekly run against Azure is failing"
+          if [ -f "$RUNNER_TEMP/first.json" ]; then
+            python3 scripts/ci_report.py live "$RUNNER_TEMP/first.json" "$RUNNER_TEMP/committed.json" > report.md
+          else
+            echo "The notebook run did not start; see the job log." > report.md
+          fi
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          number=$(gh issue list --state open --search "in:title \"$title\"" --json number,title \
+                     --jq ".[] | select(.title == \"$title\") | .number" | head -1)
+          if [ "$OUTCOME" = success ]; then
+            if [ -n "$number" ]; then
+              gh issue close "$number" --comment "Passing again: $RUN_URL"
+            fi
+            exit 0
+          fi
+          { echo "Live notebook run failed ($TAGS, $LOCK releases first): $RUN_URL"; echo; cat report.md; echo; echo "Refs #31"; } > body.md
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file body.md
+          else
+            gh issue create --title "$title" --body-file body.md
+          fi
+
+      - name: Fail the job when a notebook failed
+        if: steps.first.outcome == 'failure'
+        run: exit 1
