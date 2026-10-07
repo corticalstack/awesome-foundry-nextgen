@@ -3,14 +3,13 @@
 # ACR remote build runs on linux/amd64, which matches Foundry's hosted runtime.
 claude-agent-sdk>=0.2.87,<0.3
 
-# Foundry hosted-agent invocations protocol host. Pinned to the 1.1.0 GA release,
-# which caps azure-ai-agentserver-core at <2.2.0. The earlier 1.0.0b4 release no
-# longer imports: its core dependency resolves to 2.2.0b1, which removed
-# CHAT_ISOLATION_KEY, so the container fails at startup.
-azure-ai-agentserver-invocations==1.1.0
+# Foundry hosted-agent invocations protocol host. 1.2.0 supports
+# azure-ai-agentserver-core 2.2 (1.0.0b4 broke on core 2.2's removed
+# CHAT_ISOLATION_KEY; 1.1.0 capped core below 2.2).
+azure-ai-agentserver-invocations>=1.2.0
 azure-identity>=1.17.0
 azure-monitor-opentelemetry>=1.6.0
-python-dotenv==1.1.1
+python-dotenv>=1.1.1
 
 # Baked in so the M365 analytics skill can use pandas/matplotlib without a
 # session-time `pip install` (hosted runtimes may have no package egress).
