@@ -141,6 +141,8 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="also print exception messages (not for CI)")
     parser.add_argument("--list", action="store_true", help="print the selection without running it")
     parser.add_argument("--check", action="store_true", help="verify the manifest lists every notebook")
+    parser.add_argument("--before-each", metavar="COMMAND",
+                        help="shell command to run before each notebook (CI: refresh the az login)")
     args = parser.parse_args()
 
     entries = read_manifest()
@@ -162,7 +164,12 @@ def main():
             print(e["path"])
         return 0
 
-    results = [run(e, args.save, args.verbose) for e in selected]
+    results = []
+    for e in selected:
+        if args.before_each and subprocess.run(args.before_each, shell=True, cwd=REPO,
+                                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+            print(f"warning: --before-each command failed before {e['path']}", flush=True)
+        results.append(run(e, args.save, args.verbose))
     failed = [r for r in results if r["status"] == "fail"]
     print(f"{len(results) - len(failed)} passed, {len(failed)} failed")
     if args.results:
