@@ -36,7 +36,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-from copilot import CopilotClient, SubprocessConfig
+from copilot import CopilotClient
 from copilot.session import PermissionHandler, ProviderConfig
 from copilot.generated.session_events import SessionEventType
 
@@ -143,10 +143,9 @@ async def _ensure_session() -> None:
     github_token = os.environ.get("GITHUB_TOKEN")
 
     if provider:
-        _client = CopilotClient(auto_start=False)
+        _client = CopilotClient()
     elif github_token:
-        _client = CopilotClient(
-            SubprocessConfig(github_token=github_token), auto_start=False)
+        _client = CopilotClient(github_token=github_token)
     else:
         raise RuntimeError(
             "Set GITHUB_TOKEN (Copilot model) or "

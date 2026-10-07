@@ -12,14 +12,16 @@ aiosignal==1.4.0
 annotated-types==0.8.0
     # via pydantic
 anyio==4.15.1
-    # via starlette
+    # via
+    #   httpx
+    #   starlette
 asgiref==3.12.1
     # via opentelemetry-instrumentation-asgi
 attrs==26.1.0
     # via aiohttp
-azure-ai-agentserver-core==2.1.0
+azure-ai-agentserver-core==2.2.0
     # via azure-ai-agentserver-invocations
-azure-ai-agentserver-invocations==1.1.0
+azure-ai-agentserver-invocations==1.2.0
     # via -r requirements.in
 azure-core==1.41.0
     # via
@@ -48,6 +50,8 @@ azure-monitor-opentelemetry-exporter==1.0.0b57
     #   microsoft-opentelemetry
 certifi==2026.7.22
     # via
+    #   httpcore
+    #   httpx
     #   msrest
     #   requests
 cffi==2.1.1
@@ -63,18 +67,23 @@ frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
-github-copilot-sdk==0.3.0
+github-copilot-sdk==1.0.16
     # via -r requirements.in
 googleapis-common-protos==1.75.5
     # via opentelemetry-exporter-otlp-proto-http
 h11==0.16.0
     # via
+    #   httpcore
     #   hypercorn
     #   wsproto
 h2==4.4.1
     # via hypercorn
 hpack==4.2.0
     # via h2
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via github-copilot-sdk
 hypercorn==0.18.0
     # via azure-ai-agentserver-core
 hyperframe==6.1.0
@@ -82,6 +91,7 @@ hyperframe==6.1.0
 idna==3.20
     # via
     #   anyio
+    #   httpx
     #   requests
     #   yarl
 isodate==0.7.2
@@ -107,6 +117,7 @@ oauthlib==4.0.0
 opentelemetry-api==1.44.0
     # via
     #   azure-ai-agentserver-core
+    #   azure-ai-agentserver-invocations
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
     #   microsoft-opentelemetry
