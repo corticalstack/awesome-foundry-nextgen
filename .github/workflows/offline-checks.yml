@@ -39,6 +39,9 @@ jobs:
       - name: Imports resolve
         run: uv run --frozen python scripts/check_imports.py
 
+      - name: SDK model keyword arguments match
+        run: uv run --frozen python scripts/check_sdk_kwargs.py
+
       # One pytest run per suite: 08-05 and 08-05b both have tests/test_kb.py
       # without an __init__.py, which pytest cannot collect in a single run.
       - name: Unit tests
