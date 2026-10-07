@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-10-07
+
+Every dependency on its current release, and automated checks that catch the next breaking one ([#31](https://github.com/corticalstack/awesome-foundry-nextgen/issues/31)). The core Foundry SDKs move to Agent Framework 1.20, `azure-ai-projects` 2.7 and `openai` 3; the hosted-agent containers move to the current Copilot SDK, Agent Framework and AgentServer releases; the fine-tune lab moves to torch 2.14. A weekly canary tests the newest releases offline, and a weekly live run executes the notebooks against Azure. Three labs were broken on `main` and are fixed: the lab 11 knowledge bases, the 08-05-03 tool catalog and the lab 15 GPU jobs.
+
+### Added
+
+- `scripts/check_imports.py` executes every distinct third-party import in the notebooks, helper modules and container sources, so `from pkg import Name` fails when a release removes `Name`. That is how `azure-ai-projects` 2.3.0 broke the hosted-agent notebooks while every unit test passed.
+- `scripts/check_sdk_kwargs.py` compares the keyword arguments of every call to a generated model class from `azure-ai-projects`, `azure-search-documents`, `azure-ai-agents` and `azure-ai-evaluation` with the fields the installed class defines. It catches removed fields, such as `HostedAgentDefinition`'s `image` in 2.7, which import checks miss.
+- `scripts/run_notebooks.py` runs notebooks headless from the ordered manifest `scripts/notebooks.txt` (tags `weekly`, `deploy`, `ingest`, `long`, `manual`, plus scripted `input()` answers). It prints only what is safe for public logs: notebook, status, seconds, failing cell and exception type. The kernel's own stdout and stderr are discarded unless `--verbose`.
+- GitHub Actions:
+  - `offline-checks.yml` on pull requests and `main`: lock check, imports, SDK keyword arguments, the pytest suites, every hosted-agent image build with an import check inside it, and every MCP Function app install.
+  - `dependency-canary.yml`, Mondays 05:00 UTC: reruns the offline checks against the newest allowed releases on a throwaway checkout and opens a tracking issue on failure.
+  - `live-notebooks.yml`, Mondays 07:00 UTC: runs the `weekly` notebooks against Azure through an OIDC federated credential (no stored Azure password). A notebook that fails is rerun on the committed lock to tell a package regression from Azure drift.
+  - `azure-login-check.yml`: a manual check that the workflows can sign in to Azure.
+- `CONTRIBUTING.md` "Automated checks" section describing the above and the manifest.
+
+### Changed
+
+- `uv.lock` is committed, so a fresh clone installs the versions the notebooks were last run with. `prerelease = "if-necessary-or-explicit"` stops alphas and release candidates of unrequested packages entering the lock.
+- Core SDKs, which move together because each caps another:
+  - `agent-framework-core` / `-openai` / `-foundry` 1.0.0rc6 to 1.20.0 / 1.15.0 / 1.14.0. `agent-framework-azure-ai`, abandoned at rc6, is dropped; `AzureAISearchContextProvider` now comes from `agent-framework-azure-ai-search`.
+  - `azure-ai-projects` 2.1.0 to 2.7.0, `openai` 2.38.0 to 3.24.0, and `azure-search-documents` 11.7.0b2 to 12.1.0b2 (the preview line, which the Agent Framework search provider needs for answer synthesis).
+  - `azure-ai-agents`, `azure-ai-evaluation` and `azure-identity` to their current releases. `azure-ai-agents` is now declared (08-06-01 imports it); `azure-mgmt-cognitiveservices` and `rich` are dropped, since nothing imports them.
+  - API migrations: hosted agents register with `protocol_versions` and `container_configuration=ContainerConfiguration(image=...)` (08-03, 08-10, 08-10b, 08-10c, 08-11); the knowledge-base output-mode and reasoning-effort classes moved to `azure.search.documents.knowledgebases.models` (10-03, 11-03); lab 11's `WorkflowBuilder` uses `output_from`.
+- Hosted-agent containers and MCP Function apps keep their intent in `requirements.in` and exact pins in a compiled `requirements.txt` (the compile command is in each header). Container base images are pinned by tag. The deploy notebooks build from the committed files instead of regenerating them.
+- 08-10, 08-10b and 08-10c: `github-copilot-sdk` 0.3.0 to 1.0.16 and `azure-ai-agentserver-invocations` 1.1.0 to 1.2.0. `CopilotClient` takes keyword options in 1.x, and time to first token arrives as a `timedelta`; `tracing.py` still records milliseconds.
+- 08-03: Agent Framework 1.20 and `azure-ai-agentserver-responses` 2.2.0, built on `agent-framework-core` rather than the meta-package, which pulled in about 20 pre-release integrations `main.py` never imports. The agent registers Responses protocol version 2.0.0, because the new hosting package rejects requests that lack the per-request user and call IDs the platform only sends on 2.0.0.
+- 08-11: `azure-ai-agentserver-invocations` 1.2.0 and `claude-agent-sdk` 0.2.164 (verified offline only; the lab's Claude deployment is still blocked by Marketplace policy).
+- 15: torch 2.14.1 and peft 0.21.2 locally, with transformers held at 4.53.3 for Phi-4-mini's remote code. The ACA GPU jobs pin their image to tag 58 instead of `:latest` and pin accelerate, datasets, peft and olive-ai to the lock.
+- 14-01 and 14-02 no longer open with an unpinned `%pip install`.
+- 05-01 and `.env.example` no longer list `contoso-pmo-project`, retired in May.
+- Notebook outputs refreshed on the upgraded SDKs.
+
+### Fixed
+
+- Fresh clones could not run the hosted-agent notebooks: with `uv.lock` gitignored, a new clone resolved `azure-ai-projects` 2.4.0, which had removed `AgentProtocol`.
+- 11: Azure AI Search rejects APIM endpoints in knowledge base model configurations, so 11-03, 11-04 and 11-05 failed. The knowledge base model now calls the core account, and `core-search-rbac.bicep` grants the search service's managed identity access to it (the same fix lab 10 got in 0.9.0).
+- 08-05-03 used `contoso-pmo-project`, which no longer exists, so every run failed with `ResourceNotFound`. It now uses the admin project, and its catalog listing masks the Function key embedded in connection targets.
+- 08-03:
+  - It stopped with a `NameError` on `CORE_CONNECTION` before registering the agent.
+  - Re-running it never rolled out a rebuilt image: `create_version` returns the existing version when the definition is unchanged, and the image was referenced by `:latest`. It now registers the build by digest.
+  - `ask()` printed HTTP 500s and failed responses and carried on, so the notebook passed with no answers. It now raises, and Step 7 waits for the new role assignments itself.
+- 08-10c stopped with `KeyError: 'image'` on versions registered with the new definition shape, and the health summaries in 08-10, 08-10b and 08-11 would have reported the image as `None`.
+- 15: Microsoft rebuilt the GPU jobs' base image, and `pip install` failed on it (`Permission denied` removing the image's own packages) before training started. The jobs now install into a venv layered on the image. 15-02 and 15-03 also passed when their GPU job failed; they now raise.
+
 ## [0.9.0] - 2026-09-22
 
 Three new labs plus repo-wide fixes. Two labs were broken on `main`: the Foundry IQ knowledge bases stopped answering after Azure AI Search began rejecting APIM endpoints for knowledge base models, and the hosted Copilot SDK containers no longer started when rebuilt. Both are fixed and re-verified end to end against Azure.
