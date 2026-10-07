@@ -1,0 +1,71 @@
+# Every notebook in the repo, in the order they run, for scripts/run_notebooks.py.
+#
+#   <path>  <tags,comma,separated>  [answers=a,b,...]
+#
+# Tags pick what runs:
+#   weekly  uses resources that are already deployed; the scheduled live run executes these
+#   deploy  creates or reconfigures Azure infrastructure, hosted agent images or Function apps
+#   ingest  bulk re-indexing (embedding cost) that the weekly run does not need to repeat
+#   long    runs for an hour or more (red teaming, fine-tuning)
+#   manual  needs something CI does not have (noted on the line)
+# answers=  scripted replies, in order, for notebooks that call input()
+
+05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb  deploy
+05-foundry-project-pattern-setup/05-03-deploy-foundry-project-spoke/05-03-01-deploy-foundry-project-spoke.ipynb  deploy
+05-foundry-project-pattern-setup/05-04-deploy-foundry-multi-project/05-04-01-deploy-foundry-multi-project.ipynb  deploy
+06-governance-policy/06-01-deploy-governance-policy.ipynb  deploy
+07-model-inference/07-01-models-inference-examples.ipynb  weekly
+07-model-inference/07-02-migrate-gpt-4o-to-gpt-5.ipynb  weekly
+08-agents/08-01-create-versioned-storytelling-agent.ipynb  weekly
+08-agents/08-01b-create-versioned-contoso-wealth-agent.ipynb  weekly
+08-agents/08-02-create-agent-with-code-interpreter-tool.ipynb  weekly
+08-agents/08-03-hosted-agents/08-03-01-deploy-hosted-agent.ipynb  deploy
+08-agents/08-04-agent-memory/08-04-01-deploy-agent-memory.ipynb  deploy
+# 08-05-01 / 08-05b-01 look up the caller with `az ad signed-in-user show`, which a CI identity cannot do.
+08-agents/08-05-contoso-pmo-mcp/08-05-01-contoso-pmo-agent-setup.ipynb  deploy,manual
+08-agents/08-05-contoso-pmo-mcp/08-05-02-contoso-pmo-agent-queries.ipynb  weekly
+08-agents/08-05-contoso-pmo-mcp/08-05-03-contoso-pmo-tool-catalog.ipynb  weekly
+08-agents/08-05b-contoso-private-banking-mcp/08-05b-01-private-banking-agent-setup.ipynb  deploy,manual
+08-agents/08-05b-contoso-private-banking-mcp/08-05b-02-private-banking-agent-queries.ipynb  weekly
+08-agents/08-06-agent-offline-evaluation/08-06-01-setup-and-test-data.ipynb  weekly
+08-agents/08-06-agent-offline-evaluation/08-06-02-quality-evaluators.ipynb  weekly
+08-agents/08-06-agent-offline-evaluation/08-06-03-agent-evaluators.ipynb  weekly
+08-agents/08-06-agent-offline-evaluation/08-06-04-custom-evaluators.ipynb  weekly
+08-agents/08-06-agent-offline-evaluation/08-06-05-results-and-portal.ipynb  weekly
+08-agents/08-07-agent-live-observability/08-07-01-deploy-observability-infra.ipynb  deploy
+08-agents/08-07-agent-live-observability/08-07-03-agent-observability.ipynb  weekly
+08-agents/08-07-agent-live-observability/08-07-05-agent-continuous-evaluation.ipynb  weekly
+08-agents/08-08-human-in-the-loop/08-08-01-human-in-the-loop.ipynb  weekly  answers=yes,no,yes
+08-agents/08-09-invoke-agent-via-rest/08-09-01-rest-single-shot.ipynb  weekly
+08-agents/08-09-invoke-agent-via-rest/08-09-02-rest-multi-turn.ipynb  weekly
+08-agents/08-09-invoke-agent-via-rest/08-09-03-rest-streaming.ipynb  weekly
+08-agents/08-10-hosted-copilot-sdk-agent/08-10-01-deploy-hosted-copilot-sdk-agent.ipynb  deploy
+08-agents/08-10b-hosted-copilot-sdk-agent-multi/08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb  deploy
+08-agents/08-10c-hosted-copilot-sdk-agent-runtime-model/08-10c-01-runtime-model-and-telemetry.ipynb  deploy
+# 08-11: the lab tenant's Marketplace policy blocks the Claude deployment it needs.
+08-agents/08-11-hosted-claude-agent-sdk-agent/08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb  deploy,manual
+# 09: the Content Understanding resource group is not deployed in the lab environment.
+09-content-understanding-integration/09-01-deploy-setup.ipynb  deploy
+09-content-understanding-integration/09-02-cu-analyze.ipynb  manual
+10-foundry-iq/10-01-deploy-search-and-project.ipynb  deploy
+10-foundry-iq/10-02-index-and-ingest.ipynb  ingest
+10-foundry-iq/10-03-knowledge-base-setup.ipynb  weekly
+10-foundry-iq/10-04-search-patterns.ipynb  weekly
+10-foundry-iq/10-05-agent-iq-queries.ipynb  weekly
+11-foundry-iq-multi-agent/11-01-deploy-setup.ipynb  deploy
+11-foundry-iq-multi-agent/11-02-index-and-ingest.ipynb  ingest
+11-foundry-iq-multi-agent/11-03-knowledge-base-setup.ipynb  weekly
+11-foundry-iq-multi-agent/11-04-multi-agent-setup.ipynb  weekly
+11-foundry-iq-multi-agent/11-05-multi-agent-queries.ipynb  weekly
+12-foundry-iq-deep-research/12-01-deploy-o3-backend.ipynb  deploy
+12-foundry-iq-deep-research/12-02-deep-research-loop.ipynb  weekly
+13-guardrails/13-01-configure-bank-guardrails.ipynb  deploy
+13-guardrails/13-02-create-bank-agent.ipynb  weekly
+13-guardrails/13-03-demo-guardrails.ipynb  weekly
+14-red-teaming/14-01-red-team-basics.ipynb  long
+14-red-teaming/14-02-red-team-advanced.ipynb  long
+# 15: needs `uv sync --group finetune` and the ACA GPU job.
+15-fine-tune/15-01-data-preparation.ipynb  long,manual
+15-fine-tune/15-02-fine-tune.ipynb  deploy,long,manual
+15-fine-tune/15-03-evaluate.ipynb  long,manual
+15-fine-tune/15-04-local-inference.ipynb  long,manual
