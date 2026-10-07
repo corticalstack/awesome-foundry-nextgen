@@ -25,9 +25,9 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-azure-ai-agentserver-core==2.1.0
+azure-ai-agentserver-core==2.2.0
     # via azure-ai-agentserver-invocations
-azure-ai-agentserver-invocations==1.1.0
+azure-ai-agentserver-invocations==1.2.0
     # via -r requirements.in
 azure-core==1.41.0
     # via
@@ -62,7 +62,7 @@ cffi==2.1.1
     # via cryptography
 charset-normalizer==3.5.2
     # via requests
-claude-agent-sdk==0.2.163
+claude-agent-sdk==0.2.164
     # via -r requirements.in
 click==8.5.0
     # via uvicorn
@@ -149,6 +149,7 @@ oauthlib==4.0.0
 opentelemetry-api==1.44.0
     # via
     #   azure-ai-agentserver-core
+    #   azure-ai-agentserver-invocations
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
     #   mcp
@@ -332,7 +333,7 @@ python-dateutil==2.9.0.post0
     # via
     #   matplotlib
     #   pandas
-python-dotenv==1.1.1
+python-dotenv==1.2.4
     # via -r requirements.in
 python-multipart==0.0.32
     # via mcp
