@@ -10,6 +10,11 @@ import time
 import os
 from typing import Tuple
 
+# A numbered tag, not :latest, which Microsoft rebuilds: tag 58 (2026-09-29) has torch
+# 2.13.0, CUDA 12.6 and Python 3.10 despite the 2.2-cuda12.1 repository name.
+IMAGE = "mcr.microsoft.com/azureml/curated/acpt-pytorch-2.2-cuda12.1:58"
+VENV = "python -m venv --system-site-packages /tmp/ftenv && . /tmp/ftenv/bin/activate && "
+
 def run_az(cmd: str, check: bool = True) -> subprocess.CompletedProcess:
     """Run Azure CLI command."""
     print(f"Executing: az {cmd[:50]}...")
@@ -64,9 +69,14 @@ def submit_finetune_job(
 ):
     """Submit the Olive fine-tuning job to ACA."""
     
+    # ML packages pinned: transformers as in pyproject.toml, peft/accelerate/datasets as in
+    # uv.lock, so 15-04 loads the adapter with the versions that trained it. The image
+    # tag (IMAGE) fixes torch 2.13.0, CUDA 12.6 and Python 3.10. They install into a venv
+    # layered on the image's env (VENV): pip cannot remove the image's own packages
+    # (Permission denied on antlr4-python3-runtime, which azure-cli replaces).
     script = (
-        "source /opt/conda/etc/profile.d/conda.sh && conda activate ptca && "
-        "pip install --no-cache-dir transformers==4.53.3 accelerate datasets peft olive-ai[auto-opt] azure-storage-blob azure-cli && "
+        "source /opt/conda/etc/profile.d/conda.sh && conda activate ptca && " + VENV +
+        "pip install --no-cache-dir transformers==4.53.3 accelerate==1.15.0 datasets==5.0.1 peft==0.21.2 olive-ai[auto-opt]==0.13.0 azure-storage-blob azure-cli && "
         "az login --identity && mkdir -p /data /output && "
         f"az storage blob download --account-name {storage_account} --container-name {container_name} --name train.jsonl --file /data/train.jsonl --auth-mode login && "
         f"olive finetune --method lora --model_name_or_path {base_model} --trust_remote_code "
@@ -97,7 +107,7 @@ def submit_finetune_job(
                 "template": {
                     "containers": [{
                         "name": "finetune",
-                        "image": "mcr.microsoft.com/azureml/curated/acpt-pytorch-2.2-cuda12.1:latest",
+                        "image": IMAGE,
                         "resources": {"cpu": 12, "memory": "32Gi"},
                         "command": ["/bin/bash", "-c", script]
                     }]
@@ -165,8 +175,8 @@ def submit_evaluation_job(
     """Submit evaluation job to ACA with GPU."""
     
     script = (
-        "source /opt/conda/etc/profile.d/conda.sh && conda activate ptca && "
-        "pip install --no-cache-dir transformers==4.53.3 accelerate peft azure-storage-blob azure-cli && "
+        "source /opt/conda/etc/profile.d/conda.sh && conda activate ptca && " + VENV +
+        "pip install --no-cache-dir transformers==4.53.3 accelerate==1.15.0 peft==0.21.2 azure-storage-blob azure-cli && "
         "az login --identity && mkdir -p /data/ft/adapter /output && "
         # Download adapter files individually (workaround for pattern issues)
         f"for blob in $(az storage blob list --account-name {storage_account} --container-name {container_name} --prefix ft/ --auth-mode login --query '[].name' -o tsv); do "
@@ -200,7 +210,7 @@ def submit_evaluation_job(
                 "template": {
                     "containers": [{
                         "name": "evaluate",
-                        "image": "mcr.microsoft.com/azureml/curated/acpt-pytorch-2.2-cuda12.1:latest",
+                        "image": IMAGE,
                         "resources": {"cpu": 12, "memory": "32Gi"},
                         "command": ["/bin/bash", "-c", script]
                     }]

@@ -48,9 +48,9 @@ dev = [
 # transformers is pinned to the 4.x line because Phi-4-mini's custom remote
 # code (modeling_phi3.py served from the Hugging Face hub) imports symbols
 # (e.g. `LossKwargs`) that were removed in transformers 5.x. The ACA
-# fine-tune job in azure_infra.py pins the same 4.53.3 version explicitly;
-# the local install needs to match for 15-04 (local inference) to load the
-# adapter without ImportErrors.
+# fine-tune job in azure_infra.py pins the same 4.53.3 version explicitly,
+# and pins peft to the version in uv.lock; the local install needs to match
+# for 15-04 (local inference) to load the adapter without ImportErrors.
 finetune = [
     "torch>=2.0.0",
     "transformers==4.53.3",
