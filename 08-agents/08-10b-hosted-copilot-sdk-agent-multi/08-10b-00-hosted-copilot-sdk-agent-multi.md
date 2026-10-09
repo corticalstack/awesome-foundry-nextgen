@@ -62,17 +62,15 @@ Pointing the container directly at APIM means the **gateway subscription key is 
 - **Dedicated APIM subscription** (`foundry-gateway-copilot-sdk`) -> the agent's inference quota is isolated from team traffic, exactly as `foundry-gateway-iq` / `-obs` / `-contoso-pmo` are.
 - **Minimal agent RBAC** (AcrPull + Foundry User) -> the agent never calls the account's models with its identity, so no Cognitive Services OpenAI User grant is needed; the gateway key pays for inference.
 
-> **Shared-account note:** This lab enables the hosted-agent **capability host on the shared account** (`aif-spoke-multi`) via a one-time idempotent REST `PUT`. That is an account-level enablement, required for any hosted agent on this account. If a later lab already created it, the call returns `409` and is a no-op.
-
 ## Validate this on first deploy
 
-The decisive checks are (1) the container can **egress to the gateway** and (2) APIM authenticates the **`api-key`** request for the **reasoning** model. All three were proven before this lab was finalised: the provider config was validated locally against the live gateway, and the deployed hosted agent answered a smoke test plus ran shell tools end-to-end. The first smoke test in Step 8 re-proves it in your subscription. If a turn fails, see the troubleshooting cell (model not a reasoning model, missing `APIM_*` env, inactive gateway key, or egress blocked under network isolation).
+The decisive checks are (1) the container can **egress to the gateway** and (2) APIM authenticates the **`api-key`** request for the **reasoning** model. All three were proven before this lab was finalised: the provider config was validated locally against the live gateway, and the deployed hosted agent answered a smoke test plus ran shell tools end-to-end. The first smoke test in Step 7 re-proves it in your subscription. If a turn fails, see the troubleshooting cell (model not a reasoning model, missing `APIM_*` env, inactive gateway key, or egress blocked under network isolation).
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| [`08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb`](08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb) | Mints the gateway subscription, deploys `gpt-5-mini` on the gateway backend, deploys the project + ACR bicep, enables the capability host, builds **this lab's own container image**, registers + role-grants the hosted agent **in APIM-direct mode**, then runs the smoke tests and the M365 analytics demo |
+| [`08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb`](08-10b-01-deploy-hosted-copilot-sdk-agent-multi.ipynb) | Mints the gateway subscription, deploys `gpt-5-mini` on the gateway backend, deploys the project + ACR bicep, builds **this lab's own container image**, registers + role-grants the hosted agent **in APIM-direct mode**, then runs the smoke tests and the M365 analytics demo |
 | [`infra/main.bicep`](infra/main.bicep) | RG-scoped bicep: adds `copilot-sdk-project` + ACR to the existing shared account, with RBAC. **No connection, no local model deployment** |
 | [`src/github-copilot-invocations/`](src/github-copilot-invocations/) | The agent container (Dockerfile, `main.py` with the env-driven APIM-direct branch, `system_prompt.md`, `skills/`, `tracing.py`). The image build context |
 | [`data/`](data/) | M365 demo data (`m365-licenses.csv`, `m365-reference.json`) used by the analytics demo |

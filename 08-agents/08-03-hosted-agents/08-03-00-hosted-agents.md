@@ -1,6 +1,6 @@
 # Hosted agents
 
-This lab deploys a containerised **Microsoft Agent Framework** agent, hosted via Capability Host (Azure Container Apps),
+This lab deploys a containerised **Microsoft Agent Framework** agent as a Foundry hosted agent,
 connected to the APIM gateway for model inference.
 
 The agent - `contoso-wealth-expert-agent` - answers two kinds of questions:
@@ -45,7 +45,7 @@ The next architectural step is **grounding** the agent over a knowledge base and
 
 | File | Purpose |
 |---|---|
-| [`08-03-01-deploy-hosted-agent.ipynb`](08-03-01-deploy-hosted-agent.ipynb) | Provisions ACR, builds the agent container, deploys it via Capability Host, registers it with the Foundry project, runs two test prompts |
+| [`08-03-01-deploy-hosted-agent.ipynb`](08-03-01-deploy-hosted-agent.ipynb) | Provisions ACR, builds the agent container, registers it as a hosted agent with the Foundry project, runs two test prompts |
 | [`main.bicep`](main.bicep) | Deploys the Azure Container Registry into the existing Spoke Alpha resource group and grants AcrPull to the project's managed identity |
 | [`contoso-wealth-agent/main.py`](contoso-wealth-agent/main.py) | The agent code - a `ChatAgent` with the prompt-stuffed product list as `instructions` |
 | [`contoso-wealth-agent/Dockerfile`](contoso-wealth-agent/Dockerfile) | Container image definition |

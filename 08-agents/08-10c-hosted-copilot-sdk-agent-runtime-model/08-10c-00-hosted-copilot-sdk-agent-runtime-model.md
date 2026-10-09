@@ -5,7 +5,7 @@ This is the **"C" variant** of [`08-10-hosted-copilot-sdk-agent`](../08-10-hoste
 1. **Can the user change the agent's model or reasoning effort in the middle of a conversation**, from a dropdown in the UI, without creating a new agent version or redeploying?
 2. **What logging and telemetry does a Foundry hosted agent produce out of the box?**
 
-The lab is **self-contained**. It ships its own Bicep and its own copy of the container source, and provisions everything it needs into its own resource group: a Foundry account and project, the capability host that runs hosted agents, a container registry, Application Insights, and the three model deployments the chat UI switches between. No other notebook has to run first.
+The lab is **self-contained**. It ships its own Bicep and its own copy of the container source, and provisions everything it needs into its own resource group: a Foundry account and project, a container registry, Application Insights, and the three model deployments the chat UI switches between. No other notebook has to run first.
 
 ## Question 1: switching the model and reasoning effort at runtime
 
@@ -69,7 +69,7 @@ Three things to know when reading the raw data:
 | File | Purpose |
 |---|---|
 | [`08-10c-01-runtime-model-and-telemetry.ipynb`](08-10c-01-runtime-model-and-telemetry.ipynb) | Provisions the stack, builds and registers the agent, runs the model and reasoning effort switching conversation, and walks through the telemetry layers with the log stream and KQL queries |
-| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep: resource group, Foundry account and project, capability host, container registry, Application Insights and Log Analytics, and the three model deployments |
+| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep: resource group, Foundry account and project, container registry, Application Insights and Log Analytics, and the three model deployments |
 | [`src/github-copilot-invocations/main.py`](src/github-copilot-invocations/main.py) | The 08-10 agent plus per-request model and reasoning effort selection |
 | [`src/github-copilot-invocations/tracing.py`](src/github-copilot-invocations/tracing.py) | The 08-10 span mapping, plus `gen_ai.request.reasoning_effort` on `chat <model>` spans |
 

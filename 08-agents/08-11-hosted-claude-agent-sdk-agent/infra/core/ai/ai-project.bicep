@@ -35,12 +35,6 @@ param additionalDependentResources dependentResourcesType
 @description('Enable monitoring via appinsights and log analytics')
 param enableMonitoring bool = true
 
-@description('Enable hosted agent deployment')
-param enableHostedAgents bool = false
-
-@description('Enable the capability host for agent conversations. When false and hosted agents are enabled, the capability host is not created (v2 hosted agents handle storage automatically).')
-param enableCapabilityHost bool = true
-
 @description('Optional. Existing container registry resource ID. If provided, a connection will be created to this ACR instead of creating a new one.')
 param existingContainerRegistryResourceId string = ''
 
@@ -159,16 +153,6 @@ resource aiAccount 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
     dependsOn: [
       seqDeployments
     ]
-  }
-
-  resource aiFoundryAccountCapabilityHost 'capabilityHosts@2025-10-01-preview' = if (enableHostedAgents && enableCapabilityHost) {
-    name: 'agents'
-    properties: {
-      capabilityHostKind: 'Agents'
-      // IMPORTANT: this is required to enable hosted agents deployment
-      // if no BYO Net is provided
-      enablePublicHostingEnvironment: true
-    }
   }
 }
 

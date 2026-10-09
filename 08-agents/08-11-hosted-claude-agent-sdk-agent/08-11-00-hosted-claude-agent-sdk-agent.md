@@ -20,7 +20,7 @@ So the SDK points straight at a Foundry Claude deployment with **no translation 
 
 ## What this example demonstrates
 
-- **Hosted agent runtime.** Foundry runs the container under the project's capability host. No Container App, Web App, or AKS to manage.
+- **Hosted agent runtime.** Foundry runs the container in a per-session sandbox on Microsoft-managed compute. No Container App, Web App, or AKS to manage.
 - **Claude Agent SDK as the agent loop.** `ClaudeSDKClient` owns sessions, tool-calling, streaming, and skill discovery. Your `main.py` only forwards SDK messages out through Foundry's [invocations protocol](https://pypi.org/project/azure-ai-agentserver-invocations/).
 - **BYO Foundry Claude model via Managed Identity.** No Anthropic API key, no key of any kind in the container - inference stays inside your Foundry project.
 - **Two extension surfaces:** `system_prompt.md` (persona, appended to the Claude Code preset) and `skills/<name>/SKILL.md` (procedures discovered on demand).
@@ -140,7 +140,7 @@ The identity layer is the one that actually contains the agent: `bypassPermissio
 | [`08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb`](08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb) | Walks the full `az deployment sub create` -> `az acr build` -> `create_version` -> role-grant -> invoke loop, then uploads `data/m365-licenses.csv` into a session, runs five M365 license analytics prompts, and downloads an agent-rendered cost-by-department chart |
 | [`data/m365-licenses.csv`](data/m365-licenses.csv) | Synthetic M365 license export (100 users, real SKUs, engineered outliers). Used by Step 7 to demonstrate hosted-agent session file ops |
 | [`data/m365-reference.json`](data/m365-reference.json) | Per-SKU monthly costs + department-code names. Uploaded to the session so the agent joins costs/names onto the CSV - keeps volatile data out of the skill |
-| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep: AI Foundry account, project, Claude model deployment, ACR, capability host, App Insights / Log Analytics |
+| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep: AI Foundry account, project, Claude model deployment, ACR, App Insights / Log Analytics |
 | [`infra/core/ai/ai-project.bicep`](infra/core/ai/ai-project.bicep) | Project module; its deployment loop was extended to pass the `modelProviderData` Marketplace block that Anthropic (partner) deployments require |
 | [`src/claude-agent-sdk-invocations/main.py`](src/claude-agent-sdk-invocations/main.py) | The agent. Selects the Foundry Claude vs Anthropic-API backend, manages a singleton `ClaudeSDKClient`, streams SDK messages as SSE |
 | [`src/claude-agent-sdk-invocations/system_prompt.md`](src/claude-agent-sdk-invocations/system_prompt.md) | Persona appended to the Claude Code preset system prompt |
