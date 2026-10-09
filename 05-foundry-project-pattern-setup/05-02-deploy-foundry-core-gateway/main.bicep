@@ -12,7 +12,7 @@ param ossLocation string = 'westus3'
 var sharedCoreName = 'aif-core-${suffix}'          // primary core: chat + embeddings
 var storageName = 'stfoundry${suffix}'           // st = storage account (no hyphens allowed)
 var apimName = 'apim-foundry-${suffix}'          // apim = API Management
-var researchHubName = 'aif-research-${suffix}'   // research/reasoning models (o3-deep-research)
+var researchHubName = 'aif-research-${suffix}'   // research/reasoning models (deep-research)
 var ossHubName = 'aif-oss-${suffix}'             // open source models (e.g., Phi-4)
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -37,10 +37,10 @@ resource sharedHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
 
 resource model 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: sharedHub
-  name: 'gpt-4.1-mini'
+  name: 'gpt-5.4-mini'
   sku: { name: 'GlobalStandard', capacity: 30 }
   properties: {
-    model: { name: 'gpt-4.1-mini', format: 'OpenAI', version: '2025-04-14' }
+    model: { name: 'gpt-5.4-mini', format: 'OpenAI', version: '2026-03-17' }
   }
 }
 
@@ -56,7 +56,7 @@ resource embeddingModel 'Microsoft.CognitiveServices/accounts/deployments@2025-0
 
 // Admin project - hosts centrally-managed agents, evaluations, observability and load-gen
 // workloads (08-05 MCP, 08-06 offline eval, 08-07 live obs, 20-* load gen, 04-09 cheat sheet).
-// Lives natively on the core hub so it can use the gpt-4.1-mini and embedding deployments
+// Lives natively on the core hub so it can use the gpt-5.4-mini and embedding deployments
 // directly without going through APIM (keyless, RBAC-only).
 resource adminProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: sharedHub
@@ -117,18 +117,20 @@ resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' =
   }
 }
 
+// The deployment is named for its role, not its model, so APIM routing and DR_MODEL survive
+// the next model swap. gpt-5.6-sol replaced o3-deep-research, which retires 2026-11-19.
 resource researchModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: researchHub
-  name: 'o3-deep-research'
+  name: 'deep-research'
   // Capacity is K-TPM. 10 was too low - multi-step deep-research runs hit
   // 429 throttling before completing. 200 gives realistic headroom while
-  // staying well under the Norway East o3-DeepResearch subscription quota.
+  // staying under the default gpt-5.6-sol GlobalStandard quota of 1000.
   sku: { name: 'GlobalStandard', capacity: 200 }
   properties: {
     model: {
-      name: 'o3-deep-research'
+      name: 'gpt-5.6-sol'
       format: 'OpenAI'
-      version: '2025-06-26'
+      version: '2026-07-09'
     }
     versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
     raiPolicyName: 'Microsoft.DefaultV2'
@@ -277,14 +279,14 @@ resource chatOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-prev
   }
 }
 
-// Chat Completions - research hub (URL match on o3-deep-research routes here)
+// Chat Completions - research hub (URL match on deep-research routes here)
 resource chatResearchOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
   parent: api
   name: 'chat-research'
   properties: {
     displayName: 'Chat Completions (Research)'
     method: 'POST'
-    urlTemplate: '/deployments/o3-deep-research/chat/completions'
+    urlTemplate: '/deployments/deep-research/chat/completions'
   }
 }
 
@@ -328,6 +330,20 @@ resource responsesOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01
     method: 'POST'
     urlTemplate: '/responses'
   }
+}
+
+// Responses carries the model in the body, not the URL, so a URL match cannot route it.
+// Requests for deep-research go to the research hub; the API policy (<base />) has already
+// set the core backend and the managed identity token, which the research hub also accepts.
+// rawxml because the policy expression contains As<JObject>, which is not valid XML.
+resource responsesPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
+  parent: responsesOp
+  name: 'policy'
+  properties: {
+    format: 'rawxml'
+    value: '<policies><inbound><base /><choose><when condition="@((string)context.Request.Body.As<JObject>(preserveContent: true)["model"] == "deep-research")"><set-backend-service backend-id="openai-research" /></when></choose></inbound><backend><base /></backend><outbound><base /></outbound></policies>'
+  }
+  dependsOn: [researchBackend]
 }
 
 // Embeddings operation (for vector search)

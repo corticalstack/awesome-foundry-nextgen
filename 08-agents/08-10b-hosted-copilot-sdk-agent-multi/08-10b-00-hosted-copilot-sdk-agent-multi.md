@@ -41,7 +41,7 @@ So this lab does the opposite of what 08-10b originally assumed: the container p
 
 ## Why the gateway model must be a *reasoning* model
 
-The Copilot CLI drives the model over its **Responses wire protocol in stateless mode**, which always carries **encrypted reasoning content**. Only **reasoning models** support that. `gpt-4.1-mini` (the repo-wide gateway chat model used by the team prompt agents) is not a reasoning model and returns `400 Encrypted content is not supported with this model.` So this lab deploys **`gpt-5-mini`** on the gateway backend (`aif-core`) and routes to it. (This is the same reason standalone 08-10 uses `gpt-5.4-mini` rather than `gpt-4.1-mini`.)
+The Copilot CLI drives the model over its **Responses wire protocol in stateless mode**, which always carries **encrypted reasoning content**. Only **reasoning models** support that. `gpt-4.1-mini`, the repo-wide gateway chat model when this lab was written, is not a reasoning model and returns `400 Encrypted content is not supported with this model.` So this lab deploys **`gpt-5-mini`** on the gateway backend (`aif-core`) and routes to it. (This is the same reason standalone 08-10 uses `gpt-5.4-mini` rather than `gpt-4.1-mini`.)
 
 ## The container *can* reach APIM (egress)
 

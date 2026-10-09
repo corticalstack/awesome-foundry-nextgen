@@ -16,7 +16,7 @@ LIVE = os.getenv('CONTOSO_LIVE_TESTS', '').lower() == 'true'
 
 FAKE_ENDPOINT   = 'https://fake-project.services.ai.azure.com/api/projects/contoso-project'
 FAKE_SEARCH_EP  = 'https://fake-search.search.windows.net'
-FAKE_MODEL      = 'gpt-4.1-mini'
+FAKE_MODEL      = 'gpt-5.4-mini'
 FAKE_CONN       = 'contoso-apim-connection'
 
 

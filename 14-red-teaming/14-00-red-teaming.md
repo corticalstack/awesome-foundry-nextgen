@@ -1,6 +1,6 @@
 # AI red teaming
 
-Proactively probe a Foundry-hosted agent or model for safety risks using the **Azure AI Red Teaming Agent** (powered by [PyRIT](https://github.com/Azure/PyRIT)). The scans here exercise the same `gpt-4.1-mini` deployment that the bank-guardrails demo uses, so you can compare attack success rates before and after the custom RAI policy is in place.
+Proactively probe a Foundry-hosted agent or model for safety risks using the **Azure AI Red Teaming Agent** (powered by [PyRIT](https://github.com/Azure/PyRIT)). The scans here exercise the same `gpt-5.4-mini` deployment that the bank-guardrails demo uses, so you can compare attack success rates before and after the custom RAI policy is in place.
 
 > ⚠️ **Region constraint.** The Red Teaming Agent is currently available in **East US 2**, **Sweden Central**, **France Central**, and **Switzerland West** only. The Alpha spoke this lab targets must be in one of those - see the spoke deployment.
 
@@ -24,7 +24,7 @@ Async callback (advanced_callback)
     │
     │  AsyncAzureOpenAI → APIM gateway
     ▼
-gpt-4.1-mini on aif-core-{suffix}
+gpt-5.4-mini on aif-core-{suffix}
     │
     │  responses
     ▼

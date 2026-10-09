@@ -24,7 +24,7 @@ Evaluation is performed using the `azure-ai-evaluation` SDK against the Foundry 
 
 | Variable | Usage |
 |---|---|
-| `CHAT_MODEL` | Model deployment name (e.g. `gpt-4.1-mini`) on `aif-core-{suffix}` |
+| `CHAT_MODEL` | Model deployment name (e.g. `gpt-5.4-mini`) on `aif-core-{suffix}` |
 
 Optional overrides (defaults match the Contoso PMO MCP setup):
 
@@ -55,13 +55,13 @@ Safety evaluators that detect harmful content:
 All RAI evaluators require `evaluate_query=True` (breaking change since SDK 1.10.0).
 
 ### Agent-specific evaluators
-Evaluators designed for agentic workflows, requiring thread and run IDs from a live agent execution:
+Evaluators designed for agentic workflows, scored on the agent's stored responses:
 
-- **IntentResolutionEvaluator** - measures whether the agent correctly identified user intent
-- **ToolCallAccuracyEvaluator** - measures whether the agent called the right tools with correct arguments
-- **TaskAdherenceEvaluator** - measures whether the agent's final response adheres to its assigned tasks per its system message
+- **Intent resolution** (`builtin.intent_resolution`) - measures whether the agent correctly identified user intent
+- **Tool call accuracy** (`builtin.tool_call_accuracy`) - measures whether the agent called the right tools with correct arguments
+- **Task adherence** (`builtin.task_adherence`) - measures whether the agent's final response adheres to its assigned tasks per its system message
 
-These evaluators use `AIAgentConverter` to transform an agent thread into the JSONL format expected by the evaluation SDK.
+They run as a cloud evaluation (`openai_client.evals`) over the `response_id` values that 08-06-01 captures. Foundry retrieves each stored response, including the MCP tool calls and their results, so no client-side conversion is needed.
 
 ### Custom evaluators
 Python classes implementing domain-specific evaluation logic:
@@ -75,13 +75,13 @@ Python classes implementing domain-specific evaluation logic:
 
 | Notebook | Purpose |
 |---|---|
-| [08-06-01-setup-and-test-data.ipynb](08-06-01-setup-and-test-data.ipynb) | Resolve `aria-rm-briefing-agent` on the admin project (created in [08-05b-01](../08-05b-contoso-private-banking-mcp/08-05b-01-private-banking-agent-setup.ipynb)), run sample queries, capture thread/run IDs, write `test_data.jsonl` |
+| [08-06-01-setup-and-test-data.ipynb](08-06-01-setup-and-test-data.ipynb) | Resolve `aria-rm-briefing-agent` on the admin project (created in [08-05b-01](../08-05b-contoso-private-banking-mcp/08-05b-01-private-banking-agent-setup.ipynb)), run sample queries through the Responses API, capture response IDs, write `test_data.jsonl` |
 | [08-06-02-quality-evaluators.ipynb](08-06-02-quality-evaluators.ipynb) | Run coherence, fluency, relevance, groundedness, similarity, and RAI evaluators |
-| [08-06-03-agent-evaluators.ipynb](08-06-03-agent-evaluators.ipynb) | Use `AIAgentConverter` + intent/tool/task evaluators on agent threads |
+| [08-06-03-agent-evaluators.ipynb](08-06-03-agent-evaluators.ipynb) | Cloud evaluation of intent resolution, tool call accuracy and task adherence on the stored responses |
 | [08-06-04-custom-evaluators.ipynb](08-06-04-custom-evaluators.ipynb) | Implement and run custom answer-length and citation evaluators |
 | [08-06-05-results-and-portal.ipynb](08-06-05-results-and-portal.ipynb) | Full batch `evaluate()` call with portal logging; displays `studio_url` |
 
-Run notebooks in order - `08-06-01` must complete before the others as it produces the `test_data.jsonl` with thread/run IDs. (Note: `08-06-03`'s `AIAgentConverter` call is currently upstream-blocked on `azure-ai-projects` 2.1.0 / `azure-ai-evaluation` 1.16.5 - the notebook is wrapped in try/except so it runs cleanly with that section skipped. See the warning in 08-06-03's intro.)
+Run notebooks in order - `08-06-01` must complete before the others as it produces the `test_data.jsonl` with response IDs.
 
 ---
 
@@ -89,6 +89,10 @@ Run notebooks in order - `08-06-01` must complete before the others as it produc
 
 - `DefaultAzureCredential` everywhere - for `AIProjectClient`, the LLM-as-judge evaluators, and the RAI evaluators
 - No API keys, no APIM hub connection - model graders talk directly to the deployment on `aif-core-{suffix}` because the admin project natively hosts it
+
+### Reasoning-model graders
+
+`CHAT_MODEL` (`gpt-5.4-mini`) is a reasoning model and rejects `max_tokens` with HTTP 400. The prompty-based evaluators (coherence, fluency, relevance, groundedness, similarity) send `max_tokens` unless they are built with `is_reasoning_model=True`, which switches them to `max_completion_tokens`. Batch `evaluate()` logs the 400s per row instead of raising, so a missing flag shows up as empty metrics, not as a failed cell.
 
 ### Known issue: Python 3.13 + azure-ai-evaluation 1.16.x
 

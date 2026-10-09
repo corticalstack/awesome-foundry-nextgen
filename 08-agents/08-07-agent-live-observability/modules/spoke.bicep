@@ -121,7 +121,7 @@ resource apimConnection 'Microsoft.CognitiveServices/accounts/projects/connectio
     metadata: {
       deploymentInPath: 'true'
       inferenceAPIVersion: '2024-10-21'
-      models: '[{"name":"gpt-4.1-mini","properties":{"model":{"name":"gpt-4.1-mini","version":"","format":"OpenAI"}}}]'
+      models: '[{"name":"gpt-5.4-mini","properties":{"model":{"name":"gpt-5.4-mini","version":"","format":"OpenAI"}}}]'
     }
   }
 }

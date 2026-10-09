@@ -39,7 +39,7 @@ Multi-project deployment complete (aif-spoke-multi-{suffix}, MULTI_ACCOUNT in .e
 ```
 aif-spoke-multi-{suffix}     (existing shared AI Foundry account, from the multi-project deployment)
   └── contoso-project         (new - added by this lab)
-        ├── contoso-apim-connection   → APIM gateway → gpt-4.1-mini
+        ├── contoso-apim-connection   → APIM gateway → gpt-5.4-mini
         ├── contoso-mcp-hr            → Foundry IQ KB MCP endpoint
         ├── contoso-mcp-marketing     → Foundry IQ KB MCP endpoint
         └── contoso-mcp-products      → Foundry IQ KB MCP endpoint
@@ -52,7 +52,7 @@ contoso-search-{suffix}      (new Azure AI Search service, Standard SKU)
   └── contoso-products index
         └── contoso-ks-products ──→ contoso-kb-products (answerSynthesis)
 
-  knowledge base answer synthesis  →  aif-core-{suffix} / gpt-4.1-mini  (direct, search managed identity)
+  knowledge base answer synthesis  →  aif-core-{suffix} / gpt-5.4-mini  (direct, search managed identity)
 ```
 
 The routing graph at runtime:
@@ -79,7 +79,7 @@ on `aif-spoke-multi-{suffix}`.
 The exception is the LLM the knowledge bases use for answer synthesis. Azure AI Search
 rejects APIM and custom domain endpoints in knowledge base model configurations, both when
 a knowledge base is created and when it is queried. The search service therefore calls
-`gpt-4.1-mini` directly on the core account (`aif-core-{suffix}`) with its managed
+`gpt-5.4-mini` directly on the core account (`aif-core-{suffix}`) with its managed
 identity, which `11-01` grants Cognitive Services User on that account.
 
 ## Background concepts
@@ -94,7 +94,7 @@ lab uses:
 - `Agent` - local agent wrapping a chat client + instructions + context providers
 - `FoundryChatClient` - calls the project's Responses API; model is named as
   `"<connection-name>/<deployment>"` so Foundry resolves through the named APIM
-  connection (e.g. `contoso-apim-connection/gpt-4.1-mini`)
+  connection (e.g. `contoso-apim-connection/gpt-5.4-mini`)
 - `AzureAISearchContextProvider` - injects KB-grounded context into each agent turn
   in `'agentic'` mode against a named Foundry IQ Knowledge Base
 - `WorkflowBuilder` with `add_switch_case_edge_group` - runs the orchestrator, then
@@ -104,7 +104,7 @@ lab uses:
 
 The three Knowledge Bases use `output_mode=ANSWER_SYNTHESIS` with `low` reasoning
 effort. Each KB call decomposes the question, retrieves from its dedicated index, then
-runs **one LLM pass** through `gpt-4.1-mini` (on the core account, see Architecture) to produce a grounded
+runs **one LLM pass** through `gpt-5.4-mini` (on the core account, see Architecture) to produce a grounded
 natural-language answer with citations. Standard SKU search is required for this
 mode - hence the dedicated `contoso-search-{suffix}` service (the Basic-SKU
 `iq-search-{suffix}` from Foundry IQ cannot be used).
@@ -128,7 +128,7 @@ This lab reads these from `.env`:
 | `MULTI_ACCOUNT` | Multi-project deployment | Existing shared Foundry account (`aif-spoke-multi-{suffix}`) |
 | `GATEWAY_URL` | Multi-project deployment | APIM gateway URL (`https://apim-foundry-{sfx}.azure-api.net/openai`) |
 | `ALPHA_GATEWAY_KEY` | Multi-project deployment | Bootstrap APIM subscription key for initial Bicep deploy |
-| `CHAT_MODEL` | Multi-project deployment | Chat model name (`gpt-4.1-mini`) |
+| `CHAT_MODEL` | Multi-project deployment | Chat model name (`gpt-5.4-mini`) |
 | `CONTOSO_FOUNDRY_PROJECT` | Deploy setup | New project name (`contoso-project`) |
 | `CONTOSO_FOUNDRY_PROJECT_ENDPOINT` | Deploy setup | Project endpoint URL |
 | `CONTOSO_APIM_CONNECTION` | Deploy setup | APIM connection name on the project |
@@ -141,7 +141,7 @@ This lab reads these from `.env`:
 ## Prerequisites
 
 1. **Multi-project deployment complete** - `aif-spoke-multi-{suffix}` and APIM gateway must exist with
-   `gpt-4.1-mini` and `text-embedding-3-large` deployments. `.env` must contain
+   `gpt-5.4-mini` and `text-embedding-3-large` deployments. `.env` must contain
    `MULTI_ACCOUNT`, `GATEWAY_URL`, `ALPHA_GATEWAY_KEY`, `CHAT_MODEL`.
 2. **Python environment** - run `uv sync` from the repo root; select the `.venv` kernel.
 3. **Azure CLI** - run `az login` before executing cells.

@@ -40,14 +40,14 @@ calls and the agent's model calls route through the APIM gateway (`GATEWAY_URL`)
 The exception is the knowledge base LLM that `arxiv-nlp-kb` uses for query planning.
 Azure AI Search rejects APIM and custom domain endpoints in knowledge base model
 configurations, both when the knowledge base is created and when it is queried. The
-search service therefore calls `gpt-4.1-mini` directly on the core account
+search service therefore calls `gpt-5.4-mini` directly on the core account
 (`aif-core-{suffix}`) with its managed identity, which `10-01` grants Cognitive
 Services User on that account.
 
 ```
 aif-spoke-multi-{suffix}   (existing shared AI Foundry account)
   └── iq-project            (new - added by this lab)
-        └── iq-apim-connection  →  APIM gateway  →  gpt-4.1-mini / text-embedding-3-large
+        └── iq-apim-connection  →  APIM gateway  →  gpt-5.4-mini / text-embedding-3-large
         └── arxiv-nlp-mcp       →  Azure AI Search MCP endpoint
 
 iq-search-{suffix}         (new Azure AI Search service, Basic SKU)
@@ -55,7 +55,7 @@ iq-search-{suffix}         (new Azure AI Search service, Basic SKU)
         └── Knowledge Source  (arxiv-nlp-ks)
               └── Knowledge Base - minimal  (arxiv-nlp-kb-fast)
               └── Knowledge Base - low      (arxiv-nlp-kb)  ← MCP endpoint
-                    └── query planning  →  aif-core-{suffix} / gpt-4.1-mini  (direct, search managed identity)
+                    └── query planning  →  aif-core-{suffix} / gpt-5.4-mini  (direct, search managed identity)
 ```
 
 ## Background concepts

@@ -1,10 +1,10 @@
 # Foundry IQ deep research
 
 This lab demonstrates **deep research** over the `arxiv-nlp` knowledge base using
-`o3-deep-research` - OpenAI's reasoning model designed for multi-step research tasks.
-The model runs an **agentic loop**, calling `search` and `fetch` tools backed by the
+`gpt-5.6-sol`, deployed as `deep-research`. It replaced `o3-deep-research`, which retires on
+2026-11-19. The model runs an **agentic loop**, calling `search` and `fetch` tools backed by the
 Foundry IQ knowledge base from Foundry IQ, then synthesises a comprehensive cited report
-using `gpt-4.1-mini`.
+using `gpt-5.4-mini`.
 
 The lab reuses the AI Search index and Foundry IQ knowledge bases created in Foundry IQ
 (`iq-search-{suffix}` / `arxiv-nlp-kb`). No new search infrastructure is deployed.
@@ -13,7 +13,7 @@ The lab reuses the AI Search index and Foundry IQ knowledge bases created in Fou
 
 | Notebook | Purpose |
 |----------|---------|
-| [`12-01-deploy-o3-backend.ipynb`](12-01-deploy-o3-backend.ipynb) | **Optional.** Checks if the Norway East `o3-deep-research` APIM backend already exists (from the core gateway deployment). If not, deploys `main.bicep` to add it. Writes `DR_*` env vars to `.env`. Skip if the core gateway deployment has already been run. |
+| [`12-01-deploy-deep-research-backend.ipynb`](12-01-deploy-deep-research-backend.ipynb) | **Optional.** Checks if the Norway East `deep-research` deployment and its APIM routing already exist (from the core gateway deployment). If not, deploys `main.bicep` to add them. Writes `DR_*` env vars to `.env`. Skip if the core gateway deployment has already been run from this version of the repo. |
 | [`12-02-deep-research-loop.ipynb`](12-02-deep-research-loop.ipynb) | Runs the agentic deep research loop over the `arxiv-nlp-kb` Foundry IQ knowledge base. Executes four representative NLP-domain research queries and displays cited reports with tool-call telemetry. |
 
 ## Run order
@@ -21,7 +21,7 @@ The lab reuses the AI Search index and Foundry IQ knowledge bases created in Fou
 ```
 Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
   ↓
-12-01-deploy-o3-backend   ← optional if o3-deep-research APIM backend already exists
+12-01-deploy-deep-research-backend  ← optional if the deep-research backend already exists
   ↓
 12-02-deep-research-loop  ← main lab notebook
 ```
@@ -32,11 +32,11 @@ Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
                           ┌─────────────────────────────────┐
                           │  12-02-deep-research-loop        │
                           │                                  │
-                          │  o3-deep-research (agentic loop) │
+                          │  deep-research (agentic loop)    │
                           │    ├─ search tool ──────────────►│──► Foundry IQ KB
                           │    └─ fetch tool  ──────────────►│──► Foundry IQ KB
                           │                                  │
-                          │  gpt-4.1-mini (synthesis)        │
+                          │  gpt-5.4-mini (synthesis)        │
                           └──────────────┬──────────────────┘
                                          │
                               ┌──────────▼──────────┐
@@ -47,11 +47,11 @@ Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
                      ┌───────────────▼┐   ┌▼───────────────────┐
                      │  aif-core-{sfx} │   │ aif-research-{sfx}  │
                      │  (East US 2)   │   │ (Norway East)        │
-                     │  gpt-4.1-mini  │   │ o3-deep-research     │
+                     │  gpt-5.4-mini  │   │ deep-research        │
                      └────────────────┘   └─────────────────────┘
                                                     ▲
-                                   routes when deployment-id =
-                                       "o3-deep-research"
+                                   routes when the model is
+                                         "deep-research"
 
                           ┌──────────────────────────────┐
                           │  iq-search-{suffix}          │
@@ -62,44 +62,53 @@ Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
                           └──────────────────────────────┘
 ```
 
-All model calls route through the APIM gateway. The gateway policy routes requests
-for `o3-deep-research` to the Norway East research hub backend (`openai-research`),
-while all other model requests go to the primary core (`openai`).
+All model calls route through the APIM gateway. The gateway sends requests for the
+`deep-research` deployment to the Norway East research hub backend (`openai-research`),
+while all other model requests go to the primary core (`openai`). Chat Completions requests
+match on the URL (`/deployments/deep-research/chat/completions`). Responses requests carry the
+model in the body, so a policy on the `responses` operation reads `model` and switches the
+backend when it is `deep-research`.
 
 ## Background concepts
 
-### o3-deep-research
+### The deep research model
 
-`o3-deep-research` is an OpenAI reasoning model optimised for multi-step research
-tasks. Unlike standard chat models that respond in a single pass, it:
+`gpt-5.6-sol` is the strongest-reasoning tier of the GPT-5.6 family and the model the
+[retirement schedule](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule)
+names as the replacement for `o3-deep-research`. The lab deploys it as `deep-research`, a
+deployment named for its role, so the APIM routing and `DR_MODEL` stay the same when the model
+behind it changes. In the loop, it:
 
 - Plans a research strategy and executes it iteratively
 - Calls tools (`search`, `fetch`) to gather evidence
 - Reasons over gathered information before formulating answers
 - Produces comprehensive, citation-rich reports
 
-The model is available only in **Norway East**. The APIM routing policy in
-`aif-core-{suffix}` (deployed by the core gateway deployment) forwards requests to the Norway East
-`aif-research-{suffix}` account when the `deployment-id` path parameter is
-`o3-deep-research`.
+The research hub sits in **Norway East** because `o3-deep-research` was only offered there.
+`gpt-5.6-sol` is offered there too, so the hub stayed. The APIM routing (deployed by the core
+gateway deployment) forwards requests for `deep-research` to the Norway East
+`aif-research-{suffix}` account.
 
 ### Agentic loop
 
-The agentic loop uses the **Chat Completions API with function calling** - the same
-interface as standard `gpt-4.1-mini` calls. The loop:
+The agentic loop uses the **Responses API with function calling**. `gpt-5.6-sol` rejects
+`reasoning_effort` together with function tools on Chat Completions ("To use function tools,
+use /v1/responses or set reasoning_effort to 'none'"), so a Chat Completions loop would run
+the model with no reasoning. The loop:
 
-1. Sends the research query to `o3-deep-research` with tool definitions
-2. Model responds with one or more tool calls (`search` or `fetch`)
-3. Client executes the tool against Foundry IQ, appends the result to the message chain
-4. Repeat until the model returns a response with no tool calls
-5. Pass the model's reasoning to `gpt-4.1-mini` for final synthesis and formatting
+1. Sends the research query to `deep-research` with tool definitions and `reasoning.effort`
+2. Model responds with one or more `function_call` items (`search` or `fetch`)
+3. Client executes every call against Foundry IQ and sends the `function_call_output` items
+   back with `previous_response_id`, so the service keeps the reasoning between turns
+4. Repeat until the model returns a response with no function calls
+5. Pass the model's findings to `gpt-5.4-mini` for final synthesis and formatting
 
 ```
-query ──► o3-deep-research ──► tool_calls ──► search()/fetch()
-                  ▲                                    │
-                  └─────────── tool_results ◄──────────┘
-                  │
-                  └── no tool_calls ──► gpt-4.1-mini ──► final report
+query ──► deep-research ──► function_call ──► search()/fetch()
+               ▲                                        │
+               └──────── function_call_output ◄─────────┘
+               │
+               └── no function_call ──► gpt-5.4-mini ──► final report
 ```
 
 ### Foundry IQ knowledge base
@@ -122,11 +131,11 @@ This lab reads these from `.env`:
 | Variable | Source | Description |
 |----------|--------|-------------|
 | `GATEWAY_URL` | Core gateway | APIM gateway URL (`https://apim-foundry-{sfx}.azure-api.net/openai`) |
-| `CHAT_MODEL` | Core gateway | Chat model name (`gpt-4.1-mini`) |
+| `CHAT_MODEL` | Core gateway | Chat model name (`gpt-5.4-mini`) |
 | `IQ_SEARCH_ENDPOINT` | Foundry IQ | Foundry IQ search endpoint |
 | `IQ_GATEWAY_KEY` | Foundry IQ | APIM subscription key for IQ workload |
-| `DR_MODEL` | Deploy o3 backend | Deep research model name (`o3-deep-research`) |
-| `DR_GATEWAY_KEY` | Deploy o3 backend | APIM subscription key for deep research |
+| `DR_MODEL` | Deploy deep research backend | Deep research deployment name (`deep-research`) |
+| `DR_GATEWAY_KEY` | Deploy deep research backend | APIM subscription key for deep research |
 
 ## Prerequisites
 
@@ -139,4 +148,4 @@ This lab reads these from `.env`:
 
 ---
 
-[Next: Deploy the o3 backend →](12-01-deploy-o3-backend.ipynb)
+[Next: Deploy the deep research backend →](12-01-deploy-deep-research-backend.ipynb)

@@ -109,7 +109,7 @@ def display_row_results(rows: list, columns: list | None = None):
 
 
 def display_agent_eval_results(results: dict):
-    """Display results from AIAgentConverter-based agent evaluations.
+    """Display results from the agent evaluators in 08-06-03.
 
     Args:
         results: Dict with 'metrics' and optionally 'rows' keys from evaluate().

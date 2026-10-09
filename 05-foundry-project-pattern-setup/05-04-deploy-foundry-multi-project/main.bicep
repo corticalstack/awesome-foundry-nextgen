@@ -3,7 +3,7 @@ targetScope = 'resourceGroup'
 param location string = resourceGroup().location
 param deployerPrincipalId string
 param apimUrl string
-param modelName string = 'gpt-4.1-mini'
+param modelName string = 'gpt-5.4-mini'
 @secure()
 param apimSubscriptionKey string
 

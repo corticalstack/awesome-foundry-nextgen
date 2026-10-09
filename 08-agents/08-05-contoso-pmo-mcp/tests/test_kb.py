@@ -5,6 +5,7 @@ Write tests copy assets/contoso-pmo-dataset/ to tmp_path and patch kb.DATA_DIR.
 No Azure credentials required.
 """
 
+import importlib.util
 import json
 import os
 import shutil
@@ -15,9 +16,13 @@ import pytest
 # Point DATA_DIR at the real fixture data before importing kb
 os.environ['DATA_DIR'] = str(Path(__file__).parents[3] / 'assets' / 'contoso-pmo-dataset')
 
-import sys
-sys.path.insert(0, str(Path(__file__).parents[1] / 'contoso-pmo-mcp'))
-import kb  # noqa: E402
+# Load the server's kb.py from its path under its own name. 08-05b's tests import a
+# different kb.py as `kb`, so a plain `import kb` would hand one suite the other's module
+# when both run in one pytest session.
+_spec = importlib.util.spec_from_file_location(
+    'contoso_pmo_kb', Path(__file__).parents[1] / 'contoso-pmo-mcp' / 'kb.py')
+kb = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(kb)
 
 
 # ── Fixtures ─────────────────────────────────────────────────────────────────

@@ -50,7 +50,7 @@ These attributes appear on spans emitted by the `azure-ai-projects` SDK. They fo
 
 | Attribute | Example value | Description |
 |-----------|--------------|-------------|
-| `gen_ai.request.model` | `gpt-4.1-mini` | Model name requested |
+| `gen_ai.request.model` | `gpt-5.4-mini` | Model name requested |
 | `gen_ai.usage.input_tokens` | `142` | Input token count for the operation |
 | `gen_ai.usage.output_tokens` | `87` | Output token count for the operation |
 | `gen_ai.system` | `az.ai.inference` | AI system identifier |

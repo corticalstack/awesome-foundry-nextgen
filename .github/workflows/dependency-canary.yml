@@ -59,8 +59,7 @@ jobs:
       - name: SDK model keyword arguments match
         run: uv run --frozen python scripts/check_sdk_kwargs.py
 
-      # One pytest run per suite: 08-05 and 08-05b both have tests/test_kb.py
-      # without an __init__.py, which pytest cannot collect in a single run.
+      # One pytest run per suite. The three suites also pass together in a single run.
       - name: Unit tests
         run: |
           for suite in 08-agents/08-05-contoso-pmo-mcp/tests \

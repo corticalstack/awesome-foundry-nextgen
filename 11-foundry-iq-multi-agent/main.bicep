@@ -22,7 +22,7 @@ param searchLocation string = location
 
 param deployerPrincipalId string
 param apimUrl string
-param gatewayModelName string = 'gpt-4.1-mini'
+param gatewayModelName string = 'gpt-5.4-mini'
 @secure()
 param apimSubscriptionKey string
 

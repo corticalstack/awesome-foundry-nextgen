@@ -3,7 +3,7 @@ targetScope = 'resourceGroup'
 param location string = resourceGroup().location
 param deployerPrincipalId string
 param apimUrl string
-param chatModelName string = 'gpt-4.1-mini'
+param chatModelName string = 'gpt-5.4-mini'
 @secure()
 param apimSubscriptionKey string
 @description('Short unique suffix for resource names - computed from subscription ID in the notebook.')
