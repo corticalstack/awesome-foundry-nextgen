@@ -31,6 +31,8 @@ import subprocess
 import sys
 import uuid
 
+from run_notebooks import json_format
+
 ALLZERO = "00000000-0000-0000-0000-000000000000"
 ALLZERO_B64 = "AAAAAAAAAAAAAAAAAAAAAA"
 
@@ -153,7 +155,8 @@ def residual_leaks(nb, ctx):
 
 
 def process(path, check):
-    nb = json.loads(pathlib.Path(path).read_text())
+    raw = pathlib.Path(path).read_text(encoding="utf-8")
+    nb = json.loads(raw)
     ctx = build_context(nb)
     if check:
         leaks = residual_leaks(nb, ctx)
@@ -161,12 +164,14 @@ def process(path, check):
             print(f"[scrub] {path}: SENSITIVE VALUE PRESENT: {leaks}", file=sys.stderr)
             return 1
         return 0
+    # Write back in the layout the file was saved with, so a redaction changes only the
+    # redacted lines instead of re-escaping every non-ASCII character in the notebook.
+    indent, ascii_only, tail = json_format(raw, nb)
     before = json.dumps(nb, sort_keys=True)
     scrub_outputs(nb, ctx)
     if json.dumps(nb, sort_keys=True) != before:
-        with open(path, "w") as f:
-            json.dump(nb, f, indent=1)
-            f.write("\n")
+        pathlib.Path(path).write_text(json.dumps(nb, indent=indent, ensure_ascii=ascii_only) + tail,
+                                      encoding="utf-8")
         print(f"[scrub] {path}: redacted sensitive output values")
     else:
         print(f"[scrub] {path}: clean (no changes)")
