@@ -14,19 +14,25 @@ Follows the repo's CONTRIBUTING.md "Notebook output hygiene" convention:
     (allowlisted). Public role-definition GUIDs that appear in cell SOURCE are kept.
   - Replace the subscription name, signed-in UPN, keys/tokens, and session/correlation
     ids with curly-brace placeholders.
+  - Foundry portal links (`ai.azure.com/nextgen/r/<22 chars>,<rg>,...`) carry the
+    subscription id as base64url of its 16 bytes. Replace that segment with
+    `AAAAAAAAAAAAAAAAAAAAAA`, the same encoding of the all-zeros GUID.
   Keep: sha256 image digests; public role-definition GUIDs.
 
 Usage:
   scrub_notebooks.py NB [NB ...]          # scrub in place (prints what changed)
   scrub_notebooks.py --check NB [NB ...]  # exit 1 if a known secret remains (no modify)
 """
+import base64
 import json
 import pathlib
 import re
 import subprocess
 import sys
+import uuid
 
 ALLZERO = "00000000-0000-0000-0000-000000000000"
+ALLZERO_B64 = "AAAAAAAAAAAAAAAAAAAAAA"
 
 GUID = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
 JWT = re.compile(r'eyJ[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]{6,}\.[A-Za-z0-9_\-]*')
@@ -35,6 +41,12 @@ UPN = re.compile(r'[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+\.onmicrosoft\.com')
 ACCTKEY = re.compile(r'AccountKey=[A-Za-z0-9+/=]+')
 SAS = re.compile(r'sig=[A-Za-z0-9%]+')
 BEARER = re.compile(r'(?i)bearer\s+[A-Za-z0-9._\-]{12,}')
+PORTAL_SUB = re.compile(r'(ai\.azure\.com/(?:nextgen/)?r/)([A-Za-z0-9_\-]{22})(?![A-Za-z0-9_\-])')
+
+
+def b64_guid(g):
+    """A GUID as the 22-character base64url string that portal links embed."""
+    return base64.urlsafe_b64encode(uuid.UUID(g).bytes).decode().rstrip("=")
 
 
 def az_account():
@@ -68,6 +80,7 @@ def build_context(nb):
         "ten": a.get("tenantId"),
         "name": a.get("name"),
         "upn": (a.get("user") or {}).get("name"),
+        "b64": {b64_guid(g) for g in (a.get("id"), a.get("tenantId")) if g},
         "secrets": env_secrets(),
         "src_guids": {g.lower() for c in nb["cells"] if c["cell_type"] == "code"
                       for g in GUID.findall("".join(c["source"]))},
@@ -88,6 +101,9 @@ def scrub_text(s, ctx):
     # (e.g. c2676f) are NOT touched - per CONTRIBUTING.md they are the canonical demo
     # suffix, kept for consistency across the notebook set.
     s = GUID.sub(lambda m: m.group(0) if m.group(0).lower() in ctx["src_guids"] else ALLZERO, s)
+    for enc in ctx["b64"]:
+        s = s.replace(enc, ALLZERO_B64)
+    s = PORTAL_SUB.sub(lambda m: m.group(1) + ALLZERO_B64, s)
     s = SESS.sub("{session-id}", s)
     s = UPN.sub("{user}@{tenant}.onmicrosoft.com", s)
     s = ACCTKEY.sub("AccountKey={redacted}", s)
@@ -126,6 +142,13 @@ def residual_leaks(nb, ctx):
                        ("subscription name", ctx["name"])] + [("secret", s) for s in ctx["secrets"]]:
         if val and val in blob:
             leaks.append(label)
+    if any(enc in blob for enc in ctx["b64"]):
+        leaks.append("base64 subscription or tenant id")
+    # Outputs only: scrubbing never edits cell source, so a portal link written into a
+    # markdown cell must not block the commit.
+    outputs = json.dumps([c.get("outputs", []) for c in nb["cells"]])
+    if any(m.group(2) != ALLZERO_B64 for m in PORTAL_SUB.finditer(outputs)):
+        leaks.append("portal link subscription segment")
     return sorted(set(leaks))
 
 
