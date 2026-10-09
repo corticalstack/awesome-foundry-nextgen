@@ -5,9 +5,10 @@
 //
 // Creates (if not already present):
 //   - aif-research-{suffix}  Norway East CognitiveServices account
-//   - o3-deep-research model deployment
+//   - deep-research model deployment (gpt-5.6-sol)
 //   - openai-research APIM backend
 //   - chat-research APIM operation + routing policy
+//   - responses operation policy (routes model "deep-research" to the research hub)
 //   - dr-subscription APIM subscription (deep research workload key)
 //   - RBAC: APIM MI → research hub (Cognitive Services User)
 //   - RBAC: deployer → research hub (Cognitive Services User)
@@ -19,8 +20,9 @@ param deployerPrincipalId string
 @description('Name of the existing APIM service in this resource group.')
 param existingApimName string
 
-// Suffix derived from subscription + RG (matches the core gateway naming)
-var suffix = substring(uniqueString(subscription().subscriptionId, resourceGroup().id), 0, 6)
+@description('Core gateway suffix (the tail of the APIM name) so this template targets the same research hub.')
+param suffix string
+
 var researchHubName = 'aif-research-${suffix}'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,8 +37,14 @@ resource api 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' existing 
   name: 'openai'
 }
 
+resource responsesOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' existing = {
+  parent: api
+  name: 'responses'
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Norway East research hub - o3-deep-research is only available in norwayeast
+// Norway East research hub. It was placed there because o3-deep-research was only offered in
+// norwayeast; gpt-5.6-sol is offered there too, so the hub stays where it is.
 // ─────────────────────────────────────────────────────────────────────────────
 resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   name: researchHubName
@@ -51,18 +59,20 @@ resource researchHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' =
   }
 }
 
+// The deployment is named for its role, not its model, so APIM routing and DR_MODEL survive
+// the next model swap. gpt-5.6-sol replaced o3-deep-research, which retires 2026-11-19.
 resource researchModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: researchHub
-  name: 'o3-deep-research'
+  name: 'deep-research'
   // Capacity is K-TPM. 10 was too low - multi-step deep-research runs hit
   // 429 throttling before completing. 200 gives realistic headroom while
-  // staying well under the Norway East o3-DeepResearch subscription quota.
+  // staying under the default gpt-5.6-sol GlobalStandard quota of 1000.
   sku: { name: 'GlobalStandard', capacity: 200 }
   properties: {
     model: {
-      name: 'o3-deep-research'
+      name: 'gpt-5.6-sol'
       format: 'OpenAI'
-      version: '2025-06-26'
+      version: '2026-07-09'
     }
     versionUpgradeOption: 'OnceNewDefaultVersionAvailable'
     raiPolicyName: 'Microsoft.DefaultV2'
@@ -83,7 +93,7 @@ resource researchBackend 'Microsoft.ApiManagement/service/backends@2024-06-01-pr
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// APIM operation - specific URL match for o3-deep-research
+// APIM operation - specific URL match for deep-research
 // Routes before the catch-all chat operation
 // ─────────────────────────────────────────────────────────────────────────────
 resource chatResearchOp 'Microsoft.ApiManagement/service/apis/operations@2024-06-01-preview' = {
@@ -92,7 +102,7 @@ resource chatResearchOp 'Microsoft.ApiManagement/service/apis/operations@2024-06
   properties: {
     displayName: 'Chat Completions (Research)'
     method: 'POST'
-    urlTemplate: '/deployments/o3-deep-research/chat/completions'
+    urlTemplate: '/deployments/deep-research/chat/completions'
   }
 }
 
@@ -102,6 +112,22 @@ resource chatResearchPolicy 'Microsoft.ApiManagement/service/apis/operations/pol
   properties: {
     format: 'xml'
     value: '<policies><inbound><base /><set-backend-service backend-id="openai-research" /><authentication-managed-identity resource="https://cognitiveservices.azure.com" output-token-variable-name="msi-access-token" ignore-error="false" /><set-header name="Authorization" exists-action="override"><value>@("Bearer " + (string)context.Variables["msi-access-token"])</value></set-header></inbound><backend><base /></backend><outbound><base /></outbound></policies>'
+  }
+  dependsOn: [researchBackend]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Responses operation policy - Responses carries the model in the body, so a URL
+// match cannot route it. Requests for deep-research go to the research hub; the
+// API policy (<base />) has already set the managed identity token.
+// rawxml because the expression contains As<JObject>, which is not valid XML.
+// ─────────────────────────────────────────────────────────────────────────────
+resource responsesPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-06-01-preview' = {
+  parent: responsesOp
+  name: 'policy'
+  properties: {
+    format: 'rawxml'
+    value: '<policies><inbound><base /><choose><when condition="@((string)context.Request.Body.As<JObject>(preserveContent: true)["model"] == "deep-research")"><set-backend-service backend-id="openai-research" /></when></choose></inbound><backend><base /></backend><outbound><base /></outbound></policies>'
   }
   dependsOn: [researchBackend]
 }

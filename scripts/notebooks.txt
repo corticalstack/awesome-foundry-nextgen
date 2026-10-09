@@ -57,7 +57,7 @@
 11-foundry-iq-multi-agent/11-03-knowledge-base-setup.ipynb  weekly
 11-foundry-iq-multi-agent/11-04-multi-agent-setup.ipynb  weekly
 11-foundry-iq-multi-agent/11-05-multi-agent-queries.ipynb  weekly
-12-foundry-iq-deep-research/12-01-deploy-o3-backend.ipynb  deploy
+12-foundry-iq-deep-research/12-01-deploy-deep-research-backend.ipynb  deploy
 12-foundry-iq-deep-research/12-02-deep-research-loop.ipynb  weekly
 13-guardrails/13-01-configure-bank-guardrails.ipynb  deploy
 13-guardrails/13-02-create-bank-agent.ipynb  weekly
