@@ -117,7 +117,7 @@ project_client = AIProjectClient(
 
 with project_client.get_openai_client() as openai_client:
     response = openai_client.responses.create(
-        model="gpt-4.1-mini",
+        model="gpt-5.4-mini",
         input="What is the capital of France?",
     )
     print(response.output_text)
@@ -134,7 +134,7 @@ const project = new AIProjectClient(projectEndpoint, new DefaultAzureCredential(
 
 const openAIClient = await project.getOpenAIClient();
 const response = await openAIClient.responses.create({
-    model: "gpt-4.1-mini",
+    model: "gpt-5.4-mini",
     input: "What is the capital of France?",
 });
 console.log(response.output_text);
@@ -197,7 +197,7 @@ client = OpenAI(
 )
 
 response = client.responses.create(
-    model="gpt-4.1-mini",
+    model="gpt-5.4-mini",
     input="What is the capital of France?"
 )
 print(response.output_text)

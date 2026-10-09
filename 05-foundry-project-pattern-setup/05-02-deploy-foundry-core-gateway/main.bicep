@@ -37,10 +37,10 @@ resource sharedHub 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
 
 resource model 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: sharedHub
-  name: 'gpt-4.1-mini'
+  name: 'gpt-5.4-mini'
   sku: { name: 'GlobalStandard', capacity: 30 }
   properties: {
-    model: { name: 'gpt-4.1-mini', format: 'OpenAI', version: '2025-04-14' }
+    model: { name: 'gpt-5.4-mini', format: 'OpenAI', version: '2026-03-17' }
   }
 }
 
@@ -56,7 +56,7 @@ resource embeddingModel 'Microsoft.CognitiveServices/accounts/deployments@2025-0
 
 // Admin project - hosts centrally-managed agents, evaluations, observability and load-gen
 // workloads (08-05 MCP, 08-06 offline eval, 08-07 live obs, 20-* load gen, 04-09 cheat sheet).
-// Lives natively on the core hub so it can use the gpt-4.1-mini and embedding deployments
+// Lives natively on the core hub so it can use the gpt-5.4-mini and embedding deployments
 // directly without going through APIM (keyless, RBAC-only).
 resource adminProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
   parent: sharedHub

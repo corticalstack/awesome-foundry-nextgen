@@ -22,7 +22,7 @@ param teamName string = 'alpha'
 param deployerPrincipalId string
 
 @description('Local chat model for Memory API internal processing (summarisation, fact extraction).')
-param localChatModel string = 'gpt-4.1-mini'
+param localChatModel string = 'gpt-5.4-mini'
 
 @description('Local embedding model for Memory API semantic search and indexing.')
 param embeddingModelName string = 'text-embedding-3-small'
@@ -54,7 +54,7 @@ resource chatModel 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-
   name: localChatModel
   sku: { name: 'GlobalStandard', capacity: 30 }
   properties: {
-    model: { name: localChatModel, format: 'OpenAI', version: '2025-04-14' }
+    model: { name: localChatModel, format: 'OpenAI', version: '2026-03-17' }
   }
 }
 

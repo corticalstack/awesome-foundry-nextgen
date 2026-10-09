@@ -42,7 +42,7 @@ resource cuAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
 // ─────────────────────────────────────────────────────────────────────────────
 resource chatDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = {
   parent: cuAccount
-  name: 'gpt-4.1-mini'
+  name: 'gpt-5.4-mini'
   sku: {
     name: 'GlobalStandard'
     capacity: 10
@@ -50,7 +50,7 @@ resource chatDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-0
   properties: {
     model: {
       format: 'OpenAI'
-      name: 'gpt-4.1-mini'
+      name: 'gpt-5.4-mini'
     }
   }
 }

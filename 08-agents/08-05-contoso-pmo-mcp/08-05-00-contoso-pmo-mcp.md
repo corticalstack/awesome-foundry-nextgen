@@ -59,7 +59,7 @@ The lab derives everything else deterministically from the active subscription. 
 
 | Variable | Description |
 |---|---|
-| `CHAT_MODEL` | Model deployment name on the hub account (e.g. `gpt-4.1-mini`) |
+| `CHAT_MODEL` | Model deployment name on the hub account (e.g. `gpt-5.4-mini`) |
 
 Optional overrides:
 

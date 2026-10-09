@@ -22,7 +22,7 @@ unaffected.
 | Model refusal | The model's own safety training (defence in depth) | Harmful-content and protected-material requests below the filters' thresholds reach the model, which declines them. No filter fires. |
 
 All the filter layers are wired into a **single custom RAI policy** (`bank-guardrails-policy`)
-attached to a **dedicated deployment** (`gpt-4.1-mini-bank-guardrails`). The bank agent is
+attached to a **dedicated deployment** (`gpt-5.4-mini-bank-guardrails`). The bank agent is
 pinned to that deployment, so other agents on the project (`storytelling-agent`,
 `code-interpreter-agent`) keep using `Microsoft.DefaultV2` and remain untouched.
 
@@ -33,7 +33,7 @@ pinned to that deployment, so other agents on the project (`storytelling-agent`,
               │  references by name
               ▼
 ┌──────────────────────────┐
-│ gpt-4.1-mini-            │  ← dedicated model deployment
+│ gpt-5.4-mini-            │  ← dedicated model deployment
 │ bank-guardrails          │
 └─────────────┬────────────┘
               │  raiPolicyName
@@ -90,8 +90,8 @@ the Azure portal under `aif-core-{suffix}`:
    Match the configuration in the RAI policy cell of [13-01](13-01-configure-bank-guardrails.ipynb),
    including the financial-data protection filters.
    Add `bank-demo-blocklist` under **Blocklists** for both prompt and completion.
-3. **Deployments → + Deploy a model** - pick `gpt-4.1-mini` (`2025-04-14`),
-   name `gpt-4.1-mini-bank-guardrails`, SKU `GlobalStandard` at 30K TPM, set the content
+3. **Deployments → + Deploy a model** - pick `gpt-5.4-mini` (`2026-03-17`),
+   name `gpt-5.4-mini-bank-guardrails`, SKU `GlobalStandard` at 30K TPM, set the content
    filter to `bank-guardrails-policy` under Advanced.
 
 Then continue with [13-02](13-02-create-bank-agent.ipynb).

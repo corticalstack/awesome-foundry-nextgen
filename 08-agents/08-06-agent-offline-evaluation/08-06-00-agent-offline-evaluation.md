@@ -24,7 +24,7 @@ Evaluation is performed using the `azure-ai-evaluation` SDK against the Foundry 
 
 | Variable | Usage |
 |---|---|
-| `CHAT_MODEL` | Model deployment name (e.g. `gpt-4.1-mini`) on `aif-core-{suffix}` |
+| `CHAT_MODEL` | Model deployment name (e.g. `gpt-5.4-mini`) on `aif-core-{suffix}` |
 
 Optional overrides (defaults match the Contoso PMO MCP setup):
 
@@ -89,6 +89,10 @@ Run notebooks in order - `08-06-01` must complete before the others as it produc
 
 - `DefaultAzureCredential` everywhere - for `AIProjectClient`, the LLM-as-judge evaluators, and the RAI evaluators
 - No API keys, no APIM hub connection - model graders talk directly to the deployment on `aif-core-{suffix}` because the admin project natively hosts it
+
+### Reasoning-model graders
+
+`CHAT_MODEL` (`gpt-5.4-mini`) is a reasoning model and rejects `max_tokens` with HTTP 400. The prompty-based evaluators (coherence, fluency, relevance, groundedness, similarity) send `max_tokens` unless they are built with `is_reasoning_model=True`, which switches them to `max_completion_tokens`. Batch `evaluate()` logs the 400s per row instead of raising, so a missing flag shows up as empty metrics, not as a failed cell.
 
 ### Known issue: Python 3.13 + azure-ai-evaluation 1.16.x
 

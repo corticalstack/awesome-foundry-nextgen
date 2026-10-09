@@ -9,7 +9,7 @@ def main():
     # Model takes the form "<connection-name>/<deployment>" so Foundry resolves
     # it through the spoke project's APIM connection (the spoke has no local
     # model deployments - all inference is via the core gateway).
-    chat_model       = os.getenv("CHAT_MODEL", "core-alpha/gpt-4.1-mini")
+    chat_model       = os.getenv("CHAT_MODEL", "core-alpha/gpt-5.4-mini")
 
     # FoundryChatClient routes through Foundry's per-project Responses API endpoint
     # using the container's managed identity. No outbound APIM call from the

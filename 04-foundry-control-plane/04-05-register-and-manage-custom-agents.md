@@ -180,7 +180,7 @@ def get_weather(city: str) -> str:
     return f"The weather in {city} is currently sunny."
 
 agent = create_agent(
-    model="openai:gpt-4.1-mini",
+    model="openai:gpt-5.4-mini",
     tools=[get_weather],
     system_prompt="You are a helpful assistant.",
 ).with_config({"callbacks": [tracer]})

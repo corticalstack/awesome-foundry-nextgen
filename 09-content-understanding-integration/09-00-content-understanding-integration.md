@@ -18,7 +18,7 @@ https://{account}.cognitiveservices.azure.com/contentunderstanding/...
 In this lab that account is `aif-cu-{suffix}`, deployed into `rg-foundry-cu-{suffix}`.
 The APIM `/cu` API proxies to this endpoint via managed identity.
 
-The account also hosts local deployments of `gpt-4.1-mini` and
+The account also hosts local deployments of `gpt-5.4-mini` and
 `text-embedding-3-large` - these are required by CU field extraction analyzers,
 which call them internally when extracting structured fields from documents. Without
 these local deployments on the same account, field extraction analyzers will fail.
@@ -36,7 +36,7 @@ APIM /cu API  (apim-foundry-{suffix})       ← rate limit: 30/min, quota: 1000/
         │  authentication-managed-identity
         ▼
 aif-cu-{suffix}  (AI Services account)
-  ├── gpt-4.1-mini         ← local deployment for field extraction
+  ├── gpt-5.4-mini         ← local deployment for field extraction
   ├── text-embedding-3-large
   └── cu-project
         └── landing-zone-apim connection
@@ -55,7 +55,7 @@ aif-cu-{suffix}  (AI Services account)
 |---|---|---|
 | `rg-foundry-cu-{suffix}` | Resource Group | New - dedicated CU RG |
 | `aif-cu-{suffix}` | AI Services account (Foundry) | `rg-foundry-cu-{suffix}` |
-| `gpt-4.1-mini` | Model deployment (GlobalStandard, 10K TPM) | On `aif-cu-{suffix}` |
+| `gpt-5.4-mini` | Model deployment (GlobalStandard, 10K TPM) | On `aif-cu-{suffix}` |
 | `text-embedding-3-large` | Model deployment (Standard, 50K TPM) | On `aif-cu-{suffix}` |
 | `cu-project` | Foundry project | Child of `aif-cu-{suffix}` |
 | `landing-zone-apim` | Project connection (ApiManagement) | On `cu-project` |
@@ -120,7 +120,7 @@ See the policy below at the API level:
 ## Constraints and limitations
 
 ### Local model deployments required
-Content Understanding field extraction analyzers depend on `gpt-4.1-mini` and
+Content Understanding field extraction analyzers depend on `gpt-5.4-mini` and
 `text-embedding-3-large` being deployed locally on the same AI Services account.
 The `deny-model-deployments` Azure Policy **must not** be assigned to
 `rg-foundry-cu-{suffix}`. The hub/spoke architecture normally enforces this policy
@@ -138,11 +138,11 @@ an `Operation-Location` polling URL that points directly to
 route through the APIM `/cu` gateway before polling, preserving governance controls.
 
 ### CU defaults must be patched post-deployment
-The `gpt-4.1-mini` and `text-embedding-3-large` deployments are not automatically
+The `gpt-5.4-mini` and `text-embedding-3-large` deployments are not automatically
 configured as the CU service's default models. `08-01-deploy-setup.ipynb` Step 6
 performs a `PATCH /defaults` call through the APIM gateway to bind them. The
 `modelDeployments` body uses model name as both key and value (e.g.
-`{"gpt-4.1-mini": "gpt-4.1-mini"}`). If this step is skipped, field extraction
+`{"gpt-5.4-mini": "gpt-5.4-mini"}`). If this step is skipped, field extraction
 analyzers that require LLM or embedding support will fail.
 
 ### APIM subscription creation requires management permissions

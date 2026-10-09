@@ -50,7 +50,7 @@ The shared infrastructure backbone. All team projects route model requests throu
 
 | Model | Foundry Account | Region | SKU | `.env` key | Purpose |
 |-------|----------------|--------|-----|------------|---------|
-| `gpt-4.1-mini` | `aif-core-{suffix}` | East US 2 | GlobalStandard 30K TPM | `CHAT_MODEL` | General purpose chat |
+| `gpt-5.4-mini` | `aif-core-{suffix}` | East US 2 | GlobalStandard 30K TPM | `CHAT_MODEL` | General purpose chat |
 | `text-embedding-3-large` | `aif-core-{suffix}` | East US 2 | Standard 50K TPM | `EMBEDDING_MODEL` | Vector embeddings |
 | `deep-research` (`gpt-5.6-sol`) | `aif-research-{suffix}` | Norway East | GlobalStandard 200K TPM | `RESEARCH_MODEL` | Advanced reasoning and deep research |
 | `Phi-4` | `aif-oss-{suffix}` | West US 3 | GlobalStandard 1K TPM | `OSS_MODEL` | Open-weights model from Microsoft |
@@ -88,7 +88,7 @@ Team Alpha has a dedicated Foundry account with no local model deployments - all
 
 Connection: `core-alpha` (`ALPHA_FOUNDRY_CORE_CONNECTION`) → `apim-foundry-{suffix}` (key: `ALPHA_GATEWAY_KEY`)
 
-Model access via connection: `core-alpha/gpt-4.1-mini`
+Model access via connection: `core-alpha/gpt-5.4-mini`
 
 ---
 
@@ -141,7 +141,7 @@ Content Understanding requires a **dedicated** AI Services account with local mo
 |----------|------|--------|-------------|
 | `aif-cu-{suffix}` | Foundry Account (AI Services) | East US 2 | `CU_ACCOUNT_ENDPOINT` |
 | `cu-project` | Foundry Project | East US 2 | `CU_FOUNDRY_PROJECT`, `CU_FOUNDRY_PROJECT_ENDPOINT` |
-| `gpt-4.1-mini` (local) | Model Deployment on `aif-cu-{suffix}` | East US 2 | used by CU field extraction |
+| `gpt-5.4-mini` (local) | Model Deployment on `aif-cu-{suffix}` | East US 2 | used by CU field extraction |
 | `text-embedding-3-large` (local) | Model Deployment on `aif-cu-{suffix}` | East US 2 | used by CU embedding |
 
 Connection: `cu-project` → `landing-zone-apim` (`CU_APIM_CONNECTION`) with key `CU_GATEWAY_KEY`
@@ -165,7 +165,7 @@ POST /deployments/deep-research/chat/completions
 POST /deployments/Phi-4/chat/completions
   → exact match: operation "chat-oss"       → operation policy → openai-oss backend
 
-POST /deployments/gpt-4.1-mini/chat/completions
+POST /deployments/gpt-5.4-mini/chat/completions
   → wildcard match: operation "chat"        → no operation policy → falls through to API-level policy → openai backend
 
 POST /deployments/text-embedding-3-large/embeddings
@@ -197,7 +197,7 @@ Operations that have **no operation-level policy** inherit the **API-level (All 
 |---|---|---|---|---|
 | `chat-research` | `POST /deployments/deep-research/chat/completions` | `openai-research` | `aif-research-{suffix}` (Norway East) | `deep-research` (`gpt-5.6-sol`) |
 | `chat-oss` | `POST /deployments/Phi-4/chat/completions` | `openai-oss` | `aif-oss-{suffix}` (West US 3) | `Phi-4` |
-| `chat` | `POST /deployments/gpt-4.1-mini/chat/completions` | `openai` | `aif-core-{suffix}` (East US 2) | `gpt-4.1-mini` |
+| `chat` | `POST /deployments/gpt-5.4-mini/chat/completions` | `openai` | `aif-core-{suffix}` (East US 2) | `gpt-5.4-mini` |
 | `embeddings` | `POST /deployments/text-embedding-3-large/embeddings` | `openai` | `aif-core-{suffix}` (East US 2) | `text-embedding-3-large` |
 | `responses` | `POST /responses` | `openai`, or `openai-research` for `deep-research` | `aif-core-{suffix}` (East US 2) or `aif-research-{suffix}` (Norway East) | as specified by `model` in the request body |
 
@@ -229,7 +229,7 @@ Client
   → gpt-5.6-sol responds
 ```
 
-The same mechanics apply to the default backend - for `gpt-4.1-mini` the path `/deployments/gpt-4.1-mini/chat/completions` passes through untouched, with only the host replaced by `aif-core-{suffix}.cognitiveservices.azure.com`.
+The same mechanics apply to the default backend - for `gpt-5.4-mini` the path `/deployments/gpt-5.4-mini/chat/completions` passes through untouched, with only the host replaced by `aif-core-{suffix}.cognitiveservices.azure.com`.
 
 ### Authentication
 
@@ -261,7 +261,7 @@ The APIM + hub Foundry account pattern is shared platform infrastructure. Team-l
 
 **1. Quota contention**
 
-The hub's `gpt-4.1-mini` deployment is provisioned at 30K TPM GlobalStandard, shared across all four teams via APIM. There is no mechanism to ring-fence a portion of that quota for a specific workload. Any team workload that places additional calls against core model deployments - for example, the Memory API's per-turn summarisation and fact-extraction calls, or embedding lookups - competes silently with all other inference traffic on the same quota pool. A single team's memory workload can starve the other three teams' APIM-routed requests.
+The hub's `gpt-5.4-mini` deployment is provisioned at 30K TPM GlobalStandard, shared across all four teams via APIM. There is no mechanism to ring-fence a portion of that quota for a specific workload. Any team workload that places additional calls against core model deployments - for example, the Memory API's per-turn summarisation and fact-extraction calls, or embedding lookups - competes silently with all other inference traffic on the same quota pool. A single team's memory workload can starve the other three teams' APIM-routed requests.
 
 **2. Hub ownership and blast radius**
 
@@ -275,7 +275,7 @@ Because the hub RG is excluded from the deny policy, model deployments there are
 
 | Workload | Correct resource group | Correct account | Notes |
 |---|---|---|---|
-| Standard agents (no memory tools) | `rg-foundry-spoke-alpha-{suffix}` | `aif-spoke-alpha-{suffix}` | Uses `core-alpha/gpt-4.1-mini` via APIM connection |
+| Standard agents (no memory tools) | `rg-foundry-spoke-alpha-{suffix}` | `aif-spoke-alpha-{suffix}` | Uses `core-alpha/gpt-5.4-mini` via APIM connection |
 | Hosted agents | `rg-foundry-spoke-alpha-{suffix}` | `aif-spoke-alpha-{suffix}` (East US 2) | Uses existing spoke account - East US 2 is supported for hosted agents |
 | Foundry IQ (KB + agentic retrieval) | `rg-foundry-multi-{suffix}` | `aif-spoke-multi-{suffix}` (existing) | Adds `iq-project` + `iq-search-{suffix}` to the shared account. No model deployments - deny policy is not violated. `iq` is a capability qualifier, not a team name. Dedicated APIM subscription (`foundry-gateway-iq`) isolates embedding batch quota from team traffic. |
 | Custom MCP server (Contoso PMO KB) | `rg-foundry-core-{suffix}` | `aif-core-{suffix}` / `project-admin-{suffix}` (existing) | The agent and its tool catalog entry live on the admin project, which uses the core account's model deployments directly. The Azure Functions MCP server deploys into `rg-foundry-contoso-pmo-mcp`. |
@@ -328,7 +328,7 @@ flowchart TD
 
         subgraph MEM_LOCAL["aif-memory - local deployments"]
             MEM_PAD[" "]
-            MEM_M1["gpt-4.1-mini<br/>(Memory API: summarisation)"]
+            MEM_M1["gpt-5.4-mini<br/>(Memory API: summarisation)"]
             MEM_M2["text-embedding-3-small<br/>(Memory API: indexing)"]
             MEM_PAD --> MEM_M1 & MEM_M2
         end
@@ -341,7 +341,7 @@ flowchart TD
 
         subgraph CU_LOCAL["aif-cu - local deployments"]
             CU_PAD[" "]
-            CU_M1["gpt-4.1-mini<br/>(CU: field extraction)"]
+            CU_M1["gpt-5.4-mini<br/>(CU: field extraction)"]
             CU_M2["text-embedding-3-large<br/>(CU: embeddings)"]
             CU_PAD --> CU_M1 & CU_M2
         end
@@ -352,7 +352,7 @@ flowchart TD
         APIM["apim-foundry<br/>API Management BasicV2<br/>East US 2"]
 
         subgraph HUB["aif-core, East US 2"]
-            H1["gpt-4.1-mini"]
+            H1["gpt-5.4-mini"]
             H3["text-embedding-3-large"]
         end
 
@@ -430,9 +430,9 @@ flowchart TD
 | Light blue | `aif-core` | Primary core Foundry Account - hosts general-purpose and routing model deployments (East US 2). |
 | Light violet | `aif-research` | Research hub Foundry Account - hosts advanced reasoning model deployments (Norway East). |
 | Light fuchsia | `aif-oss` | OSS hub Foundry Account - hosts open-weights model deployments (West US 3). |
-| Light rose | `aif-memory` | Memory Foundry Account - hosts local `gpt-4.1-mini` (summarisation) and `text-embedding-3-small` (indexing) deployments consumed directly by the Memory API runtime. |
+| Light rose | `aif-memory` | Memory Foundry Account - hosts local `gpt-5.4-mini` (summarisation) and `text-embedding-3-small` (indexing) deployments consumed directly by the Memory API runtime. |
 | Amber-orange | `rg-foundry-cu` | Content Understanding - dedicated Foundry account (`aif-cu`) with local model deployments for CU field extraction. Intentionally excluded from the deny-model-deployments policy. |
-| Light orange | `aif-cu` | Content Understanding Foundry Account - hosts local `gpt-4.1-mini` (field extraction) and `text-embedding-3-large` (embeddings) deployments consumed by CU analyzers. |
+| Light orange | `aif-cu` | Content Understanding Foundry Account - hosts local `gpt-5.4-mini` (field extraction) and `text-embedding-3-large` (embeddings) deployments consumed by CU analyzers. |
 
 ---
 

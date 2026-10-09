@@ -4,7 +4,7 @@ This lab demonstrates **deep research** over the `arxiv-nlp` knowledge base usin
 `gpt-5.6-sol`, deployed as `deep-research`. It replaced `o3-deep-research`, which retires on
 2026-11-19. The model runs an **agentic loop**, calling `search` and `fetch` tools backed by the
 Foundry IQ knowledge base from Foundry IQ, then synthesises a comprehensive cited report
-using `gpt-4.1-mini`.
+using `gpt-5.4-mini`.
 
 The lab reuses the AI Search index and Foundry IQ knowledge bases created in Foundry IQ
 (`iq-search-{suffix}` / `arxiv-nlp-kb`). No new search infrastructure is deployed.
@@ -36,7 +36,7 @@ Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
                           │    ├─ search tool ──────────────►│──► Foundry IQ KB
                           │    └─ fetch tool  ──────────────►│──► Foundry IQ KB
                           │                                  │
-                          │  gpt-4.1-mini (synthesis)        │
+                          │  gpt-5.4-mini (synthesis)        │
                           └──────────────┬──────────────────┘
                                          │
                               ┌──────────▼──────────┐
@@ -47,7 +47,7 @@ Foundry IQ complete (iq-search-{suffix}, arxiv-nlp-kb, IQ_* env vars in .env)
                      ┌───────────────▼┐   ┌▼───────────────────┐
                      │  aif-core-{sfx} │   │ aif-research-{sfx}  │
                      │  (East US 2)   │   │ (Norway East)        │
-                     │  gpt-4.1-mini  │   │ deep-research        │
+                     │  gpt-5.4-mini  │   │ deep-research        │
                      └────────────────┘   └─────────────────────┘
                                                     ▲
                                    routes when the model is
@@ -101,14 +101,14 @@ the model with no reasoning. The loop:
 3. Client executes every call against Foundry IQ and sends the `function_call_output` items
    back with `previous_response_id`, so the service keeps the reasoning between turns
 4. Repeat until the model returns a response with no function calls
-5. Pass the model's findings to `gpt-4.1-mini` for final synthesis and formatting
+5. Pass the model's findings to `gpt-5.4-mini` for final synthesis and formatting
 
 ```
 query ──► deep-research ──► function_call ──► search()/fetch()
                ▲                                        │
                └──────── function_call_output ◄─────────┘
                │
-               └── no function_call ──► gpt-4.1-mini ──► final report
+               └── no function_call ──► gpt-5.4-mini ──► final report
 ```
 
 ### Foundry IQ knowledge base
@@ -131,7 +131,7 @@ This lab reads these from `.env`:
 | Variable | Source | Description |
 |----------|--------|-------------|
 | `GATEWAY_URL` | Core gateway | APIM gateway URL (`https://apim-foundry-{sfx}.azure-api.net/openai`) |
-| `CHAT_MODEL` | Core gateway | Chat model name (`gpt-4.1-mini`) |
+| `CHAT_MODEL` | Core gateway | Chat model name (`gpt-5.4-mini`) |
 | `IQ_SEARCH_ENDPOINT` | Foundry IQ | Foundry IQ search endpoint |
 | `IQ_GATEWAY_KEY` | Foundry IQ | APIM subscription key for IQ workload |
 | `DR_MODEL` | Deploy deep research backend | Deep research deployment name (`deep-research`) |

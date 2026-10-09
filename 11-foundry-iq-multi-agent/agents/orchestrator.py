@@ -28,7 +28,7 @@ def create_orchestrator_agent(
 
     Args:
         project_endpoint: Foundry project endpoint URL.
-        model_name: Chat model deployment name (e.g. 'gpt-4.1-mini').
+        model_name: Chat model deployment name (e.g. 'gpt-5.4-mini').
         connection_name: APIM connection on the project (e.g. 'contoso-apim-connection').
         credential: Azure credential (e.g. DefaultAzureCredential).
 

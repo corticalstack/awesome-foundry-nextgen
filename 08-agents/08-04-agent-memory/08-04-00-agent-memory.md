@@ -24,7 +24,7 @@ This lab demonstrates how to use the Foundry Agent Service Memory API to give ag
 
 A **memory store** is a named, project-scoped container that holds extracted memories for multiple users. Each memory store is backed by two local model deployments on the same Foundry account:
 
-- A **chat model** (`gpt-4.1-mini`) for extraction operations: summarising conversations, extracting facts, building user profiles.
+- A **chat model** (`gpt-5.4-mini`) for extraction operations: summarising conversations, extracting facts, building user profiles.
 - An **embedding model** (`text-embedding-3-small`) for semantic indexing and similarity search over stored memories.
 
 Memory stores hold items of the following types:
@@ -51,7 +51,7 @@ The Memory API requires **local** (non-APIM) model access for its internal summa
 | Resource | Type | Name pattern |
 |----------|------|--------------|
 | Foundry account | `Microsoft.CognitiveServices/accounts` (AIServices, S0, SystemAssigned identity) | `aif-memory-{suffix}` |
-| Chat model deployment | GlobalStandard, capacity 30, `gpt-4.1-mini@2025-04-14` | `gpt-4.1-mini` |
+| Chat model deployment | GlobalStandard, capacity 30, `gpt-5.4-mini@2026-03-17` | `gpt-5.4-mini` |
 | Embedding model deployment | Standard, capacity 30, `text-embedding-3-small@1` | `text-embedding-3-small` |
 | Project | `Microsoft.CognitiveServices/accounts/projects` (SystemAssigned identity) | `project-{teamName}-memory-{suffix}` |
 
@@ -126,7 +126,7 @@ result = subprocess.run(
   "description": "...",
   "definition": {
     "kind": "default",
-    "chat_model": "gpt-4.1-mini",
+    "chat_model": "gpt-5.4-mini",
     "embedding_model": "text-embedding-3-small",
     "options": {
       "user_profile_enabled": true,
@@ -179,7 +179,7 @@ memory = MemoryClient(ACCOUNT_NAME, PROJECT_NAME)
 ```python
 result = memory.create_store(
     name="space-expert-memory",
-    chat_model="gpt-4.1-mini",
+    chat_model="gpt-5.4-mini",
     embedding_model="text-embedding-3-small",
     description="Memory store for the Space Expert agent",
     user_profile_details="Track users' interests in space topics, preferred planets, and mission preferences"
@@ -283,7 +283,7 @@ agent = project_client.agents.create_version(
 )
 ```
 
-`LOCAL_CHAT` is a string of the form `"{hub_connection}/{model_name}"` - e.g. `"aif-memory-{suffix}/gpt-4.1-mini"` - referencing the local deployment on the dedicated Foundry account.
+`LOCAL_CHAT` is a string of the form `"{hub_connection}/{model_name}"` - e.g. `"aif-memory-{suffix}/gpt-5.4-mini"` - referencing the local deployment on the dedicated Foundry account.
 
 ### Responses API invocation
 
@@ -329,7 +329,7 @@ All five scenarios are implemented in [`08-04-01-deploy-agent-memory.ipynb`](08-
 
 | # | Scenario | Description |
 |---|----------|-------------|
-| 1 | Create Memory Store | Creates `space-expert-memory` with `gpt-4.1-mini` + `text-embedding-3-small`; enables `user_profile` and `chat_summary` extraction. |
+| 1 | Create Memory Store | Creates `space-expert-memory` with `gpt-5.4-mini` + `text-embedding-3-small`; enables `user_profile` and `chat_summary` extraction. |
 | 2 | Store User Memories | Manually extracts memories via `update_memories()` with async polling for two users: Alice (interested in Mars/rovers) and Bob (interested in Saturn/Europa). |
 | 3 | Scope isolation | Searches both scopes with the same query; confirms each user's search only returns their own memories and not the other's. |
 | 4 | Agent + Memory | Creates a `SpaceExpert` agent with explicit scope `"user_alice_123"`; demonstrates that the same query yields different personalised responses for Alice vs Bob. |

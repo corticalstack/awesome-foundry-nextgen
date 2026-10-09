@@ -4,7 +4,7 @@
 
 By the end of this lab you will be able to:
 
-- **Knowledge distillation**: Use a large teacher model (gpt-4.1-mini via APIM) to generate high-quality labelled training data for a smaller student model (Phi-4-mini)
+- **Knowledge distillation**: Use a large teacher model (gpt-5.4-mini via APIM) to generate high-quality labelled training data for a smaller student model (Phi-4-mini)
 - **LoRA fine-tuning with PEFT/Olive**: Apply parameter-efficient fine-tuning using the Olive AI toolkit and the PEFT library to adapt Phi-4-mini for a narrow domain classification task
 - **ACA GPU job orchestration**: Submit, monitor, and retrieve results from serverless GPU workloads on Azure Container Apps (NC24-A100 profile) without managing dedicated GPU infrastructure
 - **Evaluation pipeline**: Compare teacher, base, and fine-tuned model accuracies using an ACA evaluation job, then visualise results in a matplotlib chart
@@ -15,7 +15,7 @@ By the end of this lab you will be able to:
 
 ```
 APIM Gateway
-  └─ gpt-4.1-mini (teacher)          ← generates synthetic training labels
+  └─ gpt-5.4-mini (teacher)          ← generates synthetic training labels
        │
        ▼
   Synthetic Training Data (JSONL)     ← stored in Azure Blob Storage (ft container)
@@ -39,7 +39,7 @@ APIM Gateway
   Local Inference Demo                ← adapter downloaded, runs offline (CPU/MPS/CUDA)
 ```
 
-**Teacher model note**: The lab is designed around `gpt-4.1-mini` (already deployed via the shared APIM gateway) as the teacher. DeepSeek-V3.2 can be substituted as teacher if it is routed through the same APIM gateway - simply set `CHAT_MODEL=DeepSeek-V3.2` in `.env`. The notebooks reference `os.getenv('CHAT_MODEL', 'gpt-4.1-mini')` so no code changes are required.
+**Teacher model note**: The teacher is `CHAT_MODEL`, `gpt-5.4-mini` by default, already deployed via the shared APIM gateway. The committed `data/train.jsonl`, the notebook outputs and the teacher accuracy in 15-03 come from an earlier run with `gpt-4.1-mini` as the teacher; re-run 15-01 to regenerate them with the current model. DeepSeek-V3.2 can be substituted as teacher if it is routed through the same APIM gateway - simply set `CHAT_MODEL=DeepSeek-V3.2` in `.env`. The notebooks reference `os.getenv('CHAT_MODEL', 'gpt-5.4-mini')` so no code changes are required.
 
 **Regional note**: The ACA environment is always deployed to **Sweden Central** because GPU workload profiles (NC24-A100 `Consumption-GPU-NC24-A100`) are only available there. All other resources (storage account, Foundry project) use the resource group's default region.
 
@@ -64,7 +64,7 @@ APIM Gateway
 
    ```
    GATEWAY_URL=https://<apim-name>.azure-api.net/openai
-   CHAT_MODEL=gpt-4.1-mini
+   CHAT_MODEL=gpt-5.4-mini
    ALPHA_GATEWAY_KEY=<existing apim subscription key for alpha>
    FINETUNE_FOUNDRY_PROJECT_ENDPOINT=https://aif-spoke-multi-{suffix}.services.ai.azure.com/api/projects/finetune-project
    FINETUNE_APIM_CONNECTION=finetune-apim-connection
@@ -103,7 +103,7 @@ APIM Gateway
 
 | Model | Accuracy |
 |---|---|
-| gpt-4.1-mini (teacher) | ~75-85% |
+| gpt-4.1-mini teacher (committed run) | ~75-85% |
 | Phi-4-mini base | ~40-50% (reference: 45.7%) |
 | Phi-4-mini fine-tuned | ~55-65% |
 

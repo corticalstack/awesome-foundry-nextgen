@@ -61,10 +61,10 @@ you. Most capability labs assume the multi-project spoke from the [project patte
 | 09 | [Content Understanding integration](09-content-understanding-integration/) | Plumb Azure AI Content Understanding behind the core APIM with managed-identity backend auth. |
 | 10 | [Foundry IQ](10-foundry-iq/) | Managed knowledge base end-to-end: provision Azure AI Search, ingest 3k arXiv NLP papers, build a KB, ground an agent. |
 | 11 | [Foundry IQ - multi-agent](11-foundry-iq-multi-agent/) | Router + specialist pattern over three KBs (HR, Marketing, Products) using Microsoft Agent Framework `WorkflowBuilder`. |
-| 12 | [Foundry IQ - deep research](12-foundry-iq-deep-research/) | `gpt-5.6-sol` agentic loop on the Responses API over the arxiv-nlp KB with cited synthesis by `gpt-4.1-mini`. |
+| 12 | [Foundry IQ - deep research](12-foundry-iq-deep-research/) | `gpt-5.6-sol` agentic loop on the Responses API over the arxiv-nlp KB with cited synthesis by `gpt-5.4-mini`. |
 | 13 | [Guardrails](13-guardrails/) | Three-layer guardrails (Prompt Shields, PII detection, custom blocklist) stacked on a bank customer-service agent. |
 | 14 | [Red teaming](14-red-teaming/) | Basic and advanced AI Red Teaming Agent (PyRIT) scans against a Foundry project. |
-| 15 | [Fine-tune](15-fine-tune/) | Knowledge distillation from a `gpt-4.1-mini` teacher to a `Phi-4-mini` student via Olive + PEFT (LoRA). |
+| 15 | [Fine-tune](15-fine-tune/) | Knowledge distillation from a `gpt-5.4-mini` teacher to a `Phi-4-mini` student via Olive + PEFT (LoRA). |
 
 ### Agents sub-labs
 
