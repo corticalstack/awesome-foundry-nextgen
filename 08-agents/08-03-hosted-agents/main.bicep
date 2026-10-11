@@ -2,7 +2,6 @@
 // Deploys an Azure Container Registry (ACR) into the existing Spoke Alpha resource group
 // (rg-foundry-spoke-alpha-{suffix}) and grants the existing spoke project identity AcrPull access.
 //
-// The capability host (Azure Container Apps) is provisioned via REST API in the notebook (Step 4).
 // East US 2 is fully supported for Hosted Agents (confirmed March 2026).
 //
 // Prerequisites: core gateway + Team Alpha spoke must be deployed first.

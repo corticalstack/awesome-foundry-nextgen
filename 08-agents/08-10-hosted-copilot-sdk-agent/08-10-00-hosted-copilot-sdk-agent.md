@@ -6,7 +6,7 @@ The notebook follows the same pattern as the rest of this repo (see [`08-03-host
 
 ## What this example demonstrates
 
-- **Hosted agent runtime.** Foundry runs the container for you under the project's capability host. There is no Container App, Web App, or AKS to manage.
+- **Hosted agent runtime.** Foundry runs the container for you in a per-session sandbox on Microsoft-managed compute. There is no Container App, Web App, or AKS to manage.
 - **Copilot SDK as the agent loop.** `CopilotClient` owns sessions, tool-calling, streaming, and skill discovery. Your `main.py` only forwards SSE events out through Foundry's [invocations protocol](https://pypi.org/project/azure-ai-agentserver-invocations/).
 - **BYOK Foundry model via Managed Identity.** When `AZURE_AI_PROJECT_ENDPOINT` + `AZURE_AI_MODEL_DEPLOYMENT_NAME` are set, the Copilot SDK routes every chat turn to your Foundry model over the project's OpenAI surface (`<project-endpoint>/openai/v1/`, token audience `ai.azure.com/.default`) - no GitHub PAT, no OpenAI key. Set only `GITHUB_TOKEN` and it falls back to the GitHub Copilot model; if both are set, the Foundry model wins.
 - **Two extension surfaces:**
@@ -143,7 +143,7 @@ Every tool call is also fully **observable**: it emits `TOOL_EXECUTION_START` / 
 | [`08-10-01-deploy-hosted-copilot-sdk-agent.ipynb`](08-10-01-deploy-hosted-copilot-sdk-agent.ipynb) | Walks the full `az deployment sub create` → `az acr build` → `AIProjectClient.agents.create_version` → role-grant → invoke loop, then uploads `data/m365-licenses.csv` into a session, runs five M365 license analytics prompts through the deployed agent, and has the agent render a cost-by-department chart that the notebook downloads back out of the sandbox |
 | [`data/m365-licenses.csv`](data/m365-licenses.csv) | Synthetic M365 license export (100 users, real SKUs, engineered outliers: 5 disabled-but-licensed, 6 stale SPE_E5 holders, 14 ghost users). Used by Step 7 of the notebook to demonstrate hosted-agent session file ops |
 | [`data/m365-reference.json`](data/m365-reference.json) | Per-SKU monthly costs + department-code names. Uploaded to the session in Step 7 so the agent joins costs/names onto the licenses CSV - keeps this volatile data out of the skill |
-| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep that provisions the AI Foundry account, project, model deployment, ACR, capability host, and (optionally) App Insights / Log Analytics / Bing Grounding / AI Search |
+| [`infra/main.bicep`](infra/main.bicep) | Subscription-scoped Bicep that provisions the AI Foundry account, project, model deployment, ACR, and (optionally) App Insights / Log Analytics / Bing Grounding / AI Search |
 | [`src/github-copilot-invocations/main.py`](src/github-copilot-invocations/main.py) | The agent. Picks `GITHUB_TOKEN` vs Foundry BYOK at startup, manages a singleton Copilot session, streams `SessionEvent`s as SSE |
 | [`src/github-copilot-invocations/system_prompt.md`](src/github-copilot-invocations/system_prompt.md) | Persona appended to the Copilot CLI's built-in system message |
 | [`src/github-copilot-invocations/skills/m365-license-analytics/SKILL.md`](src/github-copilot-invocations/skills/m365-license-analytics/SKILL.md) | Skill supplying the M365 license analysis method, column glossary, and reclaim definition - costs and department names come from the uploaded reference, not the skill |
