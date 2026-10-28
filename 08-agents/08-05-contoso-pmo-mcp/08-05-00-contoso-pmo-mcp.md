@@ -105,6 +105,7 @@ The admin endpoint is `https://aif-core-{suffix}.services.ai.azure.com/api/proje
 - **Standard GA extension bundle:** The `mcpToolTrigger` binding is included in the standard `Microsoft.Azure.Functions.ExtensionBundle` ([4.0.0, 5.0.0)). No beta or Experimental bundle is required.
 - **Managed identity storage:** The function app uses managed identity (not shared keys) for storage authentication, following Entra ID-only best practices.
 - **Keyless Foundry auth:** The agent talks to admin via `DefaultAzureCredential` - no APIM, no shared key. The only `code=` query parameter is on the MCP SSE URL itself (the `mcp_extension` Azure Functions system key), which authenticates the **agent → MCP server** path, not the **agent → model** path.
+- **If the MCP server stops answering** (agent calls fail with `BadRequestError` after about 150 s, the app reports `Running`, its root URL hangs): check the storage account's public network access. Some governed subscriptions carry a tenant-level Azure Policy with a modify effect that silently resets it to `Disabled`; the Flex Consumption worker then loses its storage and stops serving. Recover in this order: tag the storage account and its resource group `SecurityControl=Ignore` (the policy's own exclusion), then `az storage account update --public-network-access Enabled`, then rerun the Phase 4.5 smoke test in 08-05-01. If the worker stays down, redeploy the package with Phase 3. 08-05-01 applies the tag at creation, so a fresh deployment is exempt from the start.
 
 ---
 
