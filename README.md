@@ -57,7 +57,7 @@ you. Most capability labs assume the multi-project spoke from the [project patte
 | 05 | [Project pattern setup](05-foundry-project-pattern-setup/) | Hub/spoke architecture with Bicep: deploy the core gateway, a single-project spoke, and a multi-project spoke. |
 | 06 | [Governance policy](06-governance-policy/) | Azure Policy that denies model deployments in spokes, forcing all traffic through the core APIM gateway. |
 | 07 | [Model inference](07-model-inference/) | Inference paths behind APIM - Azure OpenAI vs Foundry project clients, chat/embeddings/responses, server-side router, deep-research, streaming. Includes a live GPT-4o to GPT-5 reasoning-model migration with its parameter, token, and API-surface gotchas. |
-| 08 | [Agents](08-agents/) | Agent fundamentals across fifteen sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop, REST invocation, and hosted Copilot SDK and Claude Agent SDK agents. |
+| 08 | [Agents](08-agents/) | Agent fundamentals across sixteen sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop, REST invocation, hosted Copilot SDK and Claude Agent SDK agents, and hosted agents from source code with session management. |
 | 09 | [Content Understanding integration](09-content-understanding-integration/) | Plumb Azure AI Content Understanding behind the core APIM with managed-identity backend auth. |
 | 10 | [Foundry IQ](10-foundry-iq/) | Managed knowledge base end-to-end: provision Azure AI Search, ingest 3k arXiv NLP papers, build a KB, ground an agent. |
 | 11 | [Foundry IQ - multi-agent](11-foundry-iq-multi-agent/) | Router + specialist pattern over three KBs (HR, Marketing, Products) using Microsoft Agent Framework `WorkflowBuilder`. |
@@ -87,6 +87,7 @@ The agents lab is large enough to warrant its own breakdown:
 | 08-10b | [Hosted Copilot SDK agent on the 1:N multi account](08-agents/08-10b-hosted-copilot-sdk-agent-multi/) | A self-contained Copilot SDK agent on the shared multi-project account, pointed directly at the APIM gateway (api-key auth) for a reasoning model - no local model deployment, no Foundry connection. |
 | 08-10c | [Runtime model selection and telemetry](08-agents/08-10c-hosted-copilot-sdk-agent-runtime-model/) | Switch a hosted agent's model and reasoning effort mid-conversation from a chat UI without a new version or redeploy, and see what logging and telemetry a hosted agent produces out of the box. |
 | 08-11 | [Hosted Claude Agent SDK agent](08-agents/08-11-hosted-claude-agent-sdk-agent/) | Deploy a Claude Agent SDK agent as a Foundry hosted agent, calling a Foundry-deployed Claude model over the Anthropic Messages API with Managed Identity, and run the M365 license-analytics demo. |
+| 08-12 | [Hosted agent from source code and sessions](08-agents/08-12-hosted-agent-sessions/) | Deploy a hosted agent from a zip of source code (remote build and bundled dependencies, no container registry), then work its sessions: isolation, file upload, idle timeout, stop and delete. |
 
 ## Repository layout
 

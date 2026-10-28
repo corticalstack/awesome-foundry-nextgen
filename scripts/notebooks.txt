@@ -44,6 +44,8 @@
 08-agents/08-10c-hosted-copilot-sdk-agent-runtime-model/08-10c-01-runtime-model-and-telemetry.ipynb  deploy
 # 08-11: the lab tenant's Marketplace policy blocks the Claude deployment it needs.
 08-agents/08-11-hosted-claude-agent-sdk-agent/08-11-01-deploy-hosted-claude-agent-sdk-agent.ipynb  deploy,manual
+08-agents/08-12-hosted-agent-sessions/08-12-01-deploy-hosted-agent-from-code.ipynb  deploy
+08-agents/08-12-hosted-agent-sessions/08-12-02-manage-hosted-agent-sessions.ipynb  weekly
 # 09: the Content Understanding resource group is not deployed in the lab environment.
 09-content-understanding-integration/09-01-deploy-setup.ipynb  deploy
 09-content-understanding-integration/09-02-cu-analyze.ipynb  manual
