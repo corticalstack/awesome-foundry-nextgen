@@ -1,0 +1,7 @@
+# Zips and the bundled packages/ folder that 08-12-01 builds (regenerated on each run)
+build/
+
+# Files downloaded from a session sandbox by 08-12-02 (regenerated on each run)
+data/downloaded/
+
+**/__pycache__/
