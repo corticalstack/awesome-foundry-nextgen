@@ -143,6 +143,7 @@ Expected: **58 passed** (48 unit tests + 10 workflow evals).
 - **No API keys to the model.** The agent talks to the admin project via `DefaultAzureCredential`. The only `code=` query parameter is on the MCP SSE URL itself (the `mcp_extension` Azure Functions system key) which authenticates the **agent → MCP server** path.
 - **Standard GA extension bundle.** Same `Microsoft.Azure.Functions.ExtensionBundle [4.0.0, 5.0.0)` as 08-05 - the `mcpToolTrigger` binding is GA, no preview bundle needed.
 - **Open-source-safe by construction.** All ISINs prefixed `XX0000…`, all client/manager names fictional, no real FINMA verbatim text, internal codename `Project Edelweiss` per workshop convention.
+- **If the MCP server stops answering** (agent calls fail with `BadRequestError` after about 150 s, the app reports `Running`, its root URL hangs): check the storage account's public network access. Some governed subscriptions carry a tenant-level Azure Policy with a modify effect that silently resets it to `Disabled`; the Flex Consumption worker then loses its storage and stops serving. Recover in this order: tag the storage account and its resource group `SecurityControl=Ignore` (the policy's own exclusion), then `az storage account update --public-network-access Enabled`, then rerun the Phase 4.5 smoke test in 08-05b-01. If the worker stays down, redeploy the package with Phase 3. 08-05b-01 applies the tag at creation, so a fresh deployment is exempt from the start.
 
 ## References
 
