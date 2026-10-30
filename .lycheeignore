@@ -16,15 +16,23 @@
 ^https?://.*\.services\.ai\.azure\.com
 ^https?://management\.azure\.com(/|/\.default/?)?$
 ^https?://api\.applicationinsights\.io
+^https?://management\.azure\.com/subscriptions/
+# Microsoft Graph permission scopes (https://graph.microsoft.com/User.Read and similar)
+^https?://graph\.microsoft\.com/(\.default|[A-Za-z]+\.[A-Za-z.]+)$
+
+# MCP server endpoints: they answer JSON-RPC POSTs, and a GET returns 400
+^https?://mcp\.gnews\.io
 
 # Author-deployed Azure Functions used by demo notebooks (may be deleted or slow)
 ^https?://func-[a-z0-9-]+\.azurewebsites\.net
 
 # Sites that block unauthenticated automated checkers or have HTTP/2 quirks
 ^https?://portal\.azure\.com
-^https?://platform\.openai\.com
+^https?://(platform\.)?openai\.com
 ^https?://msrc\.microsoft\.com
 ^https?://(www\.)?taetechnologies\.com
+^https?://developers\.redhat\.com
+^https?://chatgpt\.com
 
 # Azure marketing/pricing pages, heavy JS that times out from CI runners
 ^https?://azure\.microsoft\.com/.*pricing/

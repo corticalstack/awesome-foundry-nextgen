@@ -1,0 +1,56 @@
+<policies>
+  <inbound>
+    <base />
+    <validate-azure-ad-token tenant-id="__TENANT_ID__" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized" output-token-variable-name="jwt">
+      <audiences>__AUDIENCES__</audiences>
+    </validate-azure-ad-token>
+    <set-variable name="denial" value="@{
+      if (context.Request.Method != "POST" || context.Request.Body == null) { return ""; }
+      var body = context.Request.Body.As<JObject>(preserveContent: true);
+      if ((string)body["method"] != "tools/call") { return ""; }
+      var claims = ((Jwt)context.Variables["jwt"]).Claims;
+      var roles = claims.ContainsKey("roles") ? claims["roles"] : new string[0];
+      var categories = new [] { "general", "world", "nation", "business", "technology", "entertainment", "sports", "science", "health" };
+      var allowed = roles.Contains("News.Read.All") ? categories : categories.Where(c => roles.Contains("News.Read." + char.ToUpper(c[0]) + c.Substring(1))).ToArray();
+      var name = (string)body["params"]["name"];
+      var arguments = body["params"]["arguments"] as JObject;
+      var category = (arguments == null ? null : (string)arguments["category"]) ?? "general";
+      var permitted = name == "top_headlines" ? allowed.Contains(category) : name == "search" ? roles.Contains("News.Read.All") : true;
+      if (permitted) { return ""; }
+      if (allowed.Length == 0) { return "Your access covers no news categories. Do not retry."; }
+      return "Your access covers: " + string.Join(", ", allowed) + ". Do not retry other categories.";
+    }" />
+    <choose>
+      <when condition="@((string)context.Variables["denial"] != "")">
+        <return-response>
+          <set-status code="200" reason="OK" />
+          <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+          </set-header>
+          <set-body>@(new JObject(
+            new JProperty("jsonrpc", "2.0"),
+            new JProperty("id", context.Request.Body.As<JObject>(preserveContent: true)["id"]),
+            new JProperty("result", new JObject(
+              new JProperty("content", new JArray(new JObject(
+                new JProperty("type", "text"),
+                new JProperty("text", (string)context.Variables["denial"])))),
+              new JProperty("isError", true)))).ToString())</set-body>
+        </return-response>
+      </when>
+    </choose>
+    <set-header name="Authorization" exists-action="delete" />
+    <set-header name="X-Api-Key" exists-action="override">
+      <value>{{gnews-api-key}}</value>
+    </set-header>
+    <rewrite-uri template="/" />
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

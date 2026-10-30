@@ -8,7 +8,7 @@ The full authentication reference has been consolidated into the MCP conceptual 
 
 That section covers:
 
-- All five supported authentication methods (key-based, Entra agent identity, Entra project managed identity, OAuth passthrough, unauthenticated)
+- All six supported authentication methods (key-based, Entra agent identity, Entra project managed identity, OAuth passthrough, Entra user delegation, unauthenticated)
 - How to store credentials in Foundry project connections
 - Guidance on when to use each method
 - Key security considerations including `require_approval` settings

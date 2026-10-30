@@ -27,6 +27,11 @@
 08-agents/08-05-contoso-pmo-mcp/08-05-03-contoso-pmo-tool-catalog.ipynb  weekly
 08-agents/08-05b-contoso-private-banking-mcp/08-05b-01-private-banking-agent-setup.ipynb  deploy,manual
 08-agents/08-05b-contoso-private-banking-mcp/08-05b-02-private-banking-agent-queries.ipynb  weekly
+# 08-05c registers apps, creates a user, grants tenant-wide consent and needs interactive sign-ins as
+# a Global Administrator and a test user; 08-05c-02 and 08-05c-03 also spend GNews quota.
+08-agents/08-05c-news-mcp-per-user-access/08-05c-01-identity-and-agent.ipynb  deploy,manual
+08-agents/08-05c-news-mcp-per-user-access/08-05c-02-wrapper-container-app.ipynb  deploy,manual
+08-agents/08-05c-news-mcp-per-user-access/08-05c-03-apim-passthrough.ipynb  deploy,manual
 08-agents/08-06-agent-offline-evaluation/08-06-01-setup-and-test-data.ipynb  weekly
 08-agents/08-06-agent-offline-evaluation/08-06-02-quality-evaluators.ipynb  weekly
 08-agents/08-06-agent-offline-evaluation/08-06-03-agent-evaluators.ipynb  weekly
