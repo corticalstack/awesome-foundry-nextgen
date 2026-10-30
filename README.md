@@ -57,7 +57,7 @@ you. Most capability labs assume the multi-project spoke from the [project patte
 | 05 | [Project pattern setup](05-foundry-project-pattern-setup/) | Hub/spoke architecture with Bicep: deploy the core gateway, a single-project spoke, and a multi-project spoke. |
 | 06 | [Governance policy](06-governance-policy/) | Azure Policy that denies model deployments in spokes, forcing all traffic through the core APIM gateway. |
 | 07 | [Model inference](07-model-inference/) | Inference paths behind APIM - Azure OpenAI vs Foundry project clients, chat/embeddings/responses, server-side router, deep-research, streaming. Includes a live GPT-4o to GPT-5 reasoning-model migration with its parameter, token, and API-surface gotchas. |
-| 08 | [Agents](08-agents/) | Agent fundamentals across sixteen sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO + private banking), offline eval, live observability, human-in-the-loop, REST invocation, hosted Copilot SDK and Claude Agent SDK agents, and hosted agents from source code with session management. |
+| 08 | [Agents](08-agents/) | Agent fundamentals across seventeen sub-labs: versioned agents, code interpreter, hosted agents, memory, MCP (PMO, private banking, per-user access), offline eval, live observability, human-in-the-loop, REST invocation, hosted Copilot SDK and Claude Agent SDK agents, and hosted agents from source code with session management. |
 | 09 | [Content Understanding integration](09-content-understanding-integration/) | Plumb Azure AI Content Understanding behind the core APIM with managed-identity backend auth. |
 | 10 | [Foundry IQ](10-foundry-iq/) | Managed knowledge base end-to-end: provision Azure AI Search, ingest 3k arXiv NLP papers, build a KB, ground an agent. |
 | 11 | [Foundry IQ - multi-agent](11-foundry-iq-multi-agent/) | Router + specialist pattern over three KBs (HR, Marketing, Products) using Microsoft Agent Framework `WorkflowBuilder`. |
@@ -79,6 +79,7 @@ The agents lab is large enough to warrant its own breakdown:
 | 08-04 | [Agent memory](08-agents/08-04-agent-memory/) | Add Foundry agent memory for cross-turn context. |
 | 08-05 | [MCP - Contoso PMO](08-agents/08-05-contoso-pmo-mcp/) | Custom MCP server with a tool catalog for a project-management scenario. |
 | 08-05b | [MCP - Contoso private banking](08-agents/08-05b-contoso-private-banking-mcp/) | Second MCP scenario, intent-over-endpoint tool design. |
+| 08-05c | [MCP - per-user access](08-agents/08-05c-news-mcp-per-user-access/) | One agent, two users with different Entra app roles, and a third-party MCP server (GNews) that knows neither: Foundry calls it on each user's behalf, and a wrapper on Container Apps or a policy on the APIM gateway allows or refuses each call. |
 | 08-06 | [Offline evaluation](08-agents/08-06-agent-offline-evaluation/) | Quality, agent-specific, and custom evaluators run against a test set. |
 | 08-07 | [Live observability](08-agents/08-07-agent-live-observability/) | Tracing, real-time observability, and continuous evaluation in production. |
 | 08-08 | [Human in the loop](08-agents/08-08-human-in-the-loop/) | Pause an agent run for human approval before sensitive tool calls. |
@@ -95,6 +96,8 @@ The agents lab is large enough to warrant its own breakdown:
 ├── 00-what-is-foundry/ … 15-fine-tune/   # Lab content (notebooks + Bicep)
 ├── assets/                               # Shared images, data, prompts
 ├── docs/screenshots/                     # Portal/architecture screenshots
+├── docs/diagrams/                        # draw.io sources and their PNG exports
+├── docs/research/                        # Research write-ups behind a lab's design
 ├── scripts/                              # Notebook builders, helpers
 ├── .env.example                          # Variable template
 └── CONTRIBUTING.md                       # How to contribute

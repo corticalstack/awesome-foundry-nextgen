@@ -205,6 +205,7 @@ Embedding the `mcp_extension` key directly in the `server_url` string is conveni
 | **Microsoft Entra - agent identity** *(preview)* | The agent's own managed identity authenticates to the MCP server. Scoped per agent; requires role assignments on the underlying service. | No |
 | **Microsoft Entra - project managed identity** *(preview)* | The Foundry project's shared managed identity authenticates to the MCP server. All agents in the project share the same access level. | No |
 | **OAuth identity passthrough** | Each end user signs in and consents; their identity is used for all MCP calls. Requires `Foundry User` role on the project. | Yes |
+| **Microsoft Entra - user delegation (`AgentOnBehalfOfUser`)** *(preview)* | Foundry exchanges the caller's Entra token for one addressed to the MCP server, on the caller's behalf. The server sees the user, their app roles and the calling agent identity. Needs the agent endpoint's `AgentBlueprint` scheme. | Yes |
 | **Unauthenticated access** | No credential sent. Use only for public MCP servers or private servers protected by network isolation. | No |
 
 ### 6b. Storing credentials in Foundry project connections
@@ -231,6 +232,7 @@ When the agent invokes a tool, Agent Service retrieves the credential from the p
 | Multiple agents need different access levels on the same server | Microsoft Entra - agent identity (per-agent granularity) |
 | All agents in a project need the same access level | Microsoft Entra - project managed identity |
 | End-user identity or permissions must be preserved end-to-end | OAuth identity passthrough |
+| Per-user entitlements on a server you do not own, enforced by a wrapper or gateway you run | Microsoft Entra - user delegation ([08-05c](../08-05c-news-mcp-per-user-access/08-05c-00-news-mcp-per-user-access.md)) |
 | MCP server only supports API key auth | Key-based |
 | Public server or VNet-isolated private server with no auth requirement | Unauthenticated |
 
