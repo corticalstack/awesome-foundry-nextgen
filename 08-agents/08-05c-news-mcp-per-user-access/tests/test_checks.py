@@ -139,6 +139,13 @@ def test_rejected_call_to_the_category_tool_is_hidden():
     assert checks.classify({'output': [], 'rejected_tool': 'get_business_headlines'}, USER_B_ROLES, 'business') == 'hidden'
 
 
+def test_failed_call_with_the_denial_is_denied():
+    """Foundry failed the request because the tool returned isError (see checks.ask)."""
+    response = {'output': [], 'failed_call': {'name': 'top_headlines', 'error': DENIAL_B}}
+    assert checks.classify(response, USER_B_ROLES, 'business') == 'denied'
+    assert checks.called_tools(response) == [('top_headlines', {})]
+
+
 def test_rejected_call_to_another_tool_is_unknown():
     assert checks.classify({'output': [], 'rejected_tool': 'get_world_headlines'}, USER_B_ROLES, 'business') == 'unknown'
 
@@ -303,6 +310,15 @@ def test_ask_turns_a_call_to_an_unlisted_tool_into_a_response():
         'output': [], 'rejected_tool': 'get_business_headlines'}
 
 
+def test_ask_turns_a_failed_tool_call_into_a_response():
+    """Seen live on Track B: a tool result with isError true fails the whole request with HTTP 400,
+    and the message carries the tool's text."""
+    error = _bad_request(f"An error occurred invoking 'top_headlines': {DENIAL_B} Troubleshooting guide: "
+                         "https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol")
+    assert checks.ask(_FakeClient({'business': error}), checks.prompt('business')) == {
+        'output': [], 'failed_call': {'name': 'top_headlines', 'error': DENIAL_B}}
+
+
 def test_ask_raises_other_bad_requests():
     with pytest.raises(openai.BadRequestError):
         checks.ask(_FakeClient({'business': _bad_request('Invalid model')}), checks.prompt('business'))
@@ -338,6 +354,12 @@ def test_run_matrix_records_a_rejected_unlisted_tool_as_hidden():
     client = _FakeClient({'business': NOT_LISTED})
     records = checks.run_matrix({'B': client}, [checks.Case('B', 'business', 'hidden')], ROLES)
     assert (records[0]['outcome'], records[0]['listed'], records[0]['called'], records[0]['passed']) == ('hidden', [], [], True)
+
+
+def test_run_matrix_records_a_failed_denied_call_as_denied():
+    error = _bad_request(f"An error occurred invoking 'top_headlines': {DENIAL_B} Troubleshooting guide: https://learn.example")
+    records = checks.run_matrix({'B': _FakeClient({'business': error})}, [checks.Case('B', 'business', 'denied')], ROLES)
+    assert (records[0]['outcome'], records[0]['called'], records[0]['passed']) == ('denied', [('top_headlines', {})], True)
 
 
 def test_run_matrix_raises_on_a_required_failure():

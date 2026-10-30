@@ -91,17 +91,26 @@ def agent_client(credential, project_endpoint, agent, blueprint_client_id):
 
 
 def ask(client, text, extra_body=None):
-    """The agent's response to `text` as a dict. When the model calls a tool the MCP server did not
-    list, Foundry answers HTTP 400 ('Tool ... not found on remote server') before anything reaches
-    the server; that comes back as {'output': [], 'rejected_tool': name}."""
+    """The agent's response to `text` as a dict. Foundry fails the whole request with HTTP 400
+    `tool_user_error` in two cases, which come back as a dict too:
+
+    - the model called a tool the MCP server did not list ('Tool ... not found on remote server');
+      nothing reached the server: {'output': [], 'rejected_tool': name}
+    - a tool call returned a result with isError true ("An error occurred invoking '<name>': <text>");
+      the model never sees the text: {'output': [], 'failed_call': {'name': name, 'error': text}}
+    """
     try:
         # warnings=False: the SDK does not model Foundry's extra fields on MCP items and warns on each dump.
         return client.responses.create(input=text, extra_body=extra_body).model_dump(warnings=False)
     except BadRequestError as e:
-        rejected = re.search(r'Tool (\S+) not found on remote server', str(e))
-        if not rejected:
-            raise
-        return {'output': [], 'rejected_tool': rejected.group(1)}
+        message = e.body.get('message', '') if isinstance(e.body, dict) else str(e)
+        rejected = re.search(r'Tool (\S+) not found on remote server', message)
+        if rejected:
+            return {'output': [], 'rejected_tool': rejected.group(1)}
+        failed = re.match(r"An error occurred invoking '([^']+)': (.*?)(?: Troubleshooting guide: \S+)?$", message, re.S)
+        if failed:
+            return {'output': [], 'failed_call': {'name': failed.group(1), 'error': failed.group(2)}}
+        raise
 
 
 # ── Reading a response (response.model_dump()) ───────────────────────────────
@@ -121,7 +130,10 @@ def listed_tools(response):
 
 
 def called_tools(response):
-    return [(call['name'], json.loads(call['arguments'] or '{}')) for call in _items(response, 'mcp_call')]
+    called = [(call['name'], json.loads(call['arguments'] or '{}')) for call in _items(response, 'mcp_call')]
+    if 'failed_call' in response:  # Foundry reports no arguments for it
+        called.append((response['failed_call']['name'], {}))
+    return called
 
 
 def _asks_for(call, category):
@@ -135,8 +147,9 @@ def _asks_for(call, category):
 def classify(response, roles, category):
     """The outcome of asking for `category` headlines with these roles:
 
-    'denied'       a tool call returned the denial text for the roles (with no tool call at
-                   all, the model's reply quoting it counts too)
+    'denied'       a tool call returned the denial text for the roles, in its result or in the
+                   error Foundry failed the request with (with no tool call at all, the model's
+                   reply quoting it counts too)
     'articles'     a call for this category returned content
     'substituted'  content came only from calls for other categories
     'hidden'       the server listed no tool for this category and the agent called nothing,
@@ -146,6 +159,8 @@ def classify(response, roles, category):
     denial = authz.denial_message(roles)
     calls = _items(response, 'mcp_call')
     if any(denial in (c.get('output') or '') or denial in (c.get('error') or '') for c in calls):
+        return 'denied'
+    if denial in response.get('failed_call', {}).get('error', ''):
         return 'denied'
     answered = [c for c in calls if c.get('output') and not c.get('error')]
     if any(_asks_for(c, category) for c in answered):
