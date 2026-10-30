@@ -28,7 +28,7 @@
 
 # Sites that block unauthenticated automated checkers or have HTTP/2 quirks
 ^https?://portal\.azure\.com
-^https?://platform\.openai\.com
+^https?://(platform\.)?openai\.com
 ^https?://msrc\.microsoft\.com
 ^https?://(www\.)?taetechnologies\.com
 ^https?://developers\.redhat\.com
