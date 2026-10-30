@@ -20,8 +20,9 @@ One Foundry agent serves several people, and each person may read different thin
 8. [Implementation notes](#8-implementation-notes)
 9. [Preview features and fallbacks](#9-preview-features-and-fallbacks)
 10. [Run the lab](#10-run-the-lab)
-11. [Teardown](#11-teardown)
-12. [Research](#12-research)
+11. [Demo runbook](#11-demo-runbook)
+12. [Teardown](#12-teardown)
+13. [Research](#13-research)
 
 ## 1. The requirement
 
@@ -185,12 +186,71 @@ For user B, use a private window, choose **Use another account**, type user B's 
 
 **`.env` keys.** You set `GNEWS_API_KEY`, and optionally `NEWS_MCP_RESOURCE_GROUP`, `NEWS_MCP_LOCATION` and `NEWS_TEST_USER_UPN` (see `.env.example`). 08-05c-01 writes `NEWS_MCP_RESOURCE_APP_ID`, `NEWS_MCP_RESOURCE_SP_ID`, `NEWS_DESK_CLIENT_APP_ID`, `NEWS_TEST_USER_UPN`, `NEWS_TEST_USER_ID`, `NEWS_TEST_USER_TAP`, `NEWS_AGENT_BLUEPRINT_CLIENT_ID`, `NEWS_CONNECTION_AUTH_TYPE` and `NEWS_CONNECTION_API_VERSION`; 08-05c-02 writes `NEWS_MCP_WRAPPER_URL` and `NEWS_SCIENCE_REVOKED_AT`.
 
-## 11. Teardown
+## 11. Demo runbook
+
+A demo of both tracks follows the notebooks in order, because 08-05c-02 ends by revoking user B's science role and 08-05c-03 shows what that revocation does. Plan for under an hour from an empty tenant to the end of Track B, with six device code sign-ins: user A and user B in each notebook.
+
+### Before the day
+
+- 05-02's gateway is deployed, `az login` works as a Global Administrator, and `GNEWS_API_KEY` is in `.env`.
+- The GNews free plan allows 100 requests a day and delays articles by 12 hours. Building and demoing both tracks uses about 20 requests; each question that returns articles uses one more.
+- The pass for user B lasts 8 hours, so create it on the day: 08-05c-01 Step 5 does that.
+
+### The run
+
+| Part | What to run | What to show |
+|---|---|---|
+| Identity | 08-05c-01, all of it | the two users and their app roles (Step 9), the agent's endpoint schemes (Step 7), the user B sign-in with `amr` `tap, mfa` (Step 6), each user calling the agent (Step 11) |
+| Track A | 08-05c-02 Steps 1 to 9; stop before Step 10 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7), the per-agent variant (Step 9) |
+| Revocation | 08-05c-02 Step 10 | user B now holds sports and health |
+| Track B | 08-05c-03, all of it | the API added to the gateway and the 401 without a token (Steps 1 and 2), the matrix (Step 4), your own questions, the denial at the gateway (Step 5), Track A after the revocation (Step 6) |
+
+The Container Apps deployment in 08-05c-02 takes about 6 minutes (environment, image build, app); the gateway deployment in 08-05c-03 takes under a minute.
+
+### Test cases and what to expect
+
+The model words its replies differently each time. What to check is which tools the agent listed and called, and whether articles or a denial came back; the notebooks print both.
+
+| # | Where | User | Request | Expected |
+|---|---|---|---|---|
+| 1 | Track A | A | Give me three business headlines | ten tools listed; `get_business_headlines` called; three business headlines |
+| 2 | Track A | B | Give me three business headlines | three tools listed (sports, science, health); no call; a reply that user B's access does not include business |
+| 3 | Track A | B | Give me three sports headlines | `get_sports_headlines` called; three sports headlines |
+| 4 | Track A, before Step 10 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
+| 5 | Track A, Step 7 | B | direct `tools/call` of `get_business_headlines` | `isError=True` and "Your access covers: sports, science, health. Do not retry other categories."; the wrapper logs `denied` and makes no upstream call |
+| 6 | Track A, Step 9 | `news-sports-agent` | Give me three business headlines | no call; the wrapper's log shows `idtyp=app` for the calls the agents did make |
+| 7 | Track B | A | Give me three business headlines | `search` and `top_headlines` listed; `top_headlines` called with `category: business`; three business headlines |
+| 8 | Track B | B | Give me three business headlines | HTTP 400 from the agent endpoint: "An error occurred invoking 'top_headlines': Your access covers: sports, health. Do not retry other categories." |
+| 9 | Track B | B | Give me three sports headlines | `top_headlines` called with `category: sports`; three sports headlines |
+| 10 | Track B, after Step 10 | B | Give me three science headlines | HTTP 400 with the same denial text |
+| 11 | Track B, Step 6 | B | Give me three science headlines, on the Track A version | no science tool listed and no call; Foundry may still hold a token from before the revocation, in which case science headlines come back |
+| 12 | Track B | B | Search for news about the Champions League | HTTP 400 with the denial text: `search` needs `News.Read.All` |
+
+After 08-05c-02 Step 10 the denial text for user B names only sports and health.
+
+### Your own questions
+
+08-05c-02 and 08-05c-03 each have a "Your own questions" cell after the matrix. Set `USER` to `'A'` or `'B'` and `QUESTION` to anything, and run it; it prints the tools the agent listed, the calls it made and the reply, or the HTTP 400 that Foundry returns when the gateway denies a call. Questions that show the difference between the tracks:
+
+- `What news tools do you have?` as A, then as B: ten tools and three on Track A, the same two for both on Track B.
+- `Give me three business headlines` as B: a polite refusal on Track A, an HTTP 400 on Track B.
+
+### If something goes wrong
+
+- **A sign-in cell stops with "That sign-in was not user B":** the browser offered the account it already had. Re-run the cell, open a private window, and choose **Use another account**.
+- **The pass has expired:** re-run 08-05c-01 Step 5 for a new one, then sign user B in again.
+- **A user's agent lists no tools after a fix to the server or gateway:** Foundry may still serve that user's earlier, empty list. Sign the user in again.
+
+### Running it twice
+
+The simplest way is the teardown in section 12 and a fresh build. To repeat the revocation without one, give user B the science role back by re-running 08-05c-01 Step 9, which adds any assignment that is missing. The agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one: 08-05c-02's cells then test Track B, and its notebook needs a new Track A version before its matrix means anything.
+
+## 12. Teardown
 
 The Cleanup section of [08-05c-01](08-05c-01-identity-and-agent.ipynb) removes everything the lab created, in order: the three agents and their agent identities, the four connections, the MCP API, backend and named value on the gateway, the Track A resource group, user B, and both app registrations with their service principals, consent grants and role assignments. Users and apps are then purged from the Entra recycle bin, and the lab's keys are removed from `.env`. 08-05c-02 and 08-05c-03 each have a smaller cleanup cell for their own track.
 
 The Temporary Access Pass method stays on: whether it is on is a tenant setting, and it may have been on before. The cleanup cell ends with a commented line that turns it off.
 
-## 12. Research
+## 13. Research
 
 The research behind the design, with sources: [docs/research/08-05c-mcp-access-control/](../../docs/research/08-05c-mcp-access-control/README.md).

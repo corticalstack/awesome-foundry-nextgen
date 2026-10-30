@@ -125,6 +125,16 @@ def _output_text(response):
                    for part in msg['content'] if part['type'] == 'output_text')
 
 
+def reply(response):
+    """What the user sees: the agent's text, or the error Foundry answered with instead (see ask)."""
+    if 'failed_call' in response:
+        call = response['failed_call']
+        return f"HTTP 400 from the agent endpoint: an error occurred invoking '{call['name']}': {call['error']}"
+    if 'rejected_tool' in response:
+        return f"HTTP 400 from the agent endpoint: tool {response['rejected_tool']} is not on the MCP server"
+    return _output_text(response)
+
+
 def listed_tools(response):
     return [tool['name'] for item in _items(response, 'mcp_list_tools') for tool in item['tools']]
 

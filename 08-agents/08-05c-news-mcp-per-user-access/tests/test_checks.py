@@ -146,6 +146,20 @@ def test_failed_call_with_the_denial_is_denied():
     assert checks.called_tools(response) == [('top_headlines', {})]
 
 
+def test_reply_is_the_agent_text():
+    assert checks.reply(_response(_message('1. Final tonight'))) == '1. Final tonight'
+
+
+def test_reply_shows_the_error_for_a_failed_call():
+    response = {'output': [], 'failed_call': {'name': 'top_headlines', 'error': DENIAL_B}}
+    assert checks.reply(response) == f"HTTP 400 from the agent endpoint: an error occurred invoking 'top_headlines': {DENIAL_B}"
+
+
+def test_reply_shows_the_error_for_a_rejected_tool():
+    response = {'output': [], 'rejected_tool': 'get_business_headlines'}
+    assert checks.reply(response) == 'HTTP 400 from the agent endpoint: tool get_business_headlines is not on the MCP server'
+
+
 def test_rejected_call_to_another_tool_is_unknown():
     assert checks.classify({'output': [], 'rejected_tool': 'get_world_headlines'}, USER_B_ROLES, 'business') == 'unknown'
 
