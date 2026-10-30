@@ -119,6 +119,30 @@ def test_preauthorization_keeps_the_scope_and_token_version():
     assert api['requestedAccessTokenVersion'] == 2
 
 
+# ── Consent ──────────────────────────────────────────────────────────────────
+
+
+def test_permission_grant_body():
+    assert ident.permission_grant_body('client-sp-id', 'resource-sp-id', ['News.Read']) == {
+        'clientId': 'client-sp-id', 'consentType': 'AllPrincipals', 'resourceId': 'resource-sp-id', 'scope': 'News.Read'}
+
+
+def test_permission_grant_joins_scopes_with_spaces():
+    body = ident.permission_grant_body('c', 'r', list(ident.GRAPH_SCOPE_IDS))
+    assert body['scope'] == 'User.Read Policy.ReadWrite.AuthenticationMethod UserAuthenticationMethod.ReadWrite.All'
+
+
+def test_blueprint_permissions_body():
+    assert ident.blueprint_permissions_body(SUFFIX, RESOURCE_APP_ID) == {
+        'requiredResourceAccess': [
+            {'resourceAppId': RESOURCE_APP_ID, 'resourceAccess': [{'id': ident.scope_id(SUFFIX), 'type': 'Scope'}]}],
+        'inheritablePermissions': [
+            {'resourceAppId': RESOURCE_APP_ID,
+             'inheritableScopes': {'@odata.type': '#microsoft.graph.allAllowedScopes', 'kind': 'allAllowed'}}],
+    }
+    assert ident.BLUEPRINT_API_VERSION == '2025-05-01'
+
+
 # ── Agent endpoint authorization schemes ─────────────────────────────────────
 
 

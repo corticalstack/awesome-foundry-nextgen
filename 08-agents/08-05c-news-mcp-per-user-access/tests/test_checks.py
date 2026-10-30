@@ -49,6 +49,14 @@ def test_openai_base_url():
         f'{endpoint}/agents/news-desk-agent/endpoint/protocols/openai')
 
 
+def test_agent_client_sends_the_api_version():
+    """Without api-version the agent endpoint answers 400 'Missing required query parameter'."""
+    endpoint = 'https://aif-core-abc123.services.ai.azure.com/api/projects/project-admin-abc123'
+    client = checks.agent_client(object(), endpoint, 'news-desk-agent', 'blueprint-client-id')
+    assert str(client.base_url) == f'{endpoint}/agents/news-desk-agent/endpoint/protocols/openai/'
+    assert client.default_query == {'api-version': 'v1'}
+
+
 # ── Classifier ───────────────────────────────────────────────────────────────
 
 

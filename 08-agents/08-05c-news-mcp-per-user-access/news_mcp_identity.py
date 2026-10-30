@@ -19,6 +19,7 @@ GRAPH_SCOPE_IDS = {
 
 AGENT_API_VERSION = 'v1'
 ENDPOINT_PATCH_CONTENT_TYPE = 'application/merge-patch+json'
+BLUEPRINT_API_VERSION = '2025-05-01'
 
 # No published contract covers a delegated RemoteTool connection, so 08-05c-01 tries these
 # in order and keeps the first that ARM accepts.
@@ -99,6 +100,25 @@ def preauthorization_patch(suffix, blueprint_client_id):
         **_resource_api(suffix),
         'preAuthorizedApplications': [{'appId': blueprint_client_id, 'delegatedPermissionIds': [scope_id(suffix)]}],
     }}
+
+
+def permission_grant_body(client_sp_id, resource_sp_id, scopes):
+    """POST /oauth2PermissionGrants: admin consent, for every user, to delegated scopes."""
+    return {'clientId': client_sp_id, 'consentType': 'AllPrincipals', 'resourceId': resource_sp_id,
+            'scope': ' '.join(scopes)}
+
+
+def blueprint_permissions_body(suffix, resource_app_id):
+    """PATCH {project}/managedAgentIdentityBlueprints/{name}: declare News.Read on the blueprint and
+    let delegated scopes granted on the blueprint principal flow to its agent identities.
+    Declaring is not consent; Step 8 grants it."""
+    return {
+        'requiredResourceAccess': [
+            {'resourceAppId': resource_app_id, 'resourceAccess': [{'id': scope_id(suffix), 'type': 'Scope'}]}],
+        'inheritablePermissions': [
+            {'resourceAppId': resource_app_id,
+             'inheritableScopes': {'@odata.type': '#microsoft.graph.allAllowedScopes', 'kind': 'allAllowed'}}],
+    }
 
 
 def role_assignment_body(suffix, principal_id, resource_sp_id, role):

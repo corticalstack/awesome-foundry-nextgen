@@ -69,9 +69,11 @@ def user_credential(tenant_id, client_id, upn=None, device_code=False):
 
 
 def agent_client(credential, project_endpoint, agent, blueprint_client_id):
-    """OpenAI client for the agent endpoint, authorized by the AgentBlueprint scheme."""
+    """OpenAI client for the agent endpoint, authorized by the AgentBlueprint scheme. The endpoint
+    requires api-version=v1, which AIProjectClient.get_openai_client also sends."""
     provider = get_bearer_token_provider(credential, f'api://{blueprint_client_id}/access_agent')
-    return OpenAI(base_url=openai_base_url(project_endpoint, agent), api_key=provider)
+    return OpenAI(base_url=openai_base_url(project_endpoint, agent), api_key=provider,
+                  default_query={'api-version': 'v1'})
 
 
 # ── Reading a response (response.model_dump()) ───────────────────────────────
