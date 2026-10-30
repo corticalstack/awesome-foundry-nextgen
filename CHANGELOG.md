@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Lab 08-05c, per-user access to an MCP server you do not own ([#54](https://github.com/corticalstack/awesome-foundry-nextgen/issues/54)). One `news-desk-agent` serves two users whose news categories are Entra app roles; Foundry calls the GNews MCP server on each user's behalf (`AgentOnBehalfOfUser` under the `AgentBlueprint` endpoint scheme), and an enforcement point reads the user's roles from the token. Track A is a FastMCP wrapper on Container Apps that filters `tools/list` per user; Track B is an MCP pass-through API with an inbound policy on the core APIM gateway. Includes the per-agent variant with app-only agent identity tokens, a measured role revocation, two diagrams in `docs/diagrams/` and the research write-up in `docs/research/08-05c-mcp-access-control/`.
+- The MCP guide (08-05-00, section 6) lists Microsoft Entra user delegation as a sixth authentication method.
+
 ## [0.10.0] - 2026-10-07
 
 Every dependency on its current release, and automated checks that catch the next breaking one ([#31](https://github.com/corticalstack/awesome-foundry-nextgen/issues/31)). The core Foundry SDKs move to Agent Framework 1.20, `azure-ai-projects` 2.7 and `openai` 3; the hosted-agent containers move to the current Copilot SDK, Agent Framework and AgentServer releases; the fine-tune lab moves to torch 2.14. A weekly canary tests the newest releases offline, and a weekly live run executes the notebooks against Azure. Three labs were broken on `main` and are fixed: the lab 11 knowledge bases, the 08-05-03 tool catalog and the lab 15 GPU jobs.
