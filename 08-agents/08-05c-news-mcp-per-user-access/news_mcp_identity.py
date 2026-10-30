@@ -26,7 +26,15 @@ BLUEPRINT_API_VERSION = '2025-05-01'
 CONNECTION_AUTH_TYPES = ('AgentOnBehalfOfUser', 'AgentUserImpersonation')
 CONNECTION_API_VERSIONS = ('2025-04-01-preview', '2025-10-01-preview', '2026-09-15-preview')
 
-AGENTS = ('news-desk-agent', 'news-all-agent', 'news-sports-agent')
+AGENT_NAME = 'news-desk-agent'
+AGENT_INSTRUCTIONS = (
+    'You are a news desk assistant. Answer requests for headlines with the news tools and keep answers short. '
+    'Ask the tools for English articles (lang en) unless the user names another language. '
+    'If a news tool call is denied, tell the user exactly what the tool returned and do not try another '
+    'category or tool for that request. If no news tool covers the category the user asks for, say that '
+    'their access does not include it and do not fetch another category instead.'
+)
+AGENTS = (AGENT_NAME, 'news-all-agent', 'news-sports-agent')
 CONNECTIONS = ('news-mcp-wrapper', 'news-mcp-apim', 'news-mcp-wrapper-all', 'news-mcp-wrapper-sports')
 
 
@@ -137,6 +145,12 @@ def endpoint_schemes_body(client_app_id):
         {'type': 'AgentBlueprint', 'isolation_key_source': {'kind': 'Entra'},
          'token_validation_rules': {'allowed_clients': [client_app_id]}},
     ]}}
+
+
+def mcp_tool(server_label, server_url, connection_id):
+    """An agent's MCP tool. The connection supplies the authentication; no approval step."""
+    return {'type': 'mcp', 'server_label': server_label, 'server_url': server_url,
+            'project_connection_id': connection_id, 'require_approval': 'never'}
 
 
 # ── Project connections (ARM) ────────────────────────────────────────────────

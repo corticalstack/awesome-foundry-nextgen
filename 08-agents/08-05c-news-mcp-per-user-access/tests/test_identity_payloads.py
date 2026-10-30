@@ -160,6 +160,23 @@ def test_endpoint_patch_content_type():
     assert ident.AGENT_API_VERSION == 'v1'
 
 
+# ── Agent ────────────────────────────────────────────────────────────────────
+
+
+def test_agent_instructions_forbid_retrying_another_category():
+    assert ident.AGENT_NAME == 'news-desk-agent'
+    assert 'exactly what the tool returned' in ident.AGENT_INSTRUCTIONS
+    assert 'do not try another category' in ident.AGENT_INSTRUCTIONS
+    assert 'lang en' in ident.AGENT_INSTRUCTIONS  # GNews returns every language unless asked
+    assert 'do not fetch another category instead' in ident.AGENT_INSTRUCTIONS  # Track A hides tools
+
+
+def test_mcp_tool():
+    assert ident.mcp_tool('news_mcp_wrapper', 'https://ca.example/mcp', '/subscriptions/x/connections/news-mcp-wrapper') == {
+        'type': 'mcp', 'server_label': 'news_mcp_wrapper', 'server_url': 'https://ca.example/mcp',
+        'project_connection_id': '/subscriptions/x/connections/news-mcp-wrapper', 'require_approval': 'never'}
+
+
 # ── Connections ──────────────────────────────────────────────────────────────
 
 
