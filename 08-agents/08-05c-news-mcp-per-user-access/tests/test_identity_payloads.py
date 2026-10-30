@@ -16,7 +16,7 @@ RESOURCE_APP_ID = '11111111-1111-1111-1111-111111111111'
 CLIENT_APP_ID = '22222222-2222-2222-2222-222222222222'
 BLUEPRINT_CLIENT_ID = '33333333-3333-3333-3333-333333333333'
 ACCESS_AGENT_SCOPE_ID = '44444444-4444-4444-4444-444444444444'
-TARGET = 'https://apim-foundry-abc123.azure-api.net/news-mcp'
+TARGET = 'https://apim-foundry-abc123.azure-api.net/news-mcp/mcp'
 
 GRAPH_APP_ID = '00000003-0000-0000-c000-000000000000'
 POLICY_RW_AUTH_METHOD = '7e823077-d88e-468f-a337-e18f1f0e6c7c'
@@ -171,6 +171,23 @@ def test_agent_instructions_forbid_retrying_another_category():
     assert 'do not fetch another category instead' in ident.AGENT_INSTRUCTIONS  # Track A hides tools
 
 
+def test_agent_reference():
+    """extra_body that runs one version through the agent endpoint, which otherwise runs the latest."""
+    assert ident.agent_reference('news-desk-agent', 4) == {
+        'agent_reference': {'type': 'agent_reference', 'name': 'news-desk-agent', 'version': '4'}}
+
+
+def _version(number, *labels):
+    return {'version': str(number), 'definition': {'tools': [{'type': 'mcp', 'server_label': label} for label in labels]}}
+
+
+def test_latest_version_with_tool():
+    versions = [_version(5, 'news_mcp_apim'), _version(4, 'news_mcp_wrapper'), _version(3, 'news_mcp_wrapper'), _version(1)]
+    assert ident.latest_version_with_tool(versions, 'news_mcp_wrapper') == '4'
+    assert ident.latest_version_with_tool(versions, 'news_mcp_apim') == '5'
+    assert ident.latest_version_with_tool([_version(1)], 'news_mcp_wrapper') is None
+
+
 def test_mcp_tool():
     assert ident.mcp_tool('news_mcp_wrapper', 'https://ca.example/mcp', '/subscriptions/x/connections/news-mcp-wrapper') == {
         'type': 'mcp', 'server_label': 'news_mcp_wrapper', 'server_url': 'https://ca.example/mcp',
@@ -270,7 +287,7 @@ NAMED = {
     ('agent', 'news-desk-agent'), ('agent', 'news-all-agent'), ('agent', 'news-sports-agent'),
     ('connection', 'news-mcp-wrapper'), ('connection', 'news-mcp-apim'),
     ('connection', 'news-mcp-wrapper-all'), ('connection', 'news-mcp-wrapper-sports'),
-    ('apim-api', 'news-mcp'), ('apim-named-value', 'gnews-api-key'),
+    ('apim-api', 'news-mcp'), ('apim-backend', 'gnews-mcp'), ('apim-named-value', 'gnews-api-key'),
     ('resource-group', 'rg-foundry-news-mcp-abc123'),
 }
 
@@ -288,6 +305,7 @@ def test_teardown_order():
     # Agents reference the connections; the API policy references the named value.
     assert max(i for i, k in enumerate(kinds) if k == 'agent') < min(i for i, k in enumerate(kinds) if k == 'connection')
     assert pairs.index(('apim-api', 'news-mcp')) < pairs.index(('apim-named-value', 'gnews-api-key'))
+    assert pairs.index(('apim-api', 'news-mcp')) < pairs.index(('apim-backend', 'gnews-mcp'))  # the API refers to it
 
 
 def test_teardown_says_role_assignments_go_with_the_resource_app():

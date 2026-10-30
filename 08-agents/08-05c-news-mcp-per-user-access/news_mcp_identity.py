@@ -147,6 +147,19 @@ def endpoint_schemes_body(client_app_id):
     ]}}
 
 
+def agent_reference(name, version):
+    """extra_body that runs one version of an agent. Without it the agent endpoint runs the latest."""
+    return {'agent_reference': {'type': 'agent_reference', 'name': name, 'version': str(version)}}
+
+
+def latest_version_with_tool(versions, server_label):
+    """The newest version number, as a string, among agent versions (as dicts) that carry an MCP
+    tool with this server_label; None if none does."""
+    numbers = [int(v['version']) for v in versions
+               if any(t.get('server_label') == server_label for t in v['definition'].get('tools', []))]
+    return str(max(numbers)) if numbers else None
+
+
 def mcp_tool(server_label, server_url, connection_id):
     """An agent's MCP tool. The connection supplies the authentication; no approval step."""
     return {'type': 'mcp', 'server_label': server_label, 'server_url': server_url,
@@ -222,6 +235,7 @@ def teardown_inventory(env, suffix):
     items += [(f'project connection {name}', 'connection', name) for name in CONNECTIONS]
     items += [
         ('MCP API news-mcp on apim-foundry (its policy goes with it)', 'apim-api', 'news-mcp'),
+        ('backend gnews-mcp on apim-foundry', 'apim-backend', 'gnews-mcp'),
         ('named value gnews-api-key on apim-foundry', 'apim-named-value', 'gnews-api-key'),
     ]
     rg = env.get('NEWS_MCP_RESOURCE_GROUP') or f'rg-foundry-news-mcp-{suffix}'
