@@ -45,11 +45,12 @@ jobs:
       - name: Every notebook is in the run manifest
         run: python3 scripts/run_notebooks.py --check
 
-      # One pytest run per suite. The three suites also pass together in a single run.
+      # One pytest run per suite. The four suites also pass together in a single run.
       - name: Unit tests
         run: |
           for suite in 08-agents/08-05-contoso-pmo-mcp/tests \
                        08-agents/08-05b-contoso-private-banking-mcp/tests \
+                       08-agents/08-05c-news-mcp-per-user-access/tests \
                        11-foundry-iq-multi-agent/tests; do
             uv run --frozen pytest -q "$suite"
           done
