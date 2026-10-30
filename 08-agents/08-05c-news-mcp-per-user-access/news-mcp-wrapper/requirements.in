@@ -1,0 +1,4 @@
+# The 3.4 line: the wrapper's use of auth=, middleware, JWTVerifier and stateless HTTP
+# was checked against the 3.4.11 source. FastMCP 4 is not; see 08-05c-00.
+fastmcp>=3.4,<4
+uvicorn

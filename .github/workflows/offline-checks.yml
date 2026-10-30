@@ -77,6 +77,14 @@ jobs:
           - name: 08-11
             context: 08-agents/08-11-hosted-claude-agent-sdk-agent/src/claude-agent-sdk-invocations
             app: /app/user_agent
+          - name: 08-05c
+            context: 08-agents/08-05c-news-mcp-per-user-access/news-mcp-wrapper
+            app: /app
+            # Test files that need only the image's packages. The lab's other tests load
+            # modules from outside the image and run in the root-env job.
+            tests: >-
+              08-agents/08-05c-news-mcp-per-user-access/tests/test_authz.py
+              08-agents/08-05c-news-mcp-per-user-access/tests/test_wrapper.py
     steps:
       - uses: actions/checkout@v7
 
@@ -88,6 +96,15 @@ jobs:
           docker run --rm --platform linux/amd64
           -v "$PWD/scripts:/ci:ro" --entrypoint python
           lab-image /ci/check_imports.py "${{ matrix.app }}"
+
+      # NEWS_MCP_WRAPPER_DIR tells the 08-05c tests where the image keeps the wrapper code.
+      - name: Tests inside the image
+        if: matrix.tests
+        run: >-
+          docker run --rm --platform linux/amd64
+          -v "$PWD:/repo:ro" -w /repo -e NEWS_MCP_WRAPPER_DIR="${{ matrix.app }}"
+          --entrypoint sh lab-image -c
+          "pip install -q pytest && python -m pytest -q -p no:cacheprovider ${{ matrix.tests }}"
 
   function-apps:
     name: Function app ${{ matrix.name }}
