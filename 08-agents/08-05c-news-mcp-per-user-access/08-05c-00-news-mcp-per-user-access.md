@@ -172,6 +172,7 @@ The wrapper reads `NEWS_MCP_OID_ROLES`, a JSON map from `oid` to app roles, and 
 | [08-05c-01](08-05c-01-identity-and-agent.ipynb) | Apps, user B and their pass, the agent and its endpoint, consent, app roles, the `news-mcp-apim` connection |
 | [08-05c-02](08-05c-02-wrapper-container-app.ipynb) | Track A: deploys the wrapper, runs the matrix, the per-agent variant, and revokes `News.Read.Science` |
 | [08-05c-03](08-05c-03-apim-passthrough.ipynb) | Track B: adds the MCP API to the gateway, runs the matrix, and checks whether the revocation reached Track A |
+| [08-05c-04](08-05c-04-reset-for-another-run.ipynb) | Optional, after 08-05c-03: gives user B the science role back, and a new pass if needed, for another run of 08-05c-02 and 08-05c-03 |
 
 Run 08-05c-03 within the hour after 08-05c-02, so its last step measures a short delay.
 
@@ -238,12 +239,12 @@ After 08-05c-02 Step 10 the denial text for user B names only sports and health.
 ### If something goes wrong
 
 - **A sign-in cell stops with "That sign-in was not user B":** the browser offered the account it already had. Re-run the cell, open a private window, and choose **Use another account**.
-- **The pass has expired:** re-run 08-05c-01 Step 5 for a new one, then sign user B in again.
+- **The pass has expired:** re-run 08-05c-01 Step 5, or run 08-05c-04 Step 2 with `NEW_PASS = True`, for a new one, then sign user B in again.
 - **A user's agent lists no tools after a fix to the server or gateway:** Foundry may still serve that user's earlier, empty list. Sign the user in again.
 
 ### Running it twice
 
-The simplest way is the teardown in section 12 and a fresh build. To repeat the revocation without one, give user B the science role back by re-running 08-05c-01 Step 9, which adds any assignment that is missing. The agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one: 08-05c-02's cells then test Track B, and its notebook needs a new Track A version before its matrix means anything.
+The simplest way is the teardown in section 12 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 10. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
 
 ## 12. Teardown
 
