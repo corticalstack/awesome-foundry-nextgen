@@ -101,6 +101,22 @@ The right-hand column was observed on 2026-10-30 in the wrapper's log (08-05c-02
 
 Foundry's MCP client calls itself `ToolServer` and speaks protocol `2025-11-25`.
 
+### App registrations and enterprise apps
+
+Entra keeps two objects for an app. The **app registration** (application object) is the app's definition: its app id, the scopes and app roles it exposes, the permissions it asks for, redirect URIs and credentials. The **enterprise app** (service principal) is the app's presence in a tenant: who holds which app role, admin consent grants, sign-in logs. "Resource app" is not a third object; it names an app that exposes an API other apps get tokens for.
+
+- **`news-mcp-{suffix}`, the resource app.**
+  - Its app registration defines the `News.Read` scope and the ten `News.Read.*` roles (the **App roles** and **Expose an API** pages).
+  - Its enterprise app holds the role assignments: user A has `News.Read.All`, user B has sports, science and health. 08-05c-01 Step 9 posts them to that service principal (`/servicePrincipals/{id}/appRoleAssignedTo`).
+  - So the assignments are under **Enterprise applications** > `news-mcp-{suffix}` > **Users and groups**, not on a user's **Assigned roles** page, which lists directory roles. The default Enterprise applications filter hides the app, because the notebook creates its service principal through Graph without the `WindowsAzureActiveDirectoryIntegratedApp` tag: clear the **Application type** filter, or open the app registration's **Managed application in local directory** link.
+  - When Entra issues a token for `news-mcp-{suffix}`, it sets `aud` to the app registration's client id and fills `roles` from the enterprise app's assignments.
+- **`news-desk-client-{suffix}`, the client app.**
+  - Its app registration says what it is (a public client with no secret) and which permissions it asks for (`access_agent`, `News.Read`, Graph).
+  - Its enterprise app holds the admin consent that lets users sign in without a consent prompt.
+- **The agent.**
+  - The blueprint has both objects: an application of type `agentIdentityBlueprint`, which defines `access_agent`, and its own service principal.
+  - The agent identity is a service principal only. It has no app registration and no credential; the blueprint signs in for it. Its `News.Read` consent grant (08-05c-01 Step 8) sits on that service principal.
+
 ### Consent
 
 The client app carries admin consent (`AllPrincipals` grants) for what the users sign in to: `access_agent` on the blueprint, `News.Read`, and Graph `User.Read`. For the downstream `News.Read` token in step 3, 08-05c-01 Step 8 sets four things:
