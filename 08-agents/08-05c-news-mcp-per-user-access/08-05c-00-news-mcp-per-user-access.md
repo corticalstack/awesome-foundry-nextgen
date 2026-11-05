@@ -58,26 +58,46 @@ Both tracks deny with the same text, which names what the user may read: "Your a
 
 ![Track B: the APIM policy as the enforcement point](../../docs/diagrams/08-05c-track-b-apim.png)
 
-1. The user signs in to the public client app `news-desk-client-{suffix}` with a device code and gets a token for the agent blueprint's `access_agent` scope.
-2. The client calls the agent's Responses endpoint, `{project endpoint}/agents/news-desk-agent/endpoint/protocols/openai?api-version=v1`, with that token. The endpoint's `AgentBlueprint` authorization scheme accepts it.
-3. Agent Service asks Entra ID, as the agent's identity, for a token for `api://news-mcp-{suffix}/News.Read` on behalf of the user. The `AgentOnBehalfOfUser` connection on the tool tells it to.
-4. Entra ID issues a delegated token that carries the user's app roles.
+1. The user signs in to the public client app `news-desk-client-{suffix}` with a device code and gets a token for the agent blueprint's `access_agent` scope. Foundry adds that delegated scope to the blueprint when the endpoint gets the `AgentBlueprint` scheme (08-05c-01 Step 7). A token for it lets an app call this one agent as the signed-in user.
+2. The client calls the agent's Responses endpoint, `{project endpoint}/agents/news-desk-agent/endpoint/protocols/openai?api-version=v1`, with that token. The endpoint's `AgentBlueprint` authorization scheme accepts it: the token is for this agent's blueprint, and Entra issued it to `news-desk-client`, the one app in the scheme's `allowed_clients`.
+3. Agent Service exchanges that token with Entra ID, as the agent's identity, for a token for `api://news-mcp-{suffix}/News.Read` on behalf of the user. The `AgentOnBehalfOfUser` connection on the tool tells it to. [The on-behalf-of exchange](#the-on-behalf-of-exchange) below explains how.
+4. Entra ID issues a delegated token that carries the user's app roles as they are at that moment.
 5. Agent Service sends the MCP requests (`initialize`, `tools/list`, `tools/call`) to the enforcement point with that token.
-6. The enforcement point validates the token (signature, issuer, tenant, audience, expiry) and maps `roles` to categories.
+6. The enforcement point validates the token and maps `roles` to categories. The token is a JWT, a set of claims signed by Entra ID: the enforcement point checks the signature with the tenant's published signing keys, then the issuer, tenant, audience and expiry, and reads the claims.
 7. Allowed calls go to GNews with the `X-Api-Key` the enforcement point holds. The user's token goes no further.
+
+### The on-behalf-of exchange
+
+Steps 3 and 4 are the OAuth 2.0 on-behalf-of (OBO) flow. Agent Service trades the token the user sent for a new one addressed to the news server, still about the same user.
+
+**Why Foundry exchanges the token**
+
+- **The user's token is for the agent.** Its audience is the agent blueprint, so the news server would reject it, and a server that received it could replay it against the agent.
+- **The agent's own token is the same for every caller.** An app-only token names the agent, not the user, so the server could not tell user A from user B. The per-agent variant in [section 5](#5-the-per-agent-variant) uses that token on purpose.
+- **The exchanged token names both.** It carries the user (`oid`, `roles`) and the agent acting for them (`azp`), and it is valid for one API and one scope.
+
+**How it works**
+
+Microsoft Entra Agent ID documents the protocol; this lab observed only the tokens at each end.
+
+1. **Agent Service signs in as the agent.** An agent identity has no credential of its own. Agent Service presents the blueprint's federated credential, which Foundry provisions and which Foundry projects, agent code and the project managed identity never hold, and Entra issues a token for the agent identity ([agent identity in Foundry](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-identity), [the Entra protocol](https://learn.microsoft.com/en-us/entra/agent-id/agent-autonomous-app-oauth-flow)).
+2. **It sends the on-behalf-of request.** A `jwt-bearer` grant to Entra's token endpoint: the user's token as the `assertion`, the agent identity as the client with the token from step 1 as its `client_assertion`, and `api://news-mcp-{suffix}/News.Read` as the scope ([on-behalf-of with an agent identity](https://learn.microsoft.com/en-us/entra/agent-id/sidecar-local-development)).
+3. **Entra checks** the user's token, and that the agent identity may act for users on `News.Read`: the four settings under [Consent](#consent) below. Conditional Access for an on-behalf-of request targets the user ([Conditional Access for agents](https://learn.microsoft.com/en-us/entra/identity/conditional-access/agent-id)).
+4. **Entra issues the token** with the user's app role assignments, as they are now, in `roles`.
+5. **Agent Service reuses the token** for later MCP requests until it expires, so a role change applies at the next exchange. [Section 6](#6-revoking-a-category) measures how long that took.
 
 ### The token the enforcement point receives
 
-Observed on 2026-10-30, from the wrapper's log in 08-05c-02 Step 5:
+The right-hand column was observed on 2026-10-30 in the wrapper's log (08-05c-02 Step 5). The notebooks do not decode the user's token, so the left-hand column gives what the [access token claims reference](https://learn.microsoft.com/en-us/entra/identity-platform/access-token-claims-reference) defines for a token the user gets through `news-desk-client`.
 
-| Claim | Value |
-|---|---|
-| `idtyp` | `user`: a delegated token |
-| `oid` | the user's object id |
-| `azp` | the client id of `news-desk-agent`'s agent identity, not the blueprint's and not the client app's |
-| `roles` | the user's app roles on `news-mcp-{suffix}` |
-| `scp` | `News.Read` |
-| `aud` | the client id of `news-mcp-{suffix}` (a v2 token) |
+| Claim | The user's token, to the agent (steps 1 and 2) | The exchanged token, to the enforcement point (steps 3 to 5) |
+|---|---|---|
+| `aud` | the agent blueprint | the client id of `news-mcp-{suffix}` (a v2 token) |
+| `scp` | `access_agent` | `News.Read` |
+| `azp` (`appid` in a v1 token) | the client id of `news-desk-client-{suffix}` | the client id of `news-desk-agent`'s agent identity, not the blueprint's and not the client app's |
+| `oid` | the user's object id | the user's object id, the same |
+| `roles` | none: the lab assigns no app roles on the blueprint | the user's app roles on `news-mcp-{suffix}` |
+| `idtyp` | not recorded | `user`: a delegated token |
 
 Foundry's MCP client calls itself `ToolServer` and speaks protocol `2025-11-25`.
 
