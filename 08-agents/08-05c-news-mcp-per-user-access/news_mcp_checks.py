@@ -49,14 +49,11 @@ def prompt(category):
     return f'Give me three {category} headlines'
 
 
-FALLBACK_CALLS = 2  # one call each through news-all-agent and news-sports-agent
-
-
 def gnews_budget():
     """Upper bound on GNews requests for one run of 08-05c-02 and 08-05c-03. The free plan
     allows 100 a day. A denied call never reaches GNews."""
     article_cases = sum(c.expected == 'articles' for track in ('wrapper', 'apim') for c in base_cases(track))
-    return article_cases + 1 + FALLBACK_CALLS + 1  # + science on Track A, + the Track A re-check
+    return article_cases + 1 + 1  # + science on Track A, + the Track A re-check
 
 
 # ── Calling the agent as a user ──────────────────────────────────────────────

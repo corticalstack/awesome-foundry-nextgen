@@ -14,15 +14,14 @@ One Foundry agent serves several people, and each person may read different thin
 2. [Why the agent and the vendor server cannot enforce it](#2-why-the-agent-and-the-vendor-server-cannot-enforce-it)
 3. [Two places to enforce it](#3-two-places-to-enforce-it)
 4. [How a request carries the user](#4-how-a-request-carries-the-user)
-5. [The per-agent variant](#5-the-per-agent-variant)
-6. [Revoking a category](#6-revoking-a-category)
-7. [What the live runs showed](#7-what-the-live-runs-showed)
-8. [Implementation notes](#8-implementation-notes)
-9. [Preview features and fallbacks](#9-preview-features-and-fallbacks)
-10. [Run the lab](#10-run-the-lab)
-11. [Demo runbook](#11-demo-runbook)
-12. [Teardown](#12-teardown)
-13. [Research](#13-research)
+5. [Revoking a category](#5-revoking-a-category)
+6. [What the live runs showed](#6-what-the-live-runs-showed)
+7. [Implementation notes](#7-implementation-notes)
+8. [Preview features and fallbacks](#8-preview-features-and-fallbacks)
+9. [Run the lab](#9-run-the-lab)
+10. [Demo runbook](#10-demo-runbook)
+11. [Teardown](#11-teardown)
+12. [Research](#12-research)
 
 ## 1. The requirement
 
@@ -34,7 +33,7 @@ One Foundry agent serves several people, and each person may read different thin
 
 - **`allowed_tools` restricts the agent, not the user.** It is part of the agent definition, the same for every caller. And GNews's `top_headlines` covers all nine categories through an argument, so no list of tool names can separate business from sports.
 - **The vendor server knows one key.** Every request with that key may read every category.
-- **Instructions are not a control.** The model follows them most of the time; section 7 shows two ways it did not.
+- **Instructions are not a control.** The model follows them most of the time; section 6 shows two ways it did not.
 
 So the check sits between Foundry and GNews, where each request carries both the user's identity and the category being asked for.
 
@@ -73,7 +72,7 @@ Steps 3 and 4 are the OAuth 2.0 on-behalf-of (OBO) flow. Agent Service trades th
 **Why Foundry exchanges the token**
 
 - **The user's token is for the agent.** Its audience is the agent blueprint, so the news server would reject it, and a server that received it could replay it against the agent.
-- **The agent's own token is the same for every caller.** An app-only token names the agent, not the user, so the server could not tell user A from user B. The per-agent variant in [section 5](#5-the-per-agent-variant) uses that token on purpose.
+- **The agent's own token is the same for every caller.** An app-only token names the agent, not the user, so the server could not tell user A from user B.
 - **The exchanged token names both.** It carries the user (`oid`, `roles`) and the agent acting for them (`azp`), and it is valid for one API and one scope.
 
 **How it works**
@@ -84,7 +83,7 @@ Microsoft Entra Agent ID documents the protocol; this lab observed only the toke
 2. **It sends the on-behalf-of request.** A `jwt-bearer` grant to Entra's token endpoint: the user's token as the `assertion`, the agent identity as the client with the token from step 1 as its `client_assertion`, and `api://news-mcp-{suffix}/News.Read` as the scope ([on-behalf-of with an agent identity](https://learn.microsoft.com/en-us/entra/agent-id/sidecar-local-development)).
 3. **Entra checks** the user's token, and that the agent identity may act for users on `News.Read`: the four settings under [Consent](#consent) below. Conditional Access for an on-behalf-of request targets the user ([Conditional Access for agents](https://learn.microsoft.com/en-us/entra/identity/conditional-access/agent-id)).
 4. **Entra issues the token** with the user's app role assignments, as they are now, in `roles`.
-5. **Agent Service reuses the token** for later MCP requests until it expires, so a role change applies at the next exchange. [Section 6](#6-revoking-a-category) measures how long that took.
+5. **Agent Service reuses the token** for later MCP requests until it expires, so a role change applies at the next exchange. [Section 5](#5-revoking-a-category) measures how long that took.
 
 ### The token the enforcement point receives
 
@@ -146,20 +145,16 @@ The MCP guide ([08-05-00, section 6](../08-05-contoso-pmo-mcp/08-05-00-mcp-guide
 
 The published ARM schema lists neither `AgentOnBehalfOfUser` nor `scopes`; ARM accepted this JSON at `2025-04-01-preview`. The agent's endpoint keeps the `AzureRbac` scheme beside `AgentBlueprint`. A Foundry token from `az login` is the signed-in user's own token, and Foundry exchanged it on that user's behalf in the same way (08-05c-02 Step 8), so keeping the scheme opens no way around the per-user rules.
 
-## 5. The per-agent variant
+## 5. Revoking a category
 
-When no test user can be created, or when entitlements belong to agents rather than people, each agent gets its own app roles. 08-05c-02 Step 9 creates `news-all-agent` with `News.Read.All` and `news-sports-agent` with `News.Read.Sports`, assigned to their agent identities. Their connections use `AgenticIdentityToken` with the audience `api://news-mcp-{suffix}`, so the wrapper receives an app-only token: `idtyp=app`, `oid` the agent identity's principal, `azp` its client id, its roles, no user. The wrapper code does not change, and neither do the outcomes: the sports agent asking for business finds no business tool.
-
-## 6. Revoking a category
-
-08-05c-02 Step 10 removes `News.Read.Science` from user B and records the time; 08-05c-03 measures the effect on both tracks.
+08-05c-02 Step 9 removes `News.Read.Science` from user B and records the time; 08-05c-03 measures the effect on both tracks.
 
 - **Track B:** `news-mcp-apim` had never fetched a token for user B, so the token Foundry obtained carried the new roles. Science was denied 13 minutes after the revocation.
 - **Track A:** Foundry had called the wrapper for user B 3 seconds before the revocation. Thirteen minutes later the wrapper received a token with sports and health only, so science was no longer offered. That held for a user token issued before the revocation too.
 
 A role change applies when Foundry obtains its next downstream token. Entra access tokens can live 60 to 90 minutes, and this run does not show how long Foundry may keep one, so do not count on an immediate effect. For an immediate cut, refuse the user at the enforcement point (for example by `oid`) or block their sign-in.
 
-## 7. What the live runs showed
+## 6. What the live runs showed
 
 - **The device code page reuses the browser's account.** Twice the admin account was picked when user B was meant, and the "user B" results were the admin's. Every sign-in cell now prints the account it expects and compares the token's `oid`.
 - **The model fills gaps.** With the business tool hidden from user B, one run fetched science headlines instead; another guessed the name `get_business_headlines`, which Foundry rejected with HTTP 400 "Tool get_business_headlines not found on remote server". The instructions now forbid fetching another category, and the checks fail a `substituted` outcome.
@@ -169,36 +164,35 @@ A role change applies when Foundry obtains its next downstream token. Entra acce
 - **The agent endpoint** needs `api-version=v1`, and runs a specific version when the request body carries `agent_reference` with a `version`.
 - **GNews** keeps an MCP session per client, returns every language unless asked for one (the instructions ask for `lang en`), and delays articles by 12 hours on the free plan.
 
-## 8. Implementation notes
+## 7. Implementation notes
 
 - **FastMCP is pinned to `>=3.4,<4`** (3.4.11). FastMCP 4 is a new major release. In 3.4.11, `auth=` on a tool hides it from `tools/list` and makes a direct call fail as "Unknown tool", which a model reads as a server fault and retries around. The wrapper's middleware filters `tools/list` and answers any other call with the denial text; `auth=` stays on each tool as a second layer that calls the same predicate.
 - **`MCP-Protocol-Version` is logged.** The wrapper records the version Foundry asks for at `initialize` and the header on each `tools/call`, so a change in Foundry's MCP client shows in the logs before it shows as a failure.
 - **The wrapper runs stateless** (`stateless_http=True`), so it needs no session affinity across replicas, and keeps one replica warm to avoid a cold start inside Foundry's 100-second tool timeout.
 - **The policy reads the request body** with `preserveContent: true` and never the response body. Allowed calls returned articles, so the body still reached GNews.
 
-## 9. Preview features and fallbacks
+## 8. Preview features and fallbacks
 
 User delegation (`AgentOnBehalfOfUser`), the `AgentBlueprint` endpoint scheme and agent identities are in preview. Shapes and behaviour may change; the notebooks record what they saw, with dates.
 
 ### If the connection API refuses
 
-08-05c-01 Step 10 tries the Learn JSON at three ARM api-versions, then `AgentUserImpersonation`, and keeps the first one ARM accepts. If none is accepted, two routes remain:
+08-05c-01 Step 10 tries the Learn JSON at three ARM api-versions, then `AgentUserImpersonation`, and keeps the first one ARM accepts. If none is accepted, one route remains:
 
 - **OAuth identity passthrough** (`OAuth2` connection). Each user follows an `oauth_consent_request` link once. The server sees the user but not the agent, and the connection holds the OAuth client's settings.
-- **The per-agent variant** (section 5), with entitlements on agents instead of users.
 
 ### If the token carries no roles
 
 The wrapper reads `NEWS_MCP_OID_ROLES`, a JSON map from `oid` to app roles, and uses it when a token has no `roles` claim. Build it from the Graph assignments on `news-mcp-{suffix}` and set it on the container app.
 
-## 10. Run the lab
+## 9. Run the lab
 
 **Prerequisites**
 
 1. `uv sync` from the repository root, and the `.venv` kernel.
 2. [05-02](../../05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb) deployed `aif-core-{suffix}`, `project-admin-{suffix}` and `apim-foundry-{suffix}`.
 3. `az login` as a **Global Administrator** of a tenant you are allowed to change. 08-05c-01 registers two apps, creates a user, grants tenant-wide consent and may turn on the Temporary Access Pass method.
-4. A free GNews key from [gnews.io](https://gnews.io) (100 requests a day) as `GNEWS_API_KEY` in `.env`. A full run makes about 10 GNews requests; denied calls make none.
+4. A free GNews key from [gnews.io](https://gnews.io) (100 requests a day) as `GNEWS_API_KEY` in `.env`. A full run makes about 8 GNews requests; denied calls make none.
 5. A private browser window for user B's sign-ins.
 
 **Notebooks, in order**
@@ -206,7 +200,7 @@ The wrapper reads `NEWS_MCP_OID_ROLES`, a JSON map from `oid` to app roles, and 
 | Notebook | What it does |
 |---|---|
 | [08-05c-01](08-05c-01-identity-and-agent.ipynb) | Apps, user B and their pass, the agent and its endpoint, consent, app roles, the `news-mcp-apim` connection |
-| [08-05c-02](08-05c-02-wrapper-container-app.ipynb) | Track A: deploys the wrapper, runs the matrix, the per-agent variant, and revokes `News.Read.Science` |
+| [08-05c-02](08-05c-02-wrapper-container-app.ipynb) | Track A: deploys the wrapper, runs the matrix, and revokes `News.Read.Science` |
 | [08-05c-03](08-05c-03-apim-passthrough.ipynb) | Track B: adds the MCP API to the gateway, runs the matrix, and checks whether the revocation reached Track A |
 | [08-05c-04](08-05c-04-reset-for-another-run.ipynb) | Optional, after 08-05c-03: gives user B the science role back, and a new pass if needed, for another run of 08-05c-02 and 08-05c-03 |
 
@@ -223,7 +217,7 @@ For user B, use a private window, choose **Use another account**, type user B's 
 
 **`.env` keys.** You set `GNEWS_API_KEY`, and optionally `NEWS_MCP_RESOURCE_GROUP`, `NEWS_MCP_LOCATION` and `NEWS_TEST_USER_UPN` (see `.env.example`). 08-05c-01 writes `NEWS_MCP_RESOURCE_APP_ID`, `NEWS_MCP_RESOURCE_SP_ID`, `NEWS_DESK_CLIENT_APP_ID`, `NEWS_TEST_USER_UPN`, `NEWS_TEST_USER_ID`, `NEWS_TEST_USER_TAP`, `NEWS_AGENT_BLUEPRINT_CLIENT_ID`, `NEWS_CONNECTION_AUTH_TYPE` and `NEWS_CONNECTION_API_VERSION`; 08-05c-02 writes `NEWS_MCP_WRAPPER_URL` and `NEWS_SCIENCE_REVOKED_AT`.
 
-## 11. Demo runbook
+## 10. Demo runbook
 
 A demo of both tracks follows the notebooks in order, because 08-05c-02 ends by revoking user B's science role and 08-05c-03 shows what that revocation does. Plan for under an hour from an empty tenant to the end of Track B, with six device code sign-ins: user A and user B in each notebook.
 
@@ -238,8 +232,8 @@ A demo of both tracks follows the notebooks in order, because 08-05c-02 ends by 
 | Part | What to run | What to show |
 |---|---|---|
 | Identity | 08-05c-01, all of it | the two users and their app roles (Step 9), the agent's endpoint schemes (Step 7), the user B sign-in with `amr` `tap, mfa` (Step 6), each user calling the agent (Step 11) |
-| Track A | 08-05c-02 Steps 1 to 9; stop before Step 10 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7), the per-agent variant (Step 9) |
-| Revocation | 08-05c-02 Step 10 | user B now holds sports and health |
+| Track A | 08-05c-02 Steps 1 to 8; stop before Step 9 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7) |
+| Revocation | 08-05c-02 Step 9 | user B now holds sports and health |
 | Track B | 08-05c-03, all of it | the API added to the gateway and the 401 without a token (Steps 1 and 2), the matrix (Step 4), your own questions, the denial at the gateway (Step 5), Track A after the revocation (Step 6) |
 
 The Container Apps deployment in 08-05c-02 takes about 6 minutes (environment, image build, app); the gateway deployment in 08-05c-03 takes under a minute.
@@ -253,17 +247,16 @@ The model words its replies differently each time. What to check is which tools 
 | 1 | Track A | A | Give me three business headlines | ten tools listed; `get_business_headlines` called; three business headlines |
 | 2 | Track A | B | Give me three business headlines | three tools listed (sports, science, health); no call; a reply that user B's access does not include business |
 | 3 | Track A | B | Give me three sports headlines | `get_sports_headlines` called; three sports headlines |
-| 4 | Track A, before Step 10 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
+| 4 | Track A, before Step 9 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
 | 5 | Track A, Step 7 | B | direct `tools/call` of `get_business_headlines` | `isError=True` and "Your access covers: sports, science, health. Do not retry other categories."; the wrapper logs `denied` and makes no upstream call |
-| 6 | Track A, Step 9 | `news-sports-agent` | Give me three business headlines | no call; the wrapper's log shows `idtyp=app` for the calls the agents did make |
-| 7 | Track B | A | Give me three business headlines | `search` and `top_headlines` listed; `top_headlines` called with `category: business`; three business headlines |
-| 8 | Track B | B | Give me three business headlines | HTTP 400 from the agent endpoint: "An error occurred invoking 'top_headlines': Your access covers: sports, health. Do not retry other categories." |
-| 9 | Track B | B | Give me three sports headlines | `top_headlines` called with `category: sports`; three sports headlines |
-| 10 | Track B, after Step 10 | B | Give me three science headlines | HTTP 400 with the same denial text |
-| 11 | Track B, Step 6 | B | Give me three science headlines, on the Track A version | no science tool listed and no call; Foundry may still hold a token from before the revocation, in which case science headlines come back |
-| 12 | Track B | B | Search for news about the Champions League | HTTP 400 with the denial text: `search` needs `News.Read.All` |
+| 6 | Track B | A | Give me three business headlines | `search` and `top_headlines` listed; `top_headlines` called with `category: business`; three business headlines |
+| 7 | Track B | B | Give me three business headlines | HTTP 400 from the agent endpoint: "An error occurred invoking 'top_headlines': Your access covers: sports, health. Do not retry other categories." |
+| 8 | Track B | B | Give me three sports headlines | `top_headlines` called with `category: sports`; three sports headlines |
+| 9 | Track B, after Step 9 | B | Give me three science headlines | HTTP 400 with the same denial text |
+| 10 | Track B, Step 6 | B | Give me three science headlines, on the Track A version | no science tool listed and no call; Foundry may still hold a token from before the revocation, in which case science headlines come back |
+| 11 | Track B | B | Search for news about the Champions League | HTTP 400 with the denial text: `search` needs `News.Read.All` |
 
-After 08-05c-02 Step 10 the denial text for user B names only sports and health.
+After 08-05c-02 Step 9 the denial text for user B names only sports and health.
 
 ### Your own questions
 
@@ -280,14 +273,14 @@ After 08-05c-02 Step 10 the denial text for user B names only sports and health.
 
 ### Running it twice
 
-The simplest way is the teardown in section 12 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 10. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
+The simplest way is the teardown in section 11 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 9. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
 
-## 12. Teardown
+## 11. Teardown
 
-The Cleanup section of [08-05c-01](08-05c-01-identity-and-agent.ipynb) removes everything the lab created, in order: the three agents and their agent identities, the four connections, the MCP API, backend and named value on the gateway, the Track A resource group, user B, and both app registrations with their service principals, consent grants and role assignments. Users and apps are then purged from the Entra recycle bin, and the lab's keys are removed from `.env`. 08-05c-02 and 08-05c-03 each have a smaller cleanup cell for their own track.
+The Cleanup section of [08-05c-01](08-05c-01-identity-and-agent.ipynb) removes everything the lab created, in order: the agent and its agent identity, the two connections, the MCP API, backend and named value on the gateway, the Track A resource group, user B, and both app registrations with their service principals, consent grants and role assignments. Users and apps are then purged from the Entra recycle bin, and the lab's keys are removed from `.env`. 08-05c-02 and 08-05c-03 each have a smaller cleanup cell for their own track.
 
 The Temporary Access Pass method stays on: whether it is on is a tenant setting, and it may have been on before. The cleanup cell ends with a commented line that turns it off.
 
-## 13. Research
+## 12. Research
 
 The research behind the design, with sources: [docs/research/08-05c-mcp-access-control/](../../docs/research/08-05c-mcp-access-control/README.md).
