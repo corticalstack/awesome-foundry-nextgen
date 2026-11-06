@@ -3,6 +3,11 @@
     <base />
     <validate-azure-ad-token tenant-id="__TENANT_ID__" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized" output-token-variable-name="jwt">
       <audiences>__AUDIENCES__</audiences>
+      <required-claims>
+        <claim name="scp" match="any" separator=" ">
+          <value>News.Read</value>
+        </claim>
+      </required-claims>
     </validate-azure-ad-token>
     <set-variable name="denial" value="@{
       if (context.Request.Method != "POST" || context.Request.Body == null) { return ""; }

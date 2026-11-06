@@ -32,6 +32,7 @@
 08-agents/08-05c-news-mcp-per-user-access/08-05c-01-identity-and-agent.ipynb  deploy,manual
 08-agents/08-05c-news-mcp-per-user-access/08-05c-02-wrapper-container-app.ipynb  deploy,manual
 08-agents/08-05c-news-mcp-per-user-access/08-05c-03-apim-passthrough.ipynb  deploy,manual
+08-agents/08-05c-news-mcp-per-user-access/08-05c-04-reset-for-another-run.ipynb  manual
 08-agents/08-06-agent-offline-evaluation/08-06-01-setup-and-test-data.ipynb  weekly
 08-agents/08-06-agent-offline-evaluation/08-06-02-quality-evaluators.ipynb  weekly
 08-agents/08-06-agent-offline-evaluation/08-06-03-agent-evaluators.ipynb  weekly
