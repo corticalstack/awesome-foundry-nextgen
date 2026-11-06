@@ -143,11 +143,11 @@ The MCP guide ([08-05-00, section 6](../08-05-contoso-pmo-mcp/08-05-00-mcp-guide
 }
 ```
 
-The published ARM schema lists neither `AgentOnBehalfOfUser` nor `scopes`; ARM accepted this JSON at `2025-04-01-preview`. The agent's endpoint keeps the `AzureRbac` scheme beside `AgentBlueprint`. A Foundry token from `az login` is the signed-in user's own token, and Foundry exchanged it on that user's behalf in the same way (08-05c-02 Step 8), so keeping the scheme opens no way around the per-user rules.
+The published ARM schema lists neither `AgentOnBehalfOfUser` nor `scopes`; ARM accepted this JSON at `2025-04-01-preview`. The agent's endpoint keeps the `AzureRbac` scheme beside `AgentBlueprint`. A Foundry token from `az login` is the signed-in user's own token. On 2026-10-30 Foundry exchanged it on that user's behalf in the same way, and the wrapper applied that user's roles; on 2026-11-06 the same call failed before Foundry obtained any token for the news server. Either way, keeping the scheme opens no way around the per-user rules.
 
 ## 5. Revoking a category
 
-08-05c-02 Step 9 removes `News.Read.Science` from user B and records the time; 08-05c-03 measures the effect on both tracks.
+08-05c-02 Step 8 removes `News.Read.Science` from user B and records the time; 08-05c-03 measures the effect on both tracks.
 
 - **Track B:** `news-mcp-apim` had never fetched a token for user B, so the token Foundry obtained carried the new roles. Science was denied 13 minutes after the revocation.
 - **Track A:** Foundry had called the wrapper for user B 3 seconds before the revocation. Thirteen minutes later the wrapper received a token with sports and health only, so science was no longer offered. That held for a user token issued before the revocation too.
@@ -193,7 +193,7 @@ The wrapper reads `NEWS_MCP_OID_ROLES`, a JSON map from `oid` to app roles, and 
 1. `uv sync` from the repository root, and the `.venv` kernel.
 2. [05-02](../../05-foundry-project-pattern-setup/05-02-deploy-foundry-core-gateway/05-02-01-deploy-foundry-core-gateway.ipynb) deployed `aif-core-{suffix}`, `project-admin-{suffix}` and `apim-foundry-{suffix}`.
 3. `az login` as a **Global Administrator** of a tenant you are allowed to change. 08-05c-01 registers two apps, creates a user, grants tenant-wide consent and may turn on the Temporary Access Pass method.
-4. A free GNews key from [gnews.io](https://gnews.io) (100 requests a day) as `GNEWS_API_KEY` in `.env`. A full run makes about 8 GNews requests; denied calls make none.
+4. A free GNews key from [gnews.io](https://gnews.io) (100 requests a day) as `GNEWS_API_KEY` in `.env`. A full run makes about 7 GNews requests; denied calls make none.
 5. A private browser window for user B's sign-ins.
 
 **Notebooks, in order**
@@ -233,8 +233,8 @@ A demo of both tracks follows the notebooks in order, because 08-05c-02 ends by 
 | Part | What to run | What to show |
 |---|---|---|
 | Identity | 08-05c-01, all of it | the two users and their app roles (Step 9), the agent's endpoint schemes (Step 7), the user B sign-in with `amr` `tap, mfa` (Step 6), each user calling the agent (Step 11) |
-| Track A | 08-05c-02 Steps 1 to 8; stop before Step 9 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7) |
-| Revocation | 08-05c-02 Step 9 | user B now holds sports and health |
+| Track A | 08-05c-02 Steps 1 to 7; stop before Step 8 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7) |
+| Revocation | 08-05c-02 Step 8 | user B now holds sports and health |
 | Track B | 08-05c-03, all of it | the API added to the gateway and the 401 without a token (Steps 1 and 2), the matrix (Step 4), your own questions, the denial at the gateway (Step 5), Track A after the revocation (Step 6) |
 
 The Container Apps deployment in 08-05c-02 takes about 6 minutes (environment, image build, app); the gateway deployment in 08-05c-03 takes under a minute.
@@ -248,16 +248,16 @@ The model words its replies differently each time. What to check is which tools 
 | 1 | Track A | A | Give me three business headlines | ten tools listed; `get_business_headlines` called; three business headlines |
 | 2 | Track A | B | Give me three business headlines | three tools listed (sports, science, health); no call; a reply that user B's access does not include business |
 | 3 | Track A | B | Give me three sports headlines | `get_sports_headlines` called; three sports headlines |
-| 4 | Track A, before Step 9 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
+| 4 | Track A, before Step 8 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
 | 5 | Track A, Step 7 | B | direct `tools/call` of `get_business_headlines` | `isError=True` and "Your access covers: sports, science, health. Do not retry other categories."; the wrapper logs `denied` and makes no upstream call |
 | 6 | Track B | A | Give me three business headlines | `search` and `top_headlines` listed; `top_headlines` called with `category: business`; three business headlines |
 | 7 | Track B | B | Give me three business headlines | HTTP 400 from the agent endpoint: "An error occurred invoking 'top_headlines': Your access covers: sports, health. Do not retry other categories." |
 | 8 | Track B | B | Give me three sports headlines | `top_headlines` called with `category: sports`; three sports headlines |
-| 9 | Track B, after Step 9 | B | Give me three science headlines | HTTP 400 with the same denial text |
+| 9 | Track B, after Step 8 | B | Give me three science headlines | HTTP 400 with the same denial text |
 | 10 | Track B, Step 6 | B | Give me three science headlines, on the Track A version | no science tool listed and no call; Foundry may still hold a token from before the revocation, in which case science headlines come back |
 | 11 | Track B | B | Search for news about the Champions League | HTTP 400 with the denial text: `search` needs `News.Read.All` |
 
-After 08-05c-02 Step 9 the denial text for user B names only sports and health.
+After 08-05c-02 Step 8 the denial text for user B names only sports and health.
 
 ### Your own questions
 
@@ -274,7 +274,7 @@ After 08-05c-02 Step 9 the denial text for user B names only sports and health.
 
 ### Running it twice
 
-The simplest way is the teardown in section 11 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 9. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
+The simplest way is the teardown in section 11 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 8. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
 
 ## 11. Teardown
 
