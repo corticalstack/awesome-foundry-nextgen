@@ -62,7 +62,7 @@ Both tracks deny with the same text, which names what the user may read: "Your a
 3. Agent Service exchanges that token with Entra ID, as the agent's identity, for a token for `api://news-mcp-{suffix}/News.Read` on behalf of the user. The `AgentOnBehalfOfUser` connection on the tool tells it to. [The on-behalf-of exchange](#the-on-behalf-of-exchange) below explains how.
 4. Entra ID issues a delegated token that carries the user's app roles as they are at that moment.
 5. Agent Service sends the MCP requests (`initialize`, `tools/list`, `tools/call`) to the enforcement point with that token.
-6. The enforcement point validates the token and maps `roles` to categories. The token is a JWT, a set of claims signed by Entra ID: the enforcement point checks the signature with the tenant's published signing keys, then the issuer, tenant, audience and expiry, and reads the claims.
+6. The enforcement point validates the token and maps `roles` to categories. The token is a JWT, a set of claims signed by Entra ID: the enforcement point checks the signature with the tenant's published signing keys, then the issuer, tenant, audience and expiry, requires the `News.Read` scope, and reads the claims.
 7. Allowed calls go to GNews with the `X-Api-Key` the enforcement point holds. The user's token goes no further.
 
 ### The on-behalf-of exchange
@@ -170,6 +170,7 @@ A role change applies when Foundry obtains its next downstream token. Entra acce
 - **`MCP-Protocol-Version` is logged.** The wrapper records the version Foundry asks for at `initialize` and the header on each `tools/call`, so a change in Foundry's MCP client shows in the logs before it shows as a failure.
 - **The wrapper runs stateless** (`stateless_http=True`), so it needs no session affinity across replicas, and keeps one replica warm to avoid a cold start inside Foundry's 100-second tool timeout.
 - **The policy reads the request body** with `preserveContent: true` and never the response body. Allowed calls returned articles, so the body still reached GNews.
+- **Both enforcement points require the `News.Read` scope.** Any app in the tenant that has a credential can get an app-only token for `news-mcp-{suffix}`: its enterprise app does not require assignment, so Entra issues the token, with no `scp` and no `roles`. Without the scope check both tracks accepted such a token and denied every call only because it held no role (observed 2026-11-06). The wrapper's `required_scopes` and the policy's `required-claims` on `scp` refuse it with 401, so only a delegated user token gets in.
 
 ## 8. Preview features and fallbacks
 
