@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Per-user limits on an MCP server that knows no users</title>
+<style>
+:root {
+  --bg: #000; --card: #0a1120; --ink: #050a14;
+  --text: #e2e8f0; --muted: #94a3b8; --faint: #64748b;
+  --entra: #c084fc; --foundry: #4ade80; --apim: #fbbf24; --gnews: #f87171; --user: #60a5fa; --client: #cbd5e1;
+  --t1: #22d3ee; --t2: #f472b6; --key: #fb923c; --ok: #34d399; --bad: #f87171;
+  --mono: "Cascadia Code", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "Segoe UI", Inter, system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
+#app { position: relative; display: flex; flex-direction: column; height: 100vh; }
+
+header { display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: #000; }
+#parts { display: flex; gap: 6px; margin-left: auto; flex: none; }
+#parts button { background: #070c18; border: 1px solid #1c2840; color: var(--muted); border-radius: 999px; padding: 5px 12px; font: 600 12px var(--sans); cursor: pointer; white-space: nowrap; }
+#parts button.on { background: #000; border-color: #94a3b8; color: #f8fafc; }
+.legend { flex: none; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.lg { display: inline-block; padding: 2px 8px; border-radius: 5px; font-weight: 700; font-size: 11px; border: 1.5px solid; }
+.lg.t1 { color: var(--t1); border-color: var(--t1); background: rgba(34, 211, 238, .12); }
+.lg.t2 { color: var(--t2); border-color: var(--t2); background: rgba(244, 114, 182, .12); }
+.lg.key { color: var(--key); border-color: var(--key); background: rgba(251, 146, 60, .12); }
+
+#stage-wrap { position: relative; flex: 1; min-height: 0; padding: 6px 12px 0; overflow: hidden; }
+#stage { width: 100%; height: 100%; display: block; }
+
+#caption { padding: 12px 28px 6px; min-height: 128px; border-top: 1px solid #111a2b; background: #000; }
+#cap-head { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+#cap-part { font-weight: 700; font-size: 13.5px; letter-spacing: .1em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; border: 1px solid #94a3b8; color: #f8fafc; background: #000; }
+.num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); border: 1.5px solid #cbd5e1; color: var(--text); font-weight: 800; font-size: 12px; }
+#cap-title { font-size: 18px; font-weight: 700; color: var(--text); }
+#cap-text { min-height: 4.26em; font-size: clamp(20px, min(1.5vw, 2.8vh), 26px); line-height: 1.42; margin: 8px 0 0; }
+#cap-text.in { animation: capin .45s ease-out; }
+@keyframes capin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+#cap-text code { font-family: var(--mono); font-size: .86em; background: #14203a; border: 1px solid #22325a; border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+#cap-text .t1 { color: var(--t1); }
+#cap-text .t2 { color: var(--t2); }
+
+#controls { display: flex; align-items: center; gap: 10px; padding: 8px 20px 14px; }
+#controls button { background: #0a1120; border: 1px solid #1c2840; color: var(--text); border-radius: 8px; height: 34px; min-width: 38px; display: grid; place-items: center; cursor: pointer; font: 600 12.5px var(--sans); }
+#controls button:hover { border-color: #38bdf8; }
+#controls svg { width: 16px; height: 16px; fill: currentColor; }
+#bar { position: relative; flex: 1; height: 26px; cursor: pointer; touch-action: none; }
+#bar .track { position: absolute; left: 0; right: 0; top: 11px; height: 4px; background: #1e293b; border-radius: 2px; }
+#bar .fill { position: absolute; left: 0; top: 11px; height: 4px; width: 0; border-radius: 2px; background: linear-gradient(90deg, #22d3ee, #a78bfa); }
+#bar .tick { position: absolute; top: 7px; width: 2px; height: 12px; margin-left: -1px; background: #3b4a66; }
+#bar .tick.part { top: 4px; height: 18px; background: #8193b2; }
+#bar .knob { position: absolute; top: 6px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #e2e8f0; box-shadow: 0 0 0 3px rgba(56, 189, 248, .25); }
+#tip { position: absolute; bottom: 28px; transform: translateX(-50%); background: #0f172a; border: 1px solid #334155; padding: 4px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s; }
+#bar:hover #tip { opacity: 1; }
+#time { font-family: var(--mono); font-size: 12.5px; color: var(--muted); min-width: 92px; text-align: right; }
+.toggle { font-size: 12.5px; color: var(--muted); display: flex; gap: 6px; align-items: center; user-select: none; white-space: nowrap; cursor: pointer; }
+.keys { padding-left: 12px; border-left: 1px solid #1c2840; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+/* ---------- stage ---------- */
+svg text { fill: var(--text); font-family: var(--sans); }
+svg .mono { font-family: var(--mono); }
+.h { opacity: 0; }
+.t-title { font-size: 22px; font-weight: 800; }
+.t-tag { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; fill: var(--c); }
+.t-h { font-size: 15px; font-weight: 700; }
+.t-b { font-size: 13.5px; }
+.t-m { font-size: 12.5px; fill: var(--muted); }
+.panel-bg { fill: color-mix(in srgb, var(--c) 5%, transparent); stroke: color-mix(in srgb, var(--c) 45%, transparent); stroke-width: 1.5; }
+.card > .bg { fill: var(--card); stroke: color-mix(in srgb, var(--c) 45%, transparent); stroke-width: 1.4; transition: stroke .3s, stroke-width .3s; }
+.card.glow > .bg { stroke: var(--c); stroke-width: 3; filter: url(#glowF); }
+.glow-self.glow { filter: url(#glowF); }
+.row > .hl { fill: color-mix(in srgb, var(--c, #94a3b8) 24%, transparent); opacity: 0; transition: opacity .3s; }
+.row.glow > .hl { opacity: 1; }
+.hop { fill: none; stroke: #5b6b84; stroke-width: 2; }
+.hop.done { marker-end: url(#arr); }
+.mk { fill: none; stroke: color-mix(in srgb, var(--entra) 75%, transparent); stroke-width: 2; }
+#bp-ai.done { marker-end: url(#arr); }
+#mk-bp.done, #mk-ai.done { marker-end: url(#arrMk); }
+.badge circle { fill: #0b1324; stroke: #cbd5e1; stroke-width: 1.5; }
+.badge text { font-size: 13px; font-weight: 800; text-anchor: middle; }
+.dot circle { fill: #1e293b; stroke: #475569; stroke-width: 1.5; transition: fill .25s, stroke .25s; }
+.dot text { opacity: 0; font-size: 11px; font-weight: 900; fill: #04121a; text-anchor: middle; transition: opacity .2s; }
+.dot.ok circle { fill: var(--ok); stroke: var(--ok); }
+.dot.ok .yes { opacity: 1; }
+.dot.bad circle { fill: var(--bad); stroke: var(--bad); }
+.dot.bad .no { opacity: 1; }
+.pill { fill: var(--ink); stroke: var(--c); stroke-width: 1.6; }
+.pk-t { font-size: 13px; }
+.pk.bad .pill { fill: #2a0f14; }
+.pk.bad .pk-t { fill: #fecaca; }
+.pk.okp .pill { fill: #0b241c; }
+.mini > rect { fill: color-mix(in srgb, var(--c) 22%, var(--ink)); stroke: var(--c); stroke-width: 1.8; }
+.mini > .perf { stroke: var(--c); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.mini > text { font-size: 12.5px; font-weight: 800; fill: var(--c); }
+.mini.glow > rect { filter: url(#glowF); stroke-width: 3; }
+.keychip > rect { fill: color-mix(in srgb, var(--key) 18%, var(--ink)); stroke: var(--key); stroke-width: 1.6; }
+.tk-bg { fill: var(--ink); stroke: var(--c); stroke-width: 2; filter: url(#shadowF); }
+.tk-head { fill: color-mix(in srgb, var(--c) 26%, var(--ink)); }
+.tk-title { font-size: 15px; font-weight: 800; fill: var(--c); letter-spacing: .08em; }
+.tk-sub { font-size: 13px; }
+.tk-k { font-size: 14px; font-weight: 700; fill: var(--c); }
+.tk-v { font-size: 15px; font-weight: 600; fill: #f8fafc; }
+.tk-m { font-size: 12px; fill: var(--muted); }
+.tag > rect { fill: color-mix(in srgb, var(--tc) 18%, var(--ink)); stroke: var(--tc); stroke-width: 1.4; }
+.tag > text { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; fill: var(--tc); text-anchor: middle; }
+.bub { stroke-width: 1.4; }
+.intro { position: absolute; z-index: 2; top: 8px; left: clamp(16px, 2.2vw, 40px); right: clamp(16px, 2.2vw, 40px); font-family: "Segoe UI", Inter, system-ui, sans-serif; color: #cfeefa; pointer-events: none; }
+.intro h1 { margin: 0; font-size: clamp(28px, min(4.6vw, 7vh), 88px); font-weight: 800; letter-spacing: .02em; line-height: 1.08; text-transform: uppercase; color: #e4f7ff; text-shadow: 0 .1em 1em rgba(0, 0, 0, .95); }
+.intro .acc { color: #5fd8ff; }
+.intro .kicker { margin: .6em 0 0; font-size: clamp(18px, min(2.3vw, 3.6vh), 42px); line-height: 1.35; text-shadow: 0 .1em .6em rgba(0, 0, 0, .9); }
+.intro .outline { list-style: none; margin: 1.1em 0 0; padding: 0; display: grid; gap: .6em; font-size: clamp(16px, min(1.95vw, 3.1vh), 35px); }
+.intro .outline li { padding-left: .8em; border-left: 3px solid rgba(95, 216, 255, .45); line-height: 1.42; }
+.intro .outline b { color: #e4f7ff; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <nav id="parts" class="h"></nav>
+    <div class="legend h">
+      <span class="lg t1">Ticket 1</span> user → agent
+      <span class="lg t2">Ticket 2</span> agent → news, for the user
+      <span class="lg key">key</span> GNews API key
+    </div>
+  </header>
+  <div id="title" class="intro">
+    <h1><span class="acc">Per-user limits</span> on an MCP server that knows no users</h1>
+    <p id="ti-kick" class="kicker h">Entra ID app roles, a token Foundry gets on the user's behalf, and an APIM policy that enforces them.</p>
+    <ol class="outline">
+      <li id="ti-b1" class="h"><b>The need.</b> One Foundry agent serves several users from a general news service, GNews, through its MCP server and one API key shared by everyone. User A may read every news category; user B only sports, science and health.</li>
+      <li id="ti-b2" class="h"><b>The gap.</b> The MCP server is third-party (GNews). It knows one API key and no users, so it cannot restrict anyone, and you cannot change it.</li>
+      <li id="ti-b3" class="h"><b>The fix.</b> Foundry swaps the user's token for one that carries their Entra app roles. APIM validates that token and checks each tool call against the roles before it reaches GNews: an allowed call goes on with the API key, and a refused call never leaves APIM.</li>
+    </ol>
+  </div>
+
+  <div id="stage-wrap">
+<svg id="stage" viewBox="0 0 1600 840" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated flow of tickets between user B, Entra ID, Foundry Agent Service, APIM and GNews">
+  <defs>
+    <filter id="glowF" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadowF" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".6"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto">
+      <path d="M0 1L9 5L0 9z" fill="#8193b2"/>
+    </marker>
+    <marker id="arrMk" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M0 1L9 5L0 9z" fill="#c084fc"/>
+    </marker>
+    <marker id="arrBig" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" orient="auto">
+      <path d="M0 1L9 5L0 9z" fill="#e2e8f0"/>
+    </marker>
+    <symbol id="key" viewBox="0 0 40 20">
+      <circle cx="8" cy="10" r="6.2" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M14.5 10H37M30 10V16M35.5 10V15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+
+  <!-- ===== Entra ID ===== -->
+  <g id="p-entra" class="h" style="--c:var(--entra)">
+    <rect class="panel-bg" x="20" y="14" width="1560" height="318" rx="18"/>
+    <text class="t-title" x="44" y="50" style="fill:var(--entra)">Microsoft Entra ID</text>
+    <text class="t-m" x="300" y="50">issues every ticket and signs it · stores the apps, consent grants and role assignments</text>
+
+    <g id="c-client" class="card h" style="--c:var(--client)">
+      <rect class="bg" x="40" y="86" width="270" height="230" rx="12"/>
+      <text class="t-tag" x="56" y="110">CLIENT APP</text>
+      <text class="t-h mono" x="56" y="133">news-desk-client-{suffix}</text>
+      <text class="t-b" x="56" y="161">The app user B signs in to.</text>
+      <text class="t-m" x="56" y="182">Public client, no secret.</text>
+      <text class="t-m" x="56" y="210">May ask for:</text>
+      <text class="t-b mono" x="56" y="230" style="font-size:12.5px">News.Read, User.Read</text>
+      <g id="c-client-aa" class="row h"><rect class="hl" x="48" y="237" width="254" height="22" rx="4"/><text class="t-b mono" x="56" y="253" style="font-size:12.5px">access_agent</text></g>
+      <g id="c-client-consent" class="h"><text class="t-b" x="56" y="294" style="fill:var(--ok)">✓ admin consent for all users</text></g>
+    </g>
+
+    <g id="c-bp" class="card h" style="--c:var(--entra)">
+      <rect class="bg" x="340" y="86" width="260" height="230" rx="12"/>
+      <text class="t-tag" x="356" y="110">AGENT BLUEPRINT</text>
+      <text class="t-h mono" x="356" y="133">news-desk-agent</text>
+      <text class="t-b" x="356" y="161">The agent's app registration.</text>
+      <text class="t-m" x="356" y="182">Created by Foundry with the agent.</text>
+      <g id="c-bp-key" class="row"><rect class="hl" x="348" y="196" width="244" height="28" rx="4"/><use href="#key" x="356" y="200" width="38" height="19" style="color:var(--entra)"/><text class="t-b" x="402" y="215">holds the only credential</text></g>
+      <g id="c-bp-scope" class="row h"><rect class="hl" x="348" y="236" width="244" height="52" rx="4"/><text class="t-b mono" x="356" y="256" style="font-size:13px">scope: access_agent</text><text class="t-m mono" x="356" y="278" style="font-size:11px">api://{blueprint id}/access_agent</text></g>
+    </g>
+
+    <g id="c-ai" class="card h" style="--c:var(--entra)">
+      <rect class="bg" x="670" y="86" width="245" height="230" rx="12"/>
+      <text class="t-tag" x="686" y="110">AGENT IDENTITY</text>
+      <text class="t-h mono" x="686" y="133">news-desk-agent</text>
+      <text class="t-b" x="686" y="161">What the agent acts as.</text>
+      <text class="t-m" x="686" y="182">Created by Foundry with the agent.</text>
+      <text class="t-m" x="686" y="210">No registration, no credential:</text>
+      <text class="t-m" x="686" y="228">it signs in through the blueprint.</text>
+      <g id="c-ai-consent" class="row h"><rect class="hl" x="678" y="262" width="229" height="28" rx="4"/><text class="t-b" x="686" y="281" style="fill:var(--ok)">✓ consent: News.Read</text></g>
+    </g>
+
+    <g id="c-res" class="card h" style="--c:var(--entra)">
+      <rect class="bg" x="955" y="86" width="355" height="230" rx="12"/>
+      <text class="t-tag" x="971" y="110">RESOURCE APP · THE NEWS SERVICE</text>
+      <text class="t-h mono" x="971" y="133">news-mcp-{suffix}</text>
+      <text class="t-b mono" x="971" y="160" style="font-size:13px">scope: News.Read</text>
+      <text class="t-m" x="971" y="181">10 app roles, for example:</text>
+      <text class="t-b mono" x="971" y="199" style="font-size:11.5px">News.Read.All</text><text class="t-m" x="1069" y="199" style="font-size:11.5px">every category</text>
+      <text class="t-b mono" x="971" y="216" style="font-size:11.5px">News.Read.Sports · News.Read.Business</text>
+      <g id="c-res-who" class="h"><path d="M971 226H1294" stroke="#334155"/><text class="t-m" x="971" y="243" style="font-size:11.5px">Who holds which role (its enterprise app):</text></g>
+      <g id="c-res-a" class="row h"><rect class="hl" x="963" y="250" width="339" height="24" rx="4"/><text class="t-b" x="971" y="267">User A</text><text class="t-b mono" x="1040" y="267" style="font-size:12.5px">News.Read.All</text></g>
+      <g id="c-res-b" class="row h"><rect class="hl" x="963" y="278" width="339" height="28" rx="4"/><text class="t-b" x="971" y="297">User B</text><text class="t-b mono" x="1040" y="297" style="font-size:12.5px;fill:var(--t2)">Sports, Science, Health</text></g>
+    </g>
+
+    <g id="c-ghost" class="h">
+      <rect x="1340" y="86" width="220" height="230" rx="12" fill="none" stroke="#475569" stroke-dasharray="6 6"/>
+      <text class="t-b" x="1450" y="178" text-anchor="middle">GNews has no Entra app.</text>
+      <text class="t-m" x="1450" y="206" text-anchor="middle">It never sees a ticket,</text>
+      <text class="t-m" x="1450" y="225" text-anchor="middle">only its own API key.</text>
+    </g>
+
+    <path id="bp-ai" class="mk draw" d="M602 214H666"/>
+    <g id="bp-ai-lbl" class="h"><text class="t-m" x="635" y="203" text-anchor="middle" style="font-size:10.5px">signs in as</text></g>
+  </g>
+
+  <!-- ===== User B and the app ===== -->
+  <g id="p-user" class="h" style="--c:var(--user)">
+    <g id="user-fig" class="glow-self">
+      <circle cx="70" cy="392" r="16" fill="none" stroke="var(--user)" stroke-width="2.5"/>
+      <path d="M42 446a28 26 0 0 1 56 0" fill="none" stroke="var(--user)" stroke-width="2.5"/>
+    </g>
+    <text class="t-h" x="112" y="398" style="fill:var(--user)">User B</text>
+    <text class="t-m mono" x="112" y="418" style="font-size:12px">news-sports-desk</text>
+    <g id="user-roles" class="h"><text class="t-m" x="112" y="438" style="font-size:12px;fill:var(--t2)">Sports, Science, Health</text></g>
+
+    <rect x="40" y="478" width="270" height="262" rx="12" fill="var(--ink)" stroke="color-mix(in srgb, var(--user) 55%, transparent)" stroke-width="1.5"/>
+    <path d="M40 490a12 12 0 0 1 12-12h246a12 12 0 0 1 12 12v16H40z" fill="#16213a"/>
+    <circle cx="58" cy="492" r="4" fill="#f87171"/><circle cx="72" cy="492" r="4" fill="#fbbf24"/><circle cx="86" cy="492" r="4" fill="#4ade80"/>
+    <text class="t-b" x="102" y="497" style="font-size:13px;font-weight:700">news-desk app</text>
+    <text class="t-m" x="56" y="530" style="font-size:12px">signs in as <tspan class="mono">news-desk-client</tspan></text>
+    <text class="t-m" x="56" y="548" style="font-size:12px">In the lab: the notebook.</text>
+
+    <g id="q1" class="h"><rect class="bub" x="96" y="566" width="200" height="32" rx="16" fill="#12305a" stroke="var(--user)"/><text class="t-b" x="196" y="587" text-anchor="middle" style="font-size:13px">Three sports headlines</text></g>
+    <g id="q2" class="h"><rect class="bub" x="86" y="566" width="210" height="32" rx="16" fill="#12305a" stroke="var(--user)"/><text class="t-b" x="191" y="587" text-anchor="middle" style="font-size:13px">Three business headlines</text></g>
+    <g id="a-ok" class="h"><rect class="bub" x="54" y="610" width="236" height="56" rx="12" fill="#0b241c" stroke="var(--ok)"/><text class="t-b" x="68" y="633" style="font-size:13px;font-weight:700;fill:var(--ok)">✓ 3 sports headlines</text><text class="t-m" x="68" y="653" style="font-size:12px">from GNews, through APIM</text></g>
+    <g id="a-err" class="h"><rect class="bub" x="54" y="606" width="246" height="72" rx="12" fill="#2a0f14" stroke="var(--bad)"/><text class="t-b" x="68" y="628" style="font-size:13px;font-weight:700;fill:var(--bad)">HTTP 400 from the agent</text><text class="t-b" x="68" y="648" style="font-size:12px;fill:#fecaca">Your access covers: sports,</text><text class="t-b" x="68" y="666" style="font-size:12px;fill:#fecaca">science, health.</text></g>
+  </g>
+
+  <!-- ===== Foundry ===== -->
+  <g id="p-foundry" class="h" style="--c:var(--foundry)">
+    <rect class="panel-bg" x="350" y="360" width="550" height="470" rx="18"/>
+    <text class="t-title" x="370" y="394" style="fill:var(--foundry)">Foundry Agent Service</text>
+
+    <g id="create-pill" class="h"><rect x="445" y="565" width="360" height="42" rx="21" fill="#0b1324" stroke="var(--foundry)" stroke-width="1.6"/><text class="mono" x="625" y="591" text-anchor="middle" style="font-size:13.5px">project.agents.create_version(...)</text></g>
+
+    <g id="agent" class="card h" style="--c:var(--foundry)">
+      <rect class="bg" x="370" y="410" width="510" height="405" rx="14"/>
+      <text class="t-h" x="390" y="438">news-desk-agent</text>
+      <text class="t-m" x="548" y="438">prompt agent</text>
+
+      <g id="ep" class="card h" style="--c:var(--foundry)">
+        <rect class="bg" x="390" y="452" width="470" height="100" rx="10"/>
+        <text class="t-h" x="406" y="476" style="font-size:14px">Endpoint</text>
+        <text class="t-m mono" x="480" y="476" style="font-size:11.5px">/agents/news-desk-agent/endpoint/protocols/openai</text>
+        <text class="t-b mono" x="406" y="508" style="font-size:12.5px">scheme: AgentBlueprint</text>
+        <text class="t-b mono" x="406" y="533" style="font-size:12.5px">allowed client: news-desk-client</text>
+        <g id="ep-chk1" class="h"><text class="t-b" x="668" y="508" style="fill:var(--ok)">✓ aud: this blueprint</text></g>
+        <g id="ep-chk2" class="h"><text class="t-b" x="668" y="533" style="fill:var(--ok)">✓ azp: allowed client</text></g>
+      </g>
+
+      <g id="model" class="card" style="--c:var(--foundry)">
+        <rect class="bg" x="390" y="564" width="470" height="84" rx="10"/>
+        <text class="t-h" x="406" y="588" style="font-size:14px">Model</text>
+        <text class="t-m" x="460" y="588">reads the question, picks a tool</text>
+        <g id="pick-s" class="h"><text class="mono" x="406" y="626" style="font-size:14.5px">top_headlines(category: "sports")</text></g>
+        <g id="pick-b" class="h"><text class="mono" x="406" y="626" style="font-size:14.5px">top_headlines(category: "business")</text></g>
+      </g>
+
+      <g id="tool" class="card h" style="--c:var(--foundry)">
+        <rect class="bg" x="390" y="660" width="470" height="142" rx="10"/>
+        <text class="t-h" x="406" y="684" style="font-size:14px">MCP tool</text>
+        <text class="t-b mono" x="480" y="684" style="font-size:12.5px">news_mcp_apim</text>
+        <text class="t-m" x="406" y="706">connection</text>
+        <text class="t-b mono" x="480" y="706" style="font-size:12.5px">news-mcp-apim</text>
+        <g id="tool-target" class="row"><rect class="hl" x="398" y="716" width="454" height="22" rx="4"/><text class="t-m mono" x="406" y="732" style="font-size:11.5px">target</text><text class="t-b mono" x="480" y="732" style="font-size:11.5px">apim-foundry-{suffix}.azure-api.net/news-mcp/mcp</text></g>
+        <g id="tool-need" class="row"><rect class="hl" x="398" y="741" width="454" height="48" rx="4"/>
+          <text class="t-m mono" x="406" y="758" style="font-size:11.5px">authType</text><text class="t-b mono" x="480" y="758" style="font-size:11.5px">AgentOnBehalfOfUser</text>
+          <text class="t-m mono" x="406" y="780" style="font-size:11.5px">scope</text><text class="t-b mono" x="480" y="780" style="font-size:11.5px">api://news-mcp-{suffix}/News.Read</text></g>
+      </g>
+    </g>
+    <path id="mk-bp" class="mk draw" d="M712 409V346a6 6 0 0 0-6-6H476a6 6 0 0 1-6-6V320"/>
+    <path id="mk-ai" class="mk draw" d="M712 409V320"/>
+    <circle id="mk-dot" class="h" cx="712" cy="409" r="4" fill="#c084fc"/>
+    <g id="mk-lbl" class="h"><text class="t-m" x="591" y="354" text-anchor="middle" style="font-size:11px;fill:#c084fc">creates</text></g>
+  </g>
+
+  <!-- ===== APIM ===== -->
+  <g id="p-apim" class="h" style="--c:var(--apim)">
+    <rect class="panel-bg" x="940" y="360" width="360" height="470" rx="18"/>
+    <text class="t-title" x="960" y="394" style="fill:var(--apim)">Azure API Management</text>
+    <text class="t-m mono" x="960" y="414" style="font-size:12px">apim-foundry-{suffix}</text>
+
+    <g id="apim-api" class="card h" style="--c:var(--apim)">
+      <rect class="bg" x="960" y="426" width="320" height="56" rx="10"/>
+      <text class="t-h" x="976" y="450" style="font-size:14px">MCP API</text>
+      <text class="t-b mono" x="1050" y="450" style="font-size:12.5px">/news-mcp/mcp</text>
+      <text class="t-m" x="976" y="470" style="font-size:12px">forwards allowed calls to GNews</text>
+    </g>
+
+    <g id="policy" class="card h" style="--c:var(--apim)">
+      <rect class="bg" x="960" y="494" width="320" height="246" rx="10"/>
+      <text class="t-h" x="976" y="519" style="font-size:14px">Inbound policy</text>
+      <g id="chk1" class="dot"><circle cx="986" cy="542" r="8"/><text class="yes" x="986" y="546">✓</text><text class="no" x="986" y="546">✕</text></g>
+      <text class="t-b" x="1004" y="547" style="font-size:13px">signed by Entra ID</text>
+      <g id="chk2" class="dot"><circle cx="986" cy="568" r="8"/><text class="yes" x="986" y="572">✓</text><text class="no" x="986" y="572">✕</text></g>
+      <text class="t-b" x="1004" y="573" style="font-size:13px">issued in this tenant</text>
+      <g id="chk3" class="dot"><circle cx="986" cy="594" r="8"/><text class="yes" x="986" y="598">✓</text><text class="no" x="986" y="598">✕</text></g>
+      <text class="t-b" x="1004" y="599" style="font-size:13px">aud is <tspan class="mono" style="font-size:12px">news-mcp-{suffix}</tspan></text>
+      <g id="chk4" class="dot"><circle cx="986" cy="620" r="8"/><text class="yes" x="986" y="624">✓</text><text class="no" x="986" y="624">✕</text></g>
+      <text class="t-b" x="1004" y="625" style="font-size:13px">not expired</text>
+      <g id="chk5" class="dot"><circle cx="986" cy="646" r="8"/><text class="yes" x="986" y="650">✓</text><text class="no" x="986" y="650">✕</text></g>
+      <text class="t-b" x="1004" y="651" style="font-size:13px">scp includes <tspan class="mono" style="font-size:12px">News.Read</tspan></text>
+      <g id="chk6" class="dot"><circle cx="986" cy="672" r="8"/><text class="yes" x="986" y="676">✓</text><text class="no" x="986" y="676">✕</text></g>
+      <g id="chk6-q"><text class="t-b" x="1004" y="677" style="font-size:13px">roles → categories</text></g>
+      <g id="chk6-v" class="h"><text class="t-b" x="1004" y="677" style="font-size:13px">roles → <tspan style="fill:var(--t2)">sports, science, health</tspan></text></g>
+      <g id="chk7" class="dot"><circle cx="986" cy="698" r="8"/><text class="yes" x="986" y="702">✓</text><text class="no" x="986" y="702">✕</text></g>
+      <g id="chk7-q"><text class="t-b" x="1004" y="703" style="font-size:13px">category allowed?</text></g>
+      <g id="chk7-s" class="h"><text class="t-b" x="1004" y="703" style="font-size:13px;fill:var(--ok)">asked for sports: allowed</text></g>
+      <g id="chk7-b" class="h"><text class="t-b" x="1004" y="703" style="font-size:13px;fill:var(--bad)">asked for business: denied</text></g>
+    </g>
+
+    <g id="nv" class="card h" style="--c:var(--apim)">
+      <rect class="bg" x="960" y="752" width="320" height="62" rx="10"/>
+      <use href="#key" x="976" y="771" width="40" height="20" style="color:var(--key)"/>
+      <text class="t-b mono" x="1026" y="780" style="font-size:12.5px">named value gnews-api-key</text>
+      <text class="t-m" x="1026" y="800" style="font-size:12px">GNews's one API key</text>
+    </g>
+  </g>
+
+  <!-- ===== GNews ===== -->
+  <g id="p-gnews" class="h" style="--c:var(--gnews)">
+    <rect class="panel-bg" x="1340" y="360" width="240" height="470" rx="18"/>
+    <text class="t-title" x="1360" y="394" style="fill:var(--gnews)">GNews MCP</text>
+    <text class="t-m mono" x="1360" y="414" style="font-size:12px">mcp.gnews.io</text>
+    <text class="t-m" x="1360" y="444">Third party: you can't</text>
+    <text class="t-m" x="1360" y="462">change it.</text>
+    <g class="card" style="--c:var(--gnews)">
+      <rect class="bg" x="1356" y="480" width="208" height="88" rx="10"/>
+      <text class="t-h" x="1370" y="504" style="font-size:13.5px">Tools</text>
+      <text class="t-b mono" x="1370" y="528" style="font-size:12px">top_headlines(category)</text>
+      <text class="t-b mono" x="1370" y="550" style="font-size:12px">search(q)</text>
+    </g>
+    <g id="gn-auth" class="card" style="--c:var(--gnews)">
+      <rect class="bg" x="1356" y="580" width="208" height="110" rx="10"/>
+      <text class="t-h" x="1370" y="604" style="font-size:13.5px">Checks one thing</text>
+      <use href="#key" x="1370" y="618" width="40" height="20" style="color:var(--key)"/>
+      <text class="t-b mono" x="1418" y="633" style="font-size:12.5px">X-Api-Key</text>
+      <text class="t-m" x="1370" y="660" style="font-size:11.5px">Any valid key reads every</text>
+      <text class="t-m" x="1370" y="676" style="font-size:11.5px">category. No users here.</text>
+    </g>
+    <g id="gn-articles" class="h"><text class="t-b" x="1360" y="775" style="fill:var(--ok)">✓ returns 3 sports articles</text></g>
+    <g id="gn-not" class="h"><text class="t-b" x="1360" y="775" style="fill:var(--muted)">✕ not called</text></g>
+  </g>
+
+  <!-- ===== hop lines and step badges ===== -->
+  <g id="lines">
+    <path id="L1" class="hop draw" d="M280 476V322"/>
+    <path id="L2" class="hop draw" d="M312 520H386"/>
+    <path id="L3" class="hop draw" d="M770 406V322"/>
+    <path id="L4" class="hop draw" d="M815 320V404"/>
+    <path id="L5" class="hop draw" d="M862 727H956"/>
+    <path id="L7" class="hop draw" d="M1282 727H1354"/>
+  </g>
+
+  <!-- motion paths (never drawn) -->
+  <g fill="none" stroke="none">
+    <path id="mp1" d="M280 522V250"/>
+    <path id="mp2" d="M230 586L340 524L620 504"/>
+    <path id="mp3" d="M770 520V236"/>
+    <path id="mp4" d="M815 236V434H830"/>
+    <path id="mpRoles" d="M1070 297C990 306 900 300 830 284"/>
+    <path id="mp5" d="M640 727H1080"/>
+    <path id="mpKey" d="M996 781L1170 727"/>
+    <path id="mp7" d="M1160 727H1450"/>
+    <path id="mpBack" d="M1450 740H1120L680 612L330 560L210 640"/>
+    <path id="mpDeny" d="M1110 727L640 612"/>
+    <path id="mp400" d="M600 540H360L190 640"/>
+  </g>
+
+  <g id="packets"></g>
+  <g id="cards"></g>
+
+</svg>
+  </div>
+
+  <section id="caption">
+    <div id="cap-head"><span id="cap-part"></span><span id="cap-nums"></span><span id="cap-title"></span></div>
+    <p id="cap-text"></p>
+  </section>
+
+  <footer id="controls">
+    <button id="btn-prev" title="Previous chapter (←)"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
+    <button id="btn-play" title="Play or pause (Space)"><svg viewBox="0 0 16 16"><path id="ico-play" d="M4 2l10 6-10 6z"/></svg></button>
+    <button id="btn-next" title="Next chapter (→)"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+    <div id="bar"><div class="track"></div><div class="fill"></div><div id="ticks"></div><div class="knob"></div><div id="tip"></div></div>
+    <span id="time">0:00 / 0:00</span>
+    <button id="btn-speed" title="Playback speed">1×</button>
+    <label class="toggle"><input type="checkbox" id="chk-step"> Pause after each step (S)</label>
+    <span class="keys">Space: play or pause · Left / Right arrow: previous or next chapter · R: restart · F: full screen</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+
+// ---------- building blocks created in code ----------
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'text') el.textContent = v; else el.setAttribute(k, v);
+  }
+  for (const c of kids) if (c) el.append(c);
+  return el;
+}
+function mini(n, id) {
+  const attrs = {class: 'mini', style: `--c:var(--t${n})`};
+  if (id) { attrs.id = id; attrs.class = 'mini h'; }
+  return h('g', attrs,
+    h('rect', {x: -46, y: -16, width: 92, height: 32, rx: 6}),
+    h('path', {class: 'perf', d: 'M-26 -16V16'}),
+    h('text', {x: 10, y: 5, 'text-anchor': 'middle', text: `Ticket ${n}`}));
+}
+function keychip() {
+  return h('g', {class: 'keychip'},
+    h('rect', {x: -32, y: -15, width: 64, height: 30, rx: 6}),
+    h('use', {href: '#key', x: -20, y: -10, width: 40, height: 20, style: 'color:var(--key)'}));
+}
+// A pill-shaped message, centred on (0, 0), optionally with a ticket or key attached on the right.
+function pill(id, text, color, w, {mono = false, tail = null, cls = '', x = null, y = null} = {}) {
+  const attrs = {id, class: `pk h ${cls}`, style: `--c:${color}`};
+  if (x !== null) { attrs['data-x'] = x; attrs['data-y'] = y; }
+  const g = h('g', attrs);
+  const x0 = tail ? -(w + 104) / 2 : -w / 2;
+  g.append(h('rect', {class: 'pill', x: x0, y: -17, width: w, height: 34, rx: 17}));
+  g.append(h('text', {x: x0 + w / 2, y: 5, 'text-anchor': 'middle', class: mono ? 'pk-t mono' : 'pk-t', text}));
+  if (tail) { tail.setAttribute('transform', `translate(${x0 + w + 56} 0)`); g.append(tail); }
+  return g;
+}
+function ticket(id, n, sub, rows) {
+  const g = h('g', {id, class: 'ticket h', style: `--c:var(--t${n})`});
+  g.append(h('rect', {class: 'tk-bg', x: -200, y: -130, width: 400, height: 260, rx: 14}));
+  g.append(h('path', {class: 'tk-head', d: 'M-200 -116a14 14 0 0 1 14-14h372a14 14 0 0 1 14 14v26h-400z'}));
+  g.append(h('text', {class: 'tk-title', x: -182, y: -104, text: `TICKET ${n}`}));
+  g.append(h('text', {class: 'tk-sub', x: -92, y: -104, text: sub}));
+  rows.forEach(([k, v, m], i) => {
+    const y = -62 + i * 40;
+    g.append(h('g', {id: `${id}-${k}`, class: 'row'},
+      h('rect', {class: 'hl', x: -192, y: y - 17, width: 384, height: 38, rx: 6}),
+      h('text', {class: 'tk-k mono', x: -182, y, text: k}),
+      h('text', {class: 'tk-v mono', x: -110, y, text: v}),
+      h('text', {class: 'tk-m', x: -110, y: y + 16, text: m})));
+  });
+  return g;
+}
+function tag(id, row, text, color) {
+  const y = -62 + row * 40;
+  return h('g', {id, class: 'tag h', style: `--tc:${color}`},
+    h('rect', {x: 128, y: y - 14, width: 62, height: 22, rx: 5}),
+    h('text', {x: 159, y: y + 1.5, text}));
+}
+function badge(n, x, y) {
+  return h('g', {id: `b${n}`, class: 'badge h'}, h('circle', {cx: x, cy: y, r: 12}), h('text', {x, y: y + 4.5, text: String(n)}));
+}
+
+const lines = $('#lines');
+[[1, 302, 398], [2, 349, 500], [3, 750, 362], [4, 836, 362], [5, 909, 707], [7, 1318, 707]]
+  .forEach(([n, x, y]) => lines.append(badge(n, x, y)));
+$('#p-apim').append(badge(6, 960, 494));
+
+const packets = $('#packets');
+packets.append(
+  pill('pk-signin', 'sign in · ask for access_agent', 'var(--client)', 250),
+  mini(1, 't1-mini'),
+  pill('pk-q1', '“Three sports headlines”', 'var(--user)', 230, {tail: mini(1)}),
+  pill('pk-obo', 'trade it for News.Read', 'var(--entra)', 200, {tail: mini(1)}),
+  pill('pk-roles', 'Sports, Science, Health', 'var(--t2)', 200),
+  pill('pk-call', 'tools/call top_headlines(sports)', 'var(--foundry)', 270, {mono: true, tail: mini(2)}),
+  h('g', {id: 't2-shred', class: 'h'}, mini(2), h('path', {d: 'M-40 -12L40 12M-40 12L40 -12', stroke: 'var(--bad)', 'stroke-width': 3}),
+    h('text', {x: 0, y: 34, 'text-anchor': 'middle', class: 't-m', style: 'font-size:12px', text: 'removed'})),
+  h('g', {id: 'key-fly', class: 'h'}, keychip()),
+  pill('pk-gnews', 'top_headlines(sports)', 'var(--apim)', 200, {mono: true, tail: keychip()}),
+  pill('pk-articles', '3 sports articles', 'var(--ok)', 180, {cls: 'okp'}),
+  pill('pk-q2', '“Three business headlines”', 'var(--user)', 240, {tail: mini(1)}),
+  pill('pk-call2', 'tools/call top_headlines(business)', 'var(--foundry)', 290, {mono: true, tail: mini(2)}),
+  pill('pk-deny', 'isError: “Your access covers: sports, science, health”', 'var(--bad)', 380, {cls: 'bad'}),
+  pill('pk-400', 'HTTP 400 · tool_user_error', 'var(--bad)', 230, {cls: 'bad'}),
+);
+const t2mini = mini(2, 't2-mini');
+packets.append(t2mini);
+
+const entra = $('#p-entra');
+entra.append(
+  pill('eb-signin', '✓ user B signed in · Entra ID issues Ticket 1', 'var(--entra)', 380, {x: 1110, y: 45}),
+  pill('eb-trade', '✓ Ticket 1 is valid · ✓ the agent identity has consent for News.Read', 'var(--entra)', 520, {x: 1110, y: 45}),
+);
+
+const cards = $('#cards');
+cards.append(
+  ticket('card-t1', 1, 'user B → news-desk-agent', [
+    ['oid', 'user B', 'who: the person'],
+    ['aud', "news-desk-agent's blueprint", 'to: the agent this ticket opens'],
+    ['azp', 'news-desk-client', 'from: the app that asked for it'],
+    ['scp', 'access_agent', 'allows: call this agent as user B'],
+    ['roles', 'none', 'no news rights on this ticket'],
+  ]),
+  ticket('card-t2', 2, 'news-desk-agent → news, for user B', [
+    ['oid', 'user B', 'who: the same person'],
+    ['aud', 'news-mcp-{suffix}', 'to: the news service'],
+    ['azp', 'agent identity', 'from: news-desk-agent, acting for user B'],
+    ['scp', 'News.Read', 'allows: read news as user B'],
+    ['roles', 'Sports, Science, Health', 'copied from news-mcp-{suffix} at the trade'],
+  ]),
+  h('g', {id: 'cmp', class: 'h'},
+    h('path', {d: 'M652 590H944', stroke: '#e2e8f0', 'stroke-width': 3, 'marker-end': 'url(#arrBig)'}),
+    h('text', {x: 798, y: 566, 'text-anchor': 'middle', style: 'font-size:17px;font-weight:800', text: 'Entra ID trades it'}),
+    h('text', {x: 798, y: 620, 'text-anchor': 'middle', class: 't-m', style: 'font-size:13.5px', text: 'on behalf of user B'}),
+    h('text', {x: 798, y: 648, 'text-anchor': 'middle', class: 't-m', style: 'font-size:12px', text: 'Foundry sent Ticket 1 and asked for News.Read'})),
+);
+const t2card = $('#card-t2');
+t2card.append(
+  tag('tg-oid', 0, 'SAME', 'var(--ok)'),
+  tag('tg-aud', 1, 'NEW', 'var(--apim)'),
+  tag('tg-azp', 2, 'NEW', 'var(--apim)'),
+  tag('tg-scp', 3, 'NEW', 'var(--apim)'),
+  tag('tg-roles', 4, 'ADDED', 'var(--t2)'),
+);
+packets.append(
+  pill('rc-entra', 'issues both tickets · stores the roles', 'var(--entra)', 330, {x: 1110, y: 45}),
+  pill('rc-user', 'holds Ticket 1', 'var(--t1)', 150, {x: 175, y: 346}),
+  pill('rc-foundry', 'trades Ticket 1 for Ticket 2', 'var(--foundry)', 240, {x: 575, y: 346}),
+  pill('rc-apim', 'sees only Ticket 2 · decides', 'var(--apim)', 250, {x: 1120, y: 346}),
+  pill('rc-gnews', 'sees only the API key', 'var(--gnews)', 200, {x: 1460, y: 346}),
+);
+
+// ---------- timeline engine: the whole picture is a pure function of time ----------
+const EASE = {
+  lin: p => p,
+  io: p => (p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2),
+  out: p => 1 - Math.pow(1 - p, 3),
+  back: p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+};
+const nodes = new Map();
+const tweens = [], flags = [], caps = [], chapters = [];
+
+function node(el) {
+  let n = nodes.get(el);
+  if (!n) {
+    const d = el.dataset;
+    const draw = el.classList.contains('draw');
+    n = {base: {o: el.classList.contains('h') ? 0 : 1, k: 1, x: +(d.x || 0), y: +(d.y || 0), s: 1, d: draw ? 0 : 1}, last: {}, len: 0};
+    if (draw) { n.len = el.getTotalLength(); el.style.strokeDasharray = n.len; }
+    el.style.transformBox = 'fill-box';
+    el.style.transformOrigin = 'center';
+    nodes.set(el, n);
+  }
+  return n;
+}
+function els(sel) {
+  const list = [...document.querySelectorAll(sel)];
+  if (!list.length) console.warn('no element for', sel);
+  return list;
+}
+function tw(t, sel, to, dur = .6, ease = 'io') {
+  for (const el of els(sel)) { node(el); tweens.push({t, dur, el, to, ease}); }
+}
+function along(t, sel, pathSel, dur, {rev = false, ease = 'io'} = {}) {
+  const path = $(pathSel), L = path.getTotalLength();
+  for (const el of els(sel)) { node(el); tweens.push({t, dur, el, path, L, rev, ease}); }
+}
+function fx(t, sel, cls, on = true) { for (const el of els(sel)) flags.push({t, el, cls, on}); }
+function cap(t, html, wps) { caps.push({t, html, wps}); }
+
+const show = (t, s, d = .6) => tw(t, s, {o: 1}, d, 'out');
+const hide = (t, s, d = .5) => tw(t, s, {o: 0}, d, 'io');
+const set = (t, s, props) => tw(t, s, props, 0);
+const pop = (t, s, d = .7) => { set(t, s, {s: .86}); tw(t, s, {o: 1, s: 1}, d, 'back'); };
+const dim = (t, s, k, d = .6) => tw(t, s, {k}, d, 'io');
+const glow = (t, s, until) => { fx(t, s, 'glow'); if (until !== undefined) fx(until, s, 'glow', false); };
+const drawL = (t, s, d = .9) => { tw(t, s, {d: 1}, d, 'io'); fx(t + d, s, 'done'); };
+function trip(t, s, pathSel, d, opts = {}) {
+  along(t, s, pathSel, d, opts);
+  show(t, s, .3);
+  if (opts.keep !== true) hide(t + d + .05, s, .35);
+}
+
+let cursor = 0;
+function chapter(part, title, nums, dur, build) {
+  chapters.push({part, title, nums, start: cursor, dur});
+  const start = cursor;
+  build(o => start + o);
+  cursor += dur;
+}
+
+const PARTS = ['Set-up', 'A request', 'A denied request', 'Summary'];
+const PANELS = '#p-user,#p-entra,#p-foundry,#p-apim,#p-gnews';
+const ALL = `${PANELS},#lines,#packets`;
+const BUT_USER = '#p-entra,#p-foundry,#p-apim,#p-gnews,#lines';
+const BUT_APIM = '#p-user,#p-entra,#p-foundry,#p-gnews,#lines,#packets';
+const CHECKS = ['#chk1', '#chk2', '#chk3', '#chk4', '#chk5', '#chk6', '#chk7'];
+
+// ================= script =================
+chapter(0, 'The use case', [], 28, a => {
+  chapters[chapters.length - 1].label = 'Overview';
+  cap(a(0), '');
+  show(a(.6), '#ti-kick', .8);
+  show(a(2.5), '#ti-b1', .8);
+  show(a(11), '#ti-b2', .8);
+  show(a(19.5), '#ti-b3', .8);
+  hide(a(28), '#title', .8);
+});
+
+chapter(0, 'GNews, the service we consume', [], 8, a => {
+  show(a(.8), '#parts,.legend', .8);
+  show(a(.2), '#p-gnews', .8);
+  cap(a(.2), '<b>GNews</b> serves the news. It has one API key and knows nothing about users.');
+});
+
+chapter(0, 'Register two apps in Entra ID', [], 20, a => {
+  show(a(.2), '#p-entra', .8); pop(a(1.8), '#c-ghost');
+  cap(a(.2), '<b>Microsoft Entra ID</b> issues every ticket and signs it.');
+  pop(a(5), '#c-res');
+  cap(a(5), 'The admin registers <code>news-mcp-{suffix}</code>, the news service\'s identity in Entra ID. Tickets for the news service are addressed to it. It defines the access levels: the <code>News.Read</code> scope and ten app roles, <code>News.Read.All</code> and one per category. Who holds which role is set later.');
+  pop(a(11), '#c-client');
+  cap(a(11), 'Then <code>news-desk-client-{suffix}</code>: the identity of the app user B signs in to. It is a public client, with no secret.');
+});
+
+chapter(0, 'Create user B', [], 8, a => {
+  show(a(.2), '#p-user', .8);
+  cap(a(.2), 'The admin creates user B, <code>news-sports-desk</code>, in the same Entra tenant. User B uses the news-desk app, which signs in as <code>news-desk-client</code>. In the lab, the notebook plays this app.');
+});
+
+chapter(0, 'Create the agent, get a blueprint', [], 26.2, a => {
+  show(a(.2), '#p-foundry', .8);
+  cap(a(.2), '<b>Foundry Agent Service</b> runs <code>news-desk-agent</code>: it takes user B\'s question, runs the model and calls the tools. Before a tool call, it signs in to Entra ID as the agent and trades user B\'s ticket for one APIM will accept.', 4.5);
+  cap(a(3.2), 'APIM\'s policy accepts only tokens whose <code>aud</code> (audience: the service a token is addressed to) is <code>news-mcp-{suffix}</code>. User B\'s <b class="t1">Ticket 1</b> is addressed to the agent, so APIM would refuse it.', 4.5);
+  show(a(6.3), '#create-pill', .5);
+  cap(a(6.3), 'The admin creates <code>news-desk-agent</code> in Foundry.');
+  hide(a(10.2), '#create-pill', .4);
+  pop(a(10.5), '#agent', .8);
+  show(a(11.6), '#mk-dot', .3); drawL(a(11.8), '#mk-bp', 1.1); drawL(a(11.8), '#mk-ai', .6); show(a(12.6), '#mk-lbl', .5);
+  pop(a(12.6), '#c-bp'); pop(a(13.2), '#c-ai');
+  cap(a(12.6), 'Foundry creates two Entra objects for it. The <b>blueprint</b> is the agent\'s app registration. The <b>agent identity</b> is what the agent acts as.');
+  glow(a(18.7), '#c-bp-key', a(22.5));
+  cap(a(18.7), 'The blueprint signs in to Entra ID like any app: with a credential, much like a password. Its credential is a federated credential that trusts a Microsoft service behind Foundry, so only Foundry can sign in as the blueprint. There is no secret or certificate for the Foundry agent or project to hold.', 3.5);
+  glow(a(22.5), '#c-ai', a(26.2)); drawL(a(22.8), '#bp-ai', .6); show(a(22.8), '#bp-ai-lbl');
+  cap(a(22.5), 'The agent identity has no credential at all. To act as the agent, Foundry first signs in as the blueprint, then asks Entra ID for a token for the agent identity, which the blueprint created.', 3.5);
+  hide(a(26.2), '#mk-bp,#mk-ai,#mk-dot,#mk-lbl,#bp-ai,#bp-ai-lbl', .6);
+});
+
+chapter(0, 'Let the news-desk app call the agent', [], 17, a => {
+  pop(a(.3), '#ep');
+  glow(a(.3), '#ep', a(5));
+  cap(a(.3), 'By default the agent\'s endpoint only accepts callers with Azure access to the project. The admin adds the <code>AgentBlueprint</code> scheme (it accepts tickets that users get through an app, addressed to this agent\'s blueprint), with <code>news-desk-client</code> as its one allowed client.');
+  show(a(5.5), '#c-bp-scope'); glow(a(5.5), '#c-bp-scope', a(11));
+  cap(a(5.5), 'Foundry adds the <code>access_agent</code> scope to the blueprint. A ticket for <code>access_agent</code> lets an app call this agent as the signed-in user.');
+  show(a(12), '#c-client-aa'); glow(a(12), '#c-client-aa', a(16.5));
+  cap(a(12), '<code>news-desk-client</code> may now ask for <code>access_agent</code>.');
+});
+
+chapter(0, 'Consent and roles', [], 17, a => {
+  show(a(.3), '#c-client-consent');
+  cap(a(.3), 'The admin consents for all users, so nobody sees a consent prompt.');
+  show(a(4), '#c-ai-consent'); glow(a(4), '#c-ai-consent', a(8.5));
+  cap(a(4), 'The agent identity gets consent for <code>News.Read</code>, so Foundry may ask for news tickets on a user\'s behalf.');
+  show(a(9), '#c-res-who'); show(a(9.6), '#c-res-a'); show(a(10.4), '#c-res-b'); show(a(10.4), '#user-roles');
+  glow(a(10.4), '#c-res-b', a(16.5));
+  cap(a(9), 'Roles go to people, on <code>news-mcp-{suffix}</code>: user A holds <code>News.Read.All</code>, and user B holds Sports, Science and Health.');
+});
+
+chapter(0, 'Put APIM in front of GNews', [], 22, a => {
+  show(a(.2), '#p-apim', .8);
+  cap(a(.2), '<b>Azure API Management</b> (APIM) sits in front of GNews and checks every call.');
+  pop(a(4.3), '#tool');
+  cap(a(4.3), 'The agent gets an MCP tool. Its connection, <code>news-mcp-apim</code>, says where to send calls (APIM) and how to authenticate: get a <code>News.Read</code> ticket on behalf of the user.');
+  glow(a(5.5), '#tool-target', a(12.5)); glow(a(5.5), '#tool-need', a(12.5));
+  pop(a(13), '#apim-api'); pop(a(13.6), '#policy'); pop(a(14.2), '#nv');
+  cap(a(13), 'APIM gets an MCP API that forwards to GNews, an inbound policy that checks tickets, and the GNews key as a named value.');
+  cap(a(19), 'Set-up is done. Now user B asks a question.');
+});
+
+chapter(1, 'User B signs in', [1], 18, a => {
+  glow(a(.2), '#user-fig', a(2.5));
+  cap(a(.2), 'User B opens the app and signs in. The app asks Entra ID for a ticket to call the agent: <code>access_agent</code>.');
+  drawL(a(1.6), '#L1', 1); pop(a(1.6), '#b1');
+  trip(a(1.6), '#pk-signin', '#mp1', 2.0);
+  glow(a(3.7), '#c-client', a(7.2)); show(a(3.7), '#eb-signin'); hide(a(7.2), '#eb-signin');
+  cap(a(3.7), 'Entra ID checks user B\'s sign-in and issues <b class="t1">Ticket 1</b>.');
+  along(a(5.4), '#t1-mini', '#mp1', 1.8, {rev: true}); show(a(5.4), '#t1-mini', .3);
+  tw(a(7.3), '#t1-mini', {x: 96, y: 712}, .7);
+  dim(a(8.2), BUT_USER, .15);
+  set(a(8.2), '#card-t1', {x: 560, y: 600}); pop(a(8.2), '#card-t1');
+  cap(a(8.2), '<b class="t1">Ticket 1</b> names the person (<code>oid</code>), who it is for (<code>aud</code>: the agent\'s blueprint), which app got it (<code>azp</code>), and what it allows (<code>scp</code>: <code>access_agent</code>). It carries no roles.');
+  hide(a(18), '#card-t1', .5); dim(a(18), BUT_USER, 1);
+});
+
+chapter(1, 'Ask the agent', [2], 15, a => {
+  show(a(.3), '#q1');
+  cap(a(.3), 'User B asks for three sports headlines. The app sends the question to the agent\'s endpoint with <b class="t1">Ticket 1</b>.');
+  drawL(a(1.4), '#L2', .8); pop(a(1.4), '#b2');
+  trip(a(1.4), '#pk-q1', '#mp2', 2.2);
+  glow(a(3.8), '#ep', a(13)); show(a(4.6), '#ep-chk1'); show(a(5.6), '#ep-chk2');
+  cap(a(4.4), 'The endpoint checks <b class="t1">Ticket 1</b>: it is addressed to this agent\'s blueprint (<code>aud</code>), and it came from the allowed client (<code>azp</code>).');
+});
+
+chapter(1, 'The model picks a tool', [], 15, a => {
+  glow(a(.2), '#model', a(4.5)); show(a(.8), '#pick-s');
+  cap(a(.2), 'The model reads the question and calls <code>top_headlines</code> with category <code>sports</code>.');
+  glow(a(4.5), '#tool-need', a(15));
+  cap(a(4.5), 'The tool\'s connection says: first get a <code>News.Read</code> ticket for this user. <b class="t1">Ticket 1</b> will not do, because it is addressed to the agent, not to the news service.');
+});
+
+chapter(1, 'The trade, on behalf of user B', [3, 4], 22, a => {
+  glow(a(.2), '#c-bp-key', a(4)); set(a(.5), '#bp-ai', {o: 1, d: 0}); fx(a(.5), '#bp-ai', 'done', false); drawL(a(.5), '#bp-ai', .6); show(a(.5), '#bp-ai-lbl'); glow(a(1.1), '#c-ai', a(4));
+  cap(a(.2), 'Foundry uses the blueprint\'s credential to sign in as the agent identity.');
+  drawL(a(4.2), '#L3', .9); pop(a(4.2), '#b3');
+  trip(a(4.2), '#pk-obo', '#mp3', 2.0);
+  cap(a(4.2), 'It sends <b class="t1">Ticket 1</b> to Entra ID and asks for a <code>News.Read</code> ticket for the same user.');
+  show(a(6.6), '#eb-trade'); glow(a(6.6), '#c-ai-consent', a(10.5));
+  cap(a(6.6), 'Entra ID checks <b class="t1">Ticket 1</b>, and that the agent identity has consent for <code>News.Read</code>.');
+  glow(a(11), '#c-res-b', a(14.5)); trip(a(11.5), '#pk-roles', '#mpRoles', 1.8);
+  cap(a(11), 'It reads user B\'s roles on <code>news-mcp-{suffix}</code> as they are right now: Sports, Science, Health.');
+  drawL(a(14.8), '#L4', .9); pop(a(14.8), '#b4');
+  along(a(14.8), '#t2-mini', '#mp4', 2.0); show(a(14.8), '#t2-mini', .3);
+  cap(a(14.8), 'Entra ID issues <b class="t2">Ticket 2</b>. Foundry keeps it and reuses it until it expires.');
+  hide(a(22), '#eb-trade,#bp-ai,#bp-ai-lbl');
+});
+
+chapter(1, 'What changed on the ticket', [], 24, a => {
+  dim(a(.2), ALL, .12);
+  set(a(.2), '#card-t1', {x: 430, y: 590}); pop(a(.3), '#card-t1');
+  set(a(.2), '#card-t2', {x: 1166, y: 590}); pop(a(.9), '#card-t2');
+  show(a(1.4), '#cmp');
+  cap(a(.3), 'Same person, new destination. Compare the two tickets line by line.');
+  pop(a(3.5), '#tg-oid'); glow(a(3.5), '#card-t1-oid,#card-t2-oid', a(7.5));
+  cap(a(3.5), '<code>oid</code> stays user B. The news side still knows exactly who is asking.');
+  pop(a(8), '#tg-aud'); pop(a(8.5), '#tg-azp'); pop(a(9), '#tg-scp');
+  glow(a(8), '#card-t2-aud,#card-t2-azp,#card-t2-scp', a(14.5));
+  cap(a(8), '<code>aud</code> now names <code>news-mcp-{suffix}</code>, <code>azp</code> names the agent identity, and <code>scp</code> is <code>News.Read</code>. Only the news side accepts this ticket.');
+  pop(a(15), '#tg-roles'); glow(a(15), '#card-t2-roles', a(24));
+  cap(a(15), '<code>roles</code> now carries user B\'s categories. Entra ID wrote them in and signed the ticket, so nothing downstream has to look them up.');
+  hide(a(24), '#card-t1,#card-t2,#cmp', .5); dim(a(24), ALL, 1);
+  hide(a(24.5), '#tg-oid,#tg-aud,#tg-azp,#tg-scp,#tg-roles', .1);
+});
+
+chapter(1, 'Call the gateway', [5], 15, a => {
+  glow(a(.2), '#tool-target', a(3.4));
+  drawL(a(.5), '#L5', .8); pop(a(.5), '#b5');
+  trip(a(.5), '#pk-call', '#mp5', 2.4);
+  cap(a(.3), 'Foundry sends the MCP call to the connection\'s target, APIM, with <b class="t2">Ticket 2</b>. <b class="t1">Ticket 1</b> never goes there.');
+  glow(a(3.1), '#policy', a(14.5));
+  cap(a(7.5), 'Every MCP request in the session carries <b class="t2">Ticket 2</b>: <code>initialize</code>, <code>tools/list</code> and <code>tools/call</code>.');
+});
+
+chapter(1, 'APIM checks Ticket 2', [6], 24, a => {
+  dim(a(.2), BUT_APIM, .15);
+  set(a(.2), '#card-t2', {x: 700, y: 612}); pop(a(.3), '#card-t2');
+  pop(a(.3), '#b6');
+  cap(a(.3), 'The policy checks <b class="t2">Ticket 2</b> before anything else. If any of these checks fails, APIM answers 401.');
+  fx(a(3.5), '#chk1', 'ok');
+  fx(a(4.3), '#chk2', 'ok');
+  fx(a(5.1), '#chk3', 'ok'); glow(a(5.1), '#card-t2-aud', a(6.8));
+  fx(a(5.9), '#chk4', 'ok');
+  fx(a(6.7), '#chk5', 'ok'); glow(a(6.7), '#card-t2-scp', a(8.6));
+  cap(a(3.5), 'Signed by Entra ID, issued in this tenant, addressed to <code>news-mcp-{suffix}</code>, not expired, and <code>News.Read</code> in <code>scp</code>. So only a user\'s ticket for the news service gets in.');
+  hide(a(11), '#chk6-q', .3); show(a(11.1), '#chk6-v', .4); fx(a(11.1), '#chk6', 'ok'); glow(a(11.1), '#card-t2-roles', a(15.5));
+  cap(a(11.1), 'It reads <code>roles</code> and turns them into categories: sports, science, health.');
+  hide(a(16), '#chk7-q', .3); show(a(16.1), '#chk7-s', .4); fx(a(16.1), '#chk7', 'ok');
+  cap(a(16.1), 'The call asks for <code>sports</code>. Sports is on the list, so the call goes through.');
+  hide(a(24), '#card-t2', .5); dim(a(24), BUT_APIM, 1);
+});
+
+chapter(1, 'GNews answers', [7], 19, a => {
+  set(a(.2), '#t2-shred', {x: 1120, y: 700}); show(a(.2), '#t2-shred', .3); tw(a(1.2), '#t2-shred', {y: 760, o: 0}, 1.1);
+  cap(a(.2), 'APIM removes <b class="t2">Ticket 2</b> and adds the GNews key from its named value.');
+  trip(a(1.2), '#key-fly', '#mpKey', 1.4);
+  drawL(a(2.8), '#L7', .7); pop(a(2.8), '#b7');
+  trip(a(2.8), '#pk-gnews', '#mp7', 1.8);
+  glow(a(4.8), '#gn-auth', a(9)); show(a(5.1), '#gn-articles');
+  cap(a(4.8), 'GNews sees a valid key and nothing about user B. It returns sports articles.');
+  trip(a(10), '#pk-articles', '#mpBack', 3.2);
+  show(a(13.3), '#a-ok');
+  cap(a(10), 'The articles go back through APIM to the agent, and the agent answers user B.');
+});
+
+chapter(2, 'User B asks for business', [2, 5, 6], 30, a => {
+  hide(a(0), '#q1,#a-ok,#pick-s,#gn-articles,#ep-chk1,#ep-chk2,#chk6-v,#chk7-s', .4);
+  CHECKS.forEach(c => fx(a(0), c, 'ok', false));
+  show(a(.4), '#chk6-q,#chk7-q', .3);
+  show(a(.6), '#q2');
+  cap(a(.6), 'Now user B asks for three business headlines. Same app, same <b class="t1">Ticket 1</b>, same agent.');
+  trip(a(1.6), '#pk-q2', '#mp2', 2.0);
+  glow(a(3.8), '#ep', a(6)); show(a(4), '#ep-chk1'); show(a(4.4), '#ep-chk2');
+  show(a(5.4), '#pick-b'); glow(a(5.4), '#model', a(8.5));
+  cap(a(4.8), 'The endpoint lets the call in. The model calls <code>top_headlines</code> with category <code>business</code>.');
+  glow(a(9.5), '#t2-mini', a(13));
+  cap(a(9.5), 'Foundry still holds <b class="t2">Ticket 2</b>, so it reuses it. There is no new trade.');
+  trip(a(12.8), '#pk-call2', '#mp5', 2.0);
+  [0, 1, 2, 3, 4].forEach(i => fx(a(15) + i * .3, CHECKS[i], 'ok'));
+  hide(a(16.6), '#chk6-q', .2); show(a(16.6), '#chk6-v', .3); fx(a(16.6), '#chk6', 'ok');
+  hide(a(17.6), '#chk7-q', .2); show(a(17.6), '#chk7-b', .3); fx(a(17.6), '#chk7', 'bad');
+  glow(a(17.6), '#policy', a(21));
+  cap(a(15), 'APIM checks <b class="t2">Ticket 2</b> as before. Business is not sports, science or health.');
+  trip(a(20), '#pk-deny', '#mpDeny', 2.0);
+  show(a(20), '#gn-not');
+  cap(a(20), 'APIM answers the call itself with <code>isError</code>: “Your access covers: sports, science, health. Do not retry other categories.” GNews is never called.');
+  trip(a(25), '#pk-400', '#mp400', 1.8);
+  show(a(26.9), '#a-err');
+  cap(a(25), 'Foundry fails the request with HTTP 400 and the denial text. The model never sees it, so the app must show it to user B.');
+});
+
+chapter(3, 'Who sees what', [], 26, a => {
+  pop(a(.3), '#rc-entra'); pop(a(1), '#rc-user'); pop(a(1.6), '#rc-foundry'); pop(a(2.2), '#rc-apim'); pop(a(2.8), '#rc-gnews');
+  cap(a(.3), 'Entra ID issues both tickets and stores the roles. Foundry holds the blueprint\'s credential and trades <b class="t1">Ticket 1</b> for <b class="t2">Ticket 2</b>. APIM sees only <b class="t2">Ticket 2</b> and decides. GNews sees only the API key.');
+  cap(a(13), 'To take a category away, remove the role on <code>news-mcp-{suffix}</code>. It applies when Foundry next trades for a ticket, so not at once.');
+});
+
+// ---------- reading time: hold the picture still until each caption can be read ----------
+const WORDS_PER_SEC = 2.6, PAD = 1.0;
+caps.sort((p, q) => p.t - q.t);
+const ends = chapters.map(c => c.start + c.dur);
+const holds = [];   // [script time at which to hold, seconds]
+caps.forEach((c, i) => {
+  const chEnd = ends.find(e => e > c.t + 1e-6);
+  const segEnd = Math.min(i + 1 < caps.length ? caps[i + 1].t : cursor, chEnd);
+  const words = c.html.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length;
+  const extra = words / (c.wps || WORDS_PER_SEC) + PAD - (segEnd - c.t);
+  if (extra > 0) holds.push([segEnd, extra]);
+});
+const warp = t => t + holds.reduce((s, [e, x]) => s + (e <= t + 1e-6 ? x : 0), 0);
+const warpEnd = t => t + holds.reduce((s, [e, x]) => s + (e < t - 1e-6 ? x : 0), 0);
+for (const w of tweens) { const t1 = warpEnd(w.t + w.dur); w.t = warp(w.t); w.dur = Math.max(0, t1 - w.t); }
+for (const f of flags) f.t = warp(f.t);
+for (const c of caps) c.t = warp(c.t);
+chapters.forEach((c, i) => { const s = warp(c.start), e = warp(ends[i]); c.start = s; c.dur = e - s; });
+
+// ---------- prepare ----------
+const DUR = warp(cursor);
+document.querySelectorAll('#stage .h, #stage .draw').forEach(node);
+tweens.sort((p, q) => p.t - q.t);
+flags.sort((p, q) => p.t - q.t);
+const flagPairs = new Map();
+for (const f of flags) {
+  if (!flagPairs.has(f.el)) flagPairs.set(f.el, new Map());
+  flagPairs.get(f.el).set(f.cls, false);
+}
+
+function render(t) {
+  const st = new Map();
+  for (const [el, n] of nodes) st.set(el, {...n.base});
+  for (const w of tweens) {
+    if (t < w.t) break;
+    const s = st.get(w.el);
+    const p = w.dur > 0 ? Math.min(1, (t - w.t) / w.dur) : 1;
+    const e = EASE[w.ease](p);
+    if (w.path) {
+      const pt = w.path.getPointAtLength((w.rev ? 1 - e : e) * w.L);
+      s.x = pt.x; s.y = pt.y;
+    } else {
+      for (const k in w.to) s[k] += (w.to[k] - s[k]) * e;
+    }
+  }
+  for (const [el, s] of st) {
+    const n = nodes.get(el), L = n.last;
+    const o = Math.max(0, Math.min(1, s.o * s.k));
+    const os = o.toFixed(3);
+    if (L.o !== os) { el.style.opacity = os; el.style.visibility = o < .002 ? 'hidden' : ''; L.o = os; }
+    const tr = `translate(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px) scale(${s.s.toFixed(4)})`;
+    if (L.tr !== tr) { el.style.transform = tr; L.tr = tr; }
+    if (n.len) {
+      const off = (n.len * (1 - Math.min(1, s.d))).toFixed(1);
+      if (L.d !== off) { el.style.strokeDashoffset = off; L.d = off; }
+    }
+  }
+  const on = new Map();
+  for (const [el, m] of flagPairs) on.set(el, new Map(m));
+  for (const f of flags) { if (t < f.t) break; on.get(f.el).set(f.cls, f.on); }
+  for (const [el, m] of on) for (const [cls, v] of m) if (el.classList.contains(cls) !== v) el.classList.toggle(cls, v);
+}
+
+// ---------- player ----------
+let T = 0, playing = false, speed = 1, lastNow = 0, skipB = null, capIdx = -1, chIdx = -1;
+const SPEEDS = [.75, 1, 1.25, 1.5, 2];
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const chapterAt = t => { let i = 0; chapters.forEach((c, j) => { if (c.start <= t + 1e-6) i = j; }); return i; };
+
+const parts = $('#parts');
+PARTS.forEach((p, i) => {
+  const b = document.createElement('button');
+  b.textContent = `${i + 1} · ${p}`;
+  b.onclick = () => seek(chapters.find(c => c.part === i && (i > 0 || c.start > 0)).start + .001);
+  parts.append(b);
+});
+const ticks = $('#ticks');
+chapters.forEach((c, i) => {
+  if (i === 0) return;
+  const d = document.createElement('div');
+  d.className = 'tick' + (chapters[i - 1].part !== c.part ? ' part' : '');
+  d.style.left = `${(c.start / DUR) * 100}%`;
+  ticks.append(d);
+});
+
+function draw() {
+  render(T);
+  $('#bar .fill').style.width = `${(T / DUR) * 100}%`;
+  $('#bar .knob').style.left = `${(T / DUR) * 100}%`;
+  $('#time').textContent = `${fmt(T)} / ${fmt(DUR)}`;
+  const ci = chapterAt(T);
+  if (ci !== chIdx) {
+    chIdx = ci;
+    const c = chapters[ci];
+    const part = $('#cap-part');
+    part.textContent = c.label || PARTS[c.part];
+    $('#cap-nums').innerHTML = c.nums.map(n => `<span class="num">${n}</span>`).join(' ');
+    $('#cap-title').textContent = c.title;
+    [...parts.children].forEach((b, i) => b.classList.toggle('on', i === c.part));
+  }
+  let k = -1;
+  caps.forEach((c, i) => { if (c.t <= T + 1e-6) k = i; });
+  if (k !== capIdx) {
+    capIdx = k;
+    const p = $('#cap-text');
+    p.innerHTML = k >= 0 ? caps[k].html : '';
+    p.classList.remove('in'); void p.offsetWidth; p.classList.add('in');
+  }
+}
+function setPlaying(v) {
+  playing = v;
+  $('#ico-play').setAttribute('d', v ? 'M3 2h4v12H3zM9 2h4v12H9z' : 'M4 2l10 6-10 6z');
+}
+function seek(t) { T = Math.max(0, Math.min(DUR, t)); skipB = null; draw(); }
+function boundaryAfter(t) {
+  for (const c of chapters) { const e = c.start + c.dur; if (e > t + 1e-6) return e; }
+  return null;
+}
+function frame(now) {
+  const dt = Math.min(.1, (now - lastNow) / 1000);
+  lastNow = now;
+  if (playing) {
+    let nt = T + dt * speed;
+    if ($('#chk-step').checked) {
+      const b = boundaryAfter(T);
+      if (b !== null && b < DUR && b !== skipB && nt >= b) { nt = b - .02; skipB = b; setPlaying(false); }
+    }
+    if (skipB !== null && nt > skipB + .05) skipB = null;
+    if (nt >= DUR) { nt = DUR; setPlaying(false); }
+    T = nt;
+    draw();
+  }
+  requestAnimationFrame(frame);
+}
+function toggle() { if (!playing && T >= DUR) seek(0); setPlaying(!playing); }
+function next() { const i = chapterAt(T); if (i < chapters.length - 1) seek(chapters[i + 1].start + .001); }
+function prev() {
+  const i = chapterAt(T), c = chapters[i];
+  seek(T - c.start > 1.5 || i === 0 ? c.start + .001 : chapters[i - 1].start + .001);
+}
+
+$('#btn-play').onclick = toggle;
+$('#btn-next').onclick = next;
+$('#btn-prev').onclick = prev;
+$('#btn-speed').onclick = e => {
+  speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
+  e.currentTarget.textContent = `${speed}×`;
+};
+const bar = $('#bar');
+const barTime = e => { const r = bar.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * DUR; };
+let dragging = false;
+bar.addEventListener('pointerdown', e => { dragging = true; bar.setPointerCapture(e.pointerId); seek(barTime(e)); });
+bar.addEventListener('pointermove', e => {
+  const t = barTime(e), tip = $('#tip');
+  tip.textContent = `${fmt(t)} · ${chapters[chapterAt(t)].title}`;
+  tip.style.left = `${(t / DUR) * 100}%`;
+  if (dragging) seek(t);
+});
+bar.addEventListener('pointerup', () => { dragging = false; });
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' && e.key !== ' ') return;
+  if (e.key === ' ') { e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === 'r' || e.key === 'R') { seek(0); setPlaying(true); }
+  else if (e.key === 's' || e.key === 'S') $('#chk-step').checked = !$('#chk-step').checked;
+  else if (e.key === 'f' || e.key === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  else if (['1', '2', '3', '4'].includes(e.key)) parts.children[+e.key - 1].click();
+});
+
+window.anim = {seek, chapters, caps, duration: DUR, play: () => setPlaying(true), pause: () => setPlaying(false)};
+const m = location.hash.match(/chapter-(\d+)/);
+seek(m ? chapters[Math.min(chapters.length - 1, +m[1])].start + .001 : 0);
+requestAnimationFrame(now => { lastNow = now; requestAnimationFrame(frame); });
+if (!/paused/.test(location.search)) setTimeout(() => setPlaying(true), 700);
+})();
+</script>
+</body>
+</html>
