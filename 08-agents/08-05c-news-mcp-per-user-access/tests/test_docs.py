@@ -38,7 +38,6 @@ def test_guide_embeds_both_diagrams(guide):
 
 def test_guide_sections(guide):
     headings = [line.lstrip('#').strip().lower() for line in guide.splitlines() if line.startswith('#')]
-    assert any('per-agent' in h for h in headings)
     assert any('teardown' in h for h in headings)
     assert any('if the connection api refuses' in h for h in headings)  # 08-05c-01's error message points here
     assert any('demo runbook' in h for h in headings)

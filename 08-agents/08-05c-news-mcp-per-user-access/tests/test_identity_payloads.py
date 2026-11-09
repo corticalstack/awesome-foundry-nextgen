@@ -60,7 +60,7 @@ def test_resource_app_roles():
     assert [r['value'] for r in roles] == list(authz.ROLES)
     for r in roles:
         assert r['id'] == authz.permission_id(SUFFIX, r['value'])
-        assert r['allowedMemberTypes'] == ['User', 'Application']
+        assert r['allowedMemberTypes'] == ['User']
         assert r['isEnabled'] is True
         assert r['displayName'] and r['description']
 
@@ -215,15 +215,6 @@ def test_user_impersonation_variant_differs_only_in_auth_type():
     assert alt == obo
 
 
-def test_agentic_identity_connection_body():
-    props = ident.agentic_connection_body(TARGET, SUFFIX)['properties']
-    assert props['category'] == 'RemoteTool'
-    assert props['target'] == TARGET
-    assert props['authType'] == 'AgenticIdentityToken'
-    assert props['audience'] == 'api://news-mcp-abc123'
-    assert 'scopes' not in props
-
-
 def test_connection_attempts_in_fixed_order():
     assert ident.connection_attempts() == [
         ('AgentOnBehalfOfUser', '2025-04-01-preview'),
@@ -284,9 +275,8 @@ ENV = {
     'NEWS_TEST_USER_TAP': 'not-a-target',
 }
 NAMED = {
-    ('agent', 'news-desk-agent'), ('agent', 'news-all-agent'), ('agent', 'news-sports-agent'),
+    ('agent', 'news-desk-agent'),
     ('connection', 'news-mcp-wrapper'), ('connection', 'news-mcp-apim'),
-    ('connection', 'news-mcp-wrapper-all'), ('connection', 'news-mcp-wrapper-sports'),
     ('apim-api', 'news-mcp'), ('apim-backend', 'gnews-mcp'), ('apim-named-value', 'gnews-api-key'),
     ('resource-group', 'rg-foundry-news-mcp-abc123'),
 }

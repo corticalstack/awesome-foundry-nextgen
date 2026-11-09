@@ -34,17 +34,20 @@ authz = importlib.import_module('authz')
 USER_B_ROLES = ['News.Read.Sports', 'News.Read.Science', 'News.Read.Health']
 USER_B_TOOLS = {'get_sports_headlines', 'get_science_headlines', 'get_health_headlines'}
 
-# Bearer string -> claims. StaticTokenVerifier needs client_id; the rest mirrors Entra tokens.
+# Bearer string -> claims. StaticTokenVerifier needs client_id and checks `scopes`, which stands
+# for the `scp` an Entra delegated token carries; the rest mirrors Entra tokens.
+DELEGATED = {'scp': 'News.Read', 'scopes': ['News.Read']}
 TOKENS = {
     'user-a': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-a', 'azp': 'agent-app',
-               'scp': 'News.Read', 'roles': ['News.Read.All']},
+               **DELEGATED, 'roles': ['News.Read.All']},
     'user-b': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-b', 'azp': 'agent-app',
-               'scp': 'News.Read', 'roles': USER_B_ROLES},
-    'agent-sports': {'client_id': 'sports-agent-app', 'idtyp': 'app', 'oid': 'oid-sports-agent',
-                     'appid': 'sports-agent-app', 'roles': ['News.Read.Sports']},
-    'no-roles': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-none', 'azp': 'agent-app', 'scp': 'News.Read'},
-    'fallback-oid': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-fallback', 'azp': 'agent-app',
-                     'scp': 'News.Read'},
+               **DELEGATED, 'roles': USER_B_ROLES},
+    # A v1 delegated token: appid instead of azp, and no idtyp.
+    'user-v1': {'client_id': 'agent-app', 'oid': 'oid-v1', 'appid': 'agent-app', **DELEGATED, 'roles': ['News.Read.Sports']},
+    # An app-only token for the API: no scp, even though it holds a role.
+    'app-only': {'client_id': 'other-app', 'idtyp': 'app', 'oid': 'oid-app', 'azp': 'other-app', 'roles': ['News.Read.All']},
+    'no-roles': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-none', 'azp': 'agent-app', **DELEGATED},
+    'fallback-oid': {'client_id': 'agent-app', 'idtyp': 'user', 'oid': 'oid-fallback', 'azp': 'agent-app', **DELEGATED},
 }
 OID_ROLES = {'oid-fallback': ['News.Read.Health']}
 
@@ -172,10 +175,6 @@ def test_user_b_lists_three_tools(wrapper):
     assert set(_list(wrapper[0], 'user-b')) == USER_B_TOOLS
 
 
-def test_sports_agent_lists_one_tool(wrapper):
-    assert _list(wrapper[0], 'agent-sports') == ['get_sports_headlines']
-
-
 def test_no_roles_lists_nothing(wrapper):
     assert _list(wrapper[0], 'no-roles') == []
 
@@ -259,6 +258,10 @@ def test_unknown_token_is_401(wrapper):
     assert _post_mcp(wrapper[0], TOOLS_LIST, token='not-a-known-token')[0] == 401
 
 
+def test_app_only_token_is_401_even_with_a_role(wrapper):
+    assert _post_mcp(wrapper[0], TOOLS_LIST, token='app-only')[0] == 401
+
+
 def test_health_needs_no_token(wrapper):
     with urllib.request.urlopen(f'{wrapper[0]}/health', timeout=5) as response:
         assert response.status == 200
@@ -273,12 +276,12 @@ def _log_lines(wrapper):
 
 def test_each_call_logs_the_caller_and_the_decision(wrapper):
     _call(wrapper[0], 'user-b', 'get_business_headlines', {})
-    _call(wrapper[0], 'agent-sports', 'get_sports_headlines', {'max': 1})
+    _call(wrapper[0], 'user-v1', 'get_sports_headlines', {'max': 1})
     calls = [line for line in _log_lines(wrapper) if line['event'] == 'tools/call']
     denied, allowed = calls[-2], calls[-1]
     assert denied == {**denied, 'idtyp': 'user', 'oid': 'oid-b', 'azp': 'agent-app', 'roles': USER_B_ROLES,
                       'tool': 'get_business_headlines', 'decision': 'denied'}
-    assert allowed == {**allowed, 'idtyp': 'app', 'oid': 'oid-sports-agent', 'appid': 'sports-agent-app',
+    assert allowed == {**allowed, 'idtyp': 'user', 'oid': 'oid-v1', 'appid': 'agent-app',
                        'roles': ['News.Read.Sports'], 'tool': 'get_sports_headlines', 'decision': 'allowed'}
     assert 'azp' not in allowed
 

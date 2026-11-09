@@ -38,15 +38,17 @@ def log(**fields):
 if AUTH_MODE == 'static':
     # Test mode: bearer strings map to fixed claims. Never set this in Azure.
     log(event='startup', warning='NEWS_MCP_AUTH_MODE=static: accepting test tokens, not Entra tokens')
-    verifier = StaticTokenVerifier(tokens=json.loads(os.environ['NEWS_MCP_STATIC_TOKENS']))
+    verifier = StaticTokenVerifier(tokens=json.loads(os.environ['NEWS_MCP_STATIC_TOKENS']), required_scopes=[authz.SCOPE])
 else:
     tenant = os.environ['ENTRA_TENANT_ID']
-    # v1 and v2 issuers and both audience forms (client id and App ID URI). No required
-    # scopes: the per-agent fallback sends app-only tokens, which carry no scp.
+    # v1 and v2 issuers and both audience forms (client id and App ID URI). News.Read is
+    # required: only a delegated user token carries it, so an app-only token for the API,
+    # which any app in the tenant can get, is refused with 401.
     verifier = JWTVerifier(
         jwks_uri=f'https://login.microsoftonline.com/{tenant}/discovery/v2.0/keys',
         issuer=[f'https://sts.windows.net/{tenant}/', f'https://login.microsoftonline.com/{tenant}/v2.0'],
         audience=os.environ['NEWS_MCP_AUDIENCES'].split(','),
+        required_scopes=[authz.SCOPE],
     )
 
 # A plain Client, not a proxy: it sends only the headers set here, so the caller's

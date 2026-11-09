@@ -29,6 +29,12 @@ def test_validates_the_entra_token_into_a_variable(policy):
     assert '<audiences>__AUDIENCES__</audiences>' in policy  # filled in by apim-news-mcp.bicep
 
 
+def test_requires_the_delegated_scope(policy):
+    """Only a delegated user token carries scp, so an app-only token for the API gets 401."""
+    claim = re.search(r'<required-claims>\s*<claim name="scp" match="any" separator=" ">\s*<value>([^<]+)</value>', policy)
+    assert claim and claim.group(1) == authz.SCOPE
+
+
 def test_categories_in_authz_order(policy):
     assert ', '.join(f'"{c}"' for c in authz.CATEGORIES) in policy
 

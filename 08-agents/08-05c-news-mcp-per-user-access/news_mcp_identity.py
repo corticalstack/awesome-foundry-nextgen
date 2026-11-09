@@ -34,8 +34,8 @@ AGENT_INSTRUCTIONS = (
     'category or tool for that request. If no news tool covers the category the user asks for, say that '
     'their access does not include it and do not fetch another category instead.'
 )
-AGENTS = (AGENT_NAME, 'news-all-agent', 'news-sports-agent')
-CONNECTIONS = ('news-mcp-wrapper', 'news-mcp-apim', 'news-mcp-wrapper-all', 'news-mcp-wrapper-sports')
+AGENTS = (AGENT_NAME,)
+CONNECTIONS = ('news-mcp-wrapper', 'news-mcp-apim')
 
 
 def scope_id(suffix):
@@ -75,7 +75,7 @@ def resource_app_manifest(suffix):
             'displayName': role,
             'description': ('Read headlines in every category and search all news' if role == authz.ALL_ROLE
                             else f'Read {role.rsplit(".", 1)[1].lower()} headlines'),
-            'allowedMemberTypes': ['User', 'Application'],
+            'allowedMemberTypes': ['User'],
             'isEnabled': True,
         } for role in authz.ROLES],
     }
@@ -188,17 +188,6 @@ def delegated_connection_body(target, suffix, auth_type='AgentOnBehalfOfUser'):
         'target': target,
         'authType': auth_type,
         'scopes': [f'{authz.app_id_uri(suffix)}/{authz.SCOPE}'],
-        'metadata': {'type': 'generic_mcp'},
-    }}
-
-
-def agentic_connection_body(target, suffix):
-    """Per-agent fallback: the agent's own identity calls the server, with no user in the token."""
-    return {'properties': {
-        'category': 'RemoteTool',
-        'target': target,
-        'authType': 'AgenticIdentityToken',
-        'audience': authz.app_id_uri(suffix),
         'metadata': {'type': 'generic_mcp'},
     }}
 
