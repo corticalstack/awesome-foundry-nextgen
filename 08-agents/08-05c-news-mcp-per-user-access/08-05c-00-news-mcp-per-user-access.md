@@ -100,6 +100,77 @@ The right-hand column was observed on 2026-10-30 in the wrapper's log (08-05c-02
 
 Foundry's MCP client calls itself `ToolServer` and speaks protocol `2025-11-25`.
 
+### Client app and resource app, in plain terms
+
+**`news-desk-client` stands in for the real application.** The lab has no app UI, so the notebook plays that part. The notebooks' sign-in cells call `checks.user_credential(TENANT_ID, CLIENT_APP_ID, device_code=True)`, which becomes `DeviceCodeCredential(client_id=...)` in [`news_mcp_checks.py`](news_mcp_checks.py). At that moment the notebook is signing the user in *as* `news-desk-client`. In production it would be a news-desk web app, a Teams app or a mobile app.
+
+`news-mcp` isn't something anyone signs into. It is Entra's record of the news service and its permission levels.
+
+#### Every token names a "from" and a "to"
+
+A token Entra issues works like a ticket. It says:
+
+- **who** the person is (`oid`)
+- **which app** they used to get it (`azp`): this is the **client**
+- **where** the ticket is valid (`aud`): this is the **resource**
+- **what** they may do there (`scp`, `roles`)
+
+So Entra needs both ends registered: the app doing the asking, and the thing being asked. Those are the two apps.
+
+#### A real-world example
+
+Outlook is a client. Exchange (through Microsoft Graph) is the resource. Your mailbox rights belong to Exchange, not to Outlook. That's why Outlook on your phone, Outlook on the web and Thunderbird all see the same mailbox with the same rights.
+
+| | Real world | This lab |
+|---|---|---|
+| Client: the app the person opens | Outlook | `news-desk-client` (the notebook, in place of a real app) |
+| Resource: owns the data and the rules | Exchange / Graph | `news-mcp` (rules = the `News.Read.*` roles) |
+| The program that checks the ticket | Exchange's servers | the wrapper (Track A) or the APIM policy (Track B) |
+
+`news-mcp` has no code of its own. It is an entry in Entra that says "a news API exists, these are its permission levels, and this is who holds which". The wrapper and the APIM policy are the programs that read tokens addressed to it. GNews never sees any of this.
+
+#### Why two apps and not one
+
+1. **Rights belong to what you access, not to what you access it with.** "User B may read sports" is a fact about the news service. Add a Teams bot later as a second client and user B is still sports-only there, with no changes, because the rule is stored on `news-mcp`.
+2. **The news server only accepts tickets addressed to itself.** The wrapper and the policy check that `aud` is `news-mcp`'s id. Tokens can only be addressed to it because it exists as an app.
+3. **The client app decides which apps may call the agent.** The agent endpoint's `allowed_clients` lists only `news-desk-client`. That is a rule about which front-end apps are allowed, and it is separate from the news permissions.
+
+#### Where the agent fits: "client" and "resource" are roles in each hop
+
+The request makes two hops, and the agent plays a different role in each:
+
+```
+ User B
+   | signs in through news-desk-client (the notebook)
+   v
+ Hop 1: ticket from news-desk-client  ->  to the agent     scp: access_agent
+   |
+   | Foundry trades the ticket in (on-behalf-of)
+   v
+ Hop 2: ticket from the agent  ->  to news-mcp            scp: News.Read
+                                                           roles: B's categories
+   v
+ wrapper / APIM checks the ticket, then calls GNews with the one API key
+```
+
+In hop 1, `news-desk-client` is the client and the agent is the resource. In hop 2, the agent is the client and `news-mcp` is the resource. That's what the next subsection means by "resource app is not a third object": "resource" describes the role an app plays in one hop, not a kind of app. The user (`oid`) stays the same on both tickets. Only "from" and "to" change. Entra fills in `roles` from `news-mcp`'s assignments at the moment of the trade.
+
+#### App registration vs enterprise app
+
+Each app is stored in Entra as two parts:
+
+- **App registration**: the definition. For `news-mcp` it lists the permission levels that exist (`News.Read.All`, `News.Read.Sports`, ...). Think of it as the menu.
+- **Enterprise app**: the app's copy in your tenant, where tenant-specific facts live. For `news-mcp` it records that user A holds All and user B holds sports, science and health. Think of it as the guest list.
+
+The split exists because an app is defined once but can be used in many tenants. Slack's registration lives in Slack's tenant. Your tenant has an enterprise app for Slack that records who in your company is assigned to it and what your admin consented to. In this lab both parts are in the same tenant, so they look like duplicates.
+
+What this means in the portal:
+
+- To see which roles **exist**: App registrations > `news-mcp-{suffix}` > App roles.
+- To see who **holds** them: Enterprise applications > `news-mcp-{suffix}` > Users and groups. You have to clear the Application type filter, or the portal hides the app.
+
+For `news-desk-client`, the registration says "I'm a public client with no secret, and I ask for `access_agent`, `News.Read` and `User.Read`". The enterprise app stores the admin's approval of those permissions, so users never see a consent prompt.
+
 ### App registrations and enterprise apps
 
 Entra keeps two objects for an app. The **app registration** (application object) is the app's definition: its app id, the scopes and app roles it exposes, the permissions it asks for, redirect URIs and credentials. The **enterprise app** (service principal) is the app's presence in a tenant: who holds which app role, admin consent grants, sign-in logs. "Resource app" is not a third object; it names an app that exposes an API other apps get tokens for.
