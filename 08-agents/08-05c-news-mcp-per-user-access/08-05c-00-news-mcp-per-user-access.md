@@ -218,7 +218,7 @@ The published ARM schema lists neither `AgentOnBehalfOfUser` nor `scopes`; ARM a
 
 ## 5. Revoking a category
 
-08-05c-02 Step 8 removes `News.Read.Science` from user B and records the time; 08-05c-03 measures the effect on both tracks.
+08-05c-02 Step 8 removes `News.Read.Science` from user B, and 08-05c-03's science case then expects a denial. The run of 2026-10-30 measured the effect on both tracks:
 
 - **Track B:** `news-mcp-apim` had never fetched a token for user B, so the token Foundry obtained carried the new roles. Science was denied 13 minutes after the revocation.
 - **Track A:** Foundry had called the wrapper for user B 3 seconds before the revocation. Thirteen minutes later the wrapper received a token with sports and health only, so science was no longer offered. That held for a user token issued before the revocation too.
@@ -229,7 +229,7 @@ A role change applies when Foundry obtains its next downstream token. Entra acce
 
 - **The device code page reuses the browser's account.** Twice the admin account was picked when user B was meant, and the "user B" results were the admin's. Every sign-in cell now prints the account it expects and compares the token's `oid`.
 - **The model fills gaps.** With the business tool hidden from user B, one run fetched science headlines instead; another guessed the name `get_business_headlines`, which Foundry rejected with HTTP 400 "Tool get_business_headlines not found on remote server". The instructions now forbid fetching another category, and the checks fail a `substituted` outcome.
-- **Foundry fails the request on `isError`.** On Track B the denial reaches the caller as HTTP 400 `tool_user_error`, "An error occurred invoking 'top_headlines': " followed by the denial text. The model never sees it, so an application calling the agent must show that error to the user.
+- **What the caller gets for a denied call on Track B has varied.** On 2026-11-10 the `isError` result went back to the model, which repeated the denial text in its reply. On 2026-10-30 and 2026-11-06 Foundry failed the whole request with HTTP 400 `tool_user_error`, first with the denial text in the message and later with only "A user error occurred while executing a tool call." An application calling the agent must handle both a reply that quotes the denial and an HTTP 400 that may carry no text. `checks.ask` and `checks.classify` accept all three shapes; without the text the matrix reports `failed`, not `denied`.
 - **Foundry can cache an empty tool list.** While a broken gateway API listed no tools, user A's token kept getting an empty list after the fix, even on a new agent version. A new sign-in cleared it.
 - **APIM's MCP pass-through** needs a backend and `backendId` on the API; without them APIM answers `initialize` itself and lists no tools. Clients reach the API at `/mcp` under its path, APIM appends that `/mcp` to the backend URL, and the policy rewrites it back to `/` for GNews. At `2025-09-01-preview` the service rejected `mcpProperties` in the shape the REST spec gives, so the template uses `2024-06-01-preview` like the AI-Gateway samples.
 - **The agent endpoint** needs `api-version=v1`, which Microsoft Learn's Python sample omits (the endpoint answers 400 without it), and runs a specific version when the request body carries `agent_reference` with a `version`.
@@ -249,7 +249,7 @@ User delegation (`AgentOnBehalfOfUser`), the `AgentBlueprint` endpoint scheme an
 
 ### If the connection API refuses
 
-08-05c-01 Step 10 tries the Learn JSON at three ARM api-versions, then `AgentUserImpersonation`, and keeps the first one ARM accepts. If none is accepted, one route remains:
+08-05c-01 Step 10 tries the Learn JSON at three ARM api-versions and keeps the first one ARM accepts. If ARM refuses all three, the cell reads the connection back, because on 2026-11-09 and 2026-11-10 ARM answered HTTP 500 and stored it anyway. It does not fall back to `AgentUserImpersonation`, the value the ARM schema lists: ARM stores it, but Foundry then fails every tool call (the note under 08-05c-01 Step 10). If the connection is not stored, one route remains:
 
 - **OAuth identity passthrough** (`OAuth2` connection). Each user follows an `oauth_consent_request` link once. The server sees the user but not the agent, and the connection holds the OAuth client's settings.
 
@@ -273,10 +273,10 @@ The wrapper reads `NEWS_MCP_OID_ROLES`, a JSON map from `oid` to app roles, and 
 |---|---|
 | [08-05c-01](08-05c-01-identity-and-agent.ipynb) | Apps, user B and their pass, the agent and its endpoint, consent, app roles, the `news-mcp-apim` connection |
 | [08-05c-02](08-05c-02-wrapper-container-app.ipynb) | Track A: deploys the wrapper, runs the matrix, and revokes `News.Read.Science` |
-| [08-05c-03](08-05c-03-apim-passthrough.ipynb) | Track B: adds the MCP API to the gateway, runs the matrix, and checks whether the revocation reached Track A |
+| [08-05c-03](08-05c-03-apim-passthrough.ipynb) | Track B: adds the MCP API to the gateway and runs the matrix |
 | [08-05c-04](08-05c-04-reset-for-another-run.ipynb) | Optional, after 08-05c-03: gives user B the science role back, and a new pass if needed, for another run of 08-05c-02 and 08-05c-03 |
 
-Run 08-05c-03 within the hour after 08-05c-02, so its last step measures a short delay.
+08-05c-03 does not need 08-05c-02. For Track B alone, run 08-05c-01 and then 08-05c-03; user B then keeps the science role and 08-05c-03 expects that. For both tracks, run 08-05c-02 and then 08-05c-03; user B then lacks the science role and 08-05c-03 expects a denial.
 
 **Sign-ins.** Each notebook signs in both users with a device code: the cell prints a code, you enter it at the address it prints, and the cell stops if the token belongs to someone else.
 
@@ -287,7 +287,7 @@ Run 08-05c-03 within the hour after 08-05c-02, so its last step measures a short
 
 For user B, use a private window, choose **Use another account**, type user B's account, and when Entra asks for a password choose **Other ways to sign in**, then **Temporary Access Pass**. `grep -E 'NEWS_TEST_USER_(UPN|TAP)' .env` shows both values. In this lab's runs Entra asked user B for nothing beyond the pass, not even security-info registration. The pass lasts 8 hours; re-run Step 5 of 08-05c-01 for a new one.
 
-**`.env` keys.** You set `GNEWS_API_KEY`, and optionally `NEWS_MCP_RESOURCE_GROUP`, `NEWS_MCP_LOCATION` and `NEWS_TEST_USER_UPN` (see `.env.example`). 08-05c-01 writes `NEWS_MCP_RESOURCE_APP_ID`, `NEWS_MCP_RESOURCE_SP_ID`, `NEWS_DESK_CLIENT_APP_ID`, `NEWS_TEST_USER_UPN`, `NEWS_TEST_USER_ID`, `NEWS_TEST_USER_TAP`, `NEWS_AGENT_BLUEPRINT_CLIENT_ID`, `NEWS_CONNECTION_AUTH_TYPE` and `NEWS_CONNECTION_API_VERSION`; 08-05c-02 writes `NEWS_MCP_WRAPPER_URL` and `NEWS_SCIENCE_REVOKED_AT`.
+**`.env` keys.** You set `GNEWS_API_KEY`, and optionally `NEWS_MCP_RESOURCE_GROUP`, `NEWS_MCP_LOCATION` and `NEWS_TEST_USER_UPN` (see `.env.example`). 08-05c-01 writes `NEWS_MCP_RESOURCE_APP_ID`, `NEWS_MCP_RESOURCE_SP_ID`, `NEWS_DESK_CLIENT_APP_ID`, `NEWS_TEST_USER_UPN`, `NEWS_TEST_USER_ID`, `NEWS_TEST_USER_TAP`, `NEWS_AGENT_BLUEPRINT_CLIENT_ID`, `NEWS_CONNECTION_AUTH_TYPE` and `NEWS_CONNECTION_API_VERSION`; 08-05c-02 writes `NEWS_MCP_WRAPPER_URL`.
 
 ## 10. Demo runbook
 
@@ -306,7 +306,7 @@ A demo of both tracks follows the notebooks in order, because 08-05c-02 ends by 
 | Identity | 08-05c-01, all of it | the two users and their app roles (Step 9), the agent's endpoint schemes (Step 7), the user B sign-in with `amr` `tap, mfa` (Step 6), each user calling the agent (Step 11) |
 | Track A | 08-05c-02 Steps 1 to 7; stop before Step 8 | the token the wrapper received (Step 5), the matrix (Step 6), your own questions, the tool lists (Step 7) |
 | Revocation | 08-05c-02 Step 8 | user B now holds sports and health |
-| Track B | 08-05c-03, all of it | the API added to the gateway and the 401 without a token (Steps 1 and 2), the matrix (Step 4), your own questions, the denial at the gateway (Step 5), Track A after the revocation (Step 6) |
+| Track B | 08-05c-03, all of it | the API added to the gateway and the 401 without a token (Steps 1 and 2), the sign-ins (Step 4), the matrix (Step 5), your own questions |
 
 The Container Apps deployment in 08-05c-02 takes about 6 minutes (environment, image build, app); the gateway deployment in 08-05c-03 takes under a minute.
 
@@ -322,20 +322,19 @@ The model words its replies differently each time. What to check is which tools 
 | 4 | Track A, before Step 8 | B | Give me three science headlines | `get_science_headlines` called; three science headlines |
 | 5 | Track A, Step 7 | B | direct `tools/call` of `get_business_headlines` | `isError=True` and "Your access covers: sports, science, health. Do not retry other categories."; the wrapper logs `denied` and makes no upstream call |
 | 6 | Track B | A | Give me three business headlines | `search` and `top_headlines` listed; `top_headlines` called with `category: business`; three business headlines |
-| 7 | Track B | B | Give me three business headlines | HTTP 400 from the agent endpoint: "An error occurred invoking 'top_headlines': Your access covers: sports, health. Do not retry other categories." |
+| 7 | Track B | B | Give me three business headlines | the denial text, "Your access covers: sports, health. Do not retry other categories.": quoted in the agent's reply (2026-11-10), or carried in an HTTP 400 `tool_user_error` from the agent endpoint (2026-10-30; on 2026-11-06 that 400 carried no text) |
 | 8 | Track B | B | Give me three sports headlines | `top_headlines` called with `category: sports`; three sports headlines |
-| 9 | Track B, after Step 8 | B | Give me three science headlines | HTTP 400 with the same denial text |
-| 10 | Track B, Step 6 | B | Give me three science headlines, on the Track A version | no science tool listed and no call; Foundry may still hold a token from before the revocation, in which case science headlines come back |
-| 11 | Track B | B | Search for news about the Champions League | HTTP 400 with the denial text: `search` needs `News.Read.All` |
+| 9 | Track B, after Step 8 | B | Give me three science headlines | the denial text, as in case 7 |
+| 10 | Track B | B | Search for news about the Champions League | the denial text, as in case 7: `search` needs `News.Read.All` |
 
 After 08-05c-02 Step 8 the denial text for user B names only sports and health.
 
 ### Your own questions
 
-08-05c-02 and 08-05c-03 each have a "Your own questions" cell after the matrix. Set `USER` to `'A'` or `'B'` and `QUESTION` to anything, and run it; it prints the tools the agent listed, the calls it made and the reply, or the HTTP 400 that Foundry returns when the gateway denies a call. Questions that show the difference between the tracks:
+08-05c-02 and 08-05c-03 each have a "Your own questions" cell after the matrix. Set `USER` to `'A'` or `'B'` and `QUESTION` to anything, and run it; it prints the tools the agent listed, the calls it made and the reply, or the HTTP 400 that Foundry returned in earlier runs when the gateway denied a call. Questions that show the difference between the tracks:
 
 - `What news tools do you have?` as A, then as B: ten tools and three on Track A, the same two for both on Track B.
-- `Give me three business headlines` as B: a polite refusal on Track A, an HTTP 400 on Track B.
+- `Give me three business headlines` as B: a polite refusal on Track A; on Track B the policy's denial text, quoted by the model or carried in an HTTP 400.
 
 ### If something goes wrong
 
@@ -345,7 +344,7 @@ After 08-05c-02 Step 8 the denial text for user B names only sports and health.
 
 ### Running it twice
 
-The simplest way is the teardown in section 11 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back, removes `NEWS_SCIENCE_REVOKED_AT` from `.env`, and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03 within the hour after its Step 8. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
+The simplest way is the teardown in section 11 and a fresh build. To run 08-05c-02 and 08-05c-03 again without one, run [08-05c-04](08-05c-04-reset-for-another-run.ipynb) after 08-05c-03. It gives user B the science role back and can issue user B a new pass. Then run 08-05c-02 from the top, and 08-05c-03. Run each notebook in full: the agent endpoint runs the agent's latest version, which after 08-05c-03 is the Track B one, and 08-05c-02 Step 4 is what makes a Track A version the latest again.
 
 ## 11. Teardown
 

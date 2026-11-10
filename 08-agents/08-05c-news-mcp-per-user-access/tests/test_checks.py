@@ -259,16 +259,15 @@ def test_wrapper_events_filter_by_kind():
 
 @pytest.mark.parametrize('track, b_business', [('wrapper', 'hidden'), ('apim', 'denied')])
 def test_base_cases(track, b_business):
-    assert [(c.user, c.category, c.expected, c.required) for c in checks.base_cases(track)] == [
-        ('A', 'business', 'articles', True),
-        ('B', 'business', b_business, True),
-        ('B', 'sports', 'articles', True),
+    assert [(c.user, c.category, c.expected) for c in checks.base_cases(track)] == [
+        ('A', 'business', 'articles'),
+        ('B', 'business', b_business),
+        ('B', 'sports', 'articles'),
     ]
 
 
 def test_science_case_takes_the_expectation_from_the_caller():
-    assert checks.science_case('articles') == checks.Case('B', 'science', 'articles', True)
-    assert checks.science_case('denied', required=False) == checks.Case('B', 'science', 'denied', False)
+    assert checks.science_case('articles') == checks.Case('B', 'science', 'articles')
 
 
 @pytest.mark.parametrize('category', ['business', 'sports', 'science'])
@@ -338,6 +337,32 @@ def test_ask_raises_other_bad_requests():
         checks.ask(_FakeClient({'business': _bad_request('Invalid model')}), checks.prompt('business'))
 
 
+GENERIC_TOOL_ERROR = 'A user error occurred while executing a tool call.'
+TOOL_ERROR_WITHOUT_DETAIL = openai.BadRequestError(
+    f'Error code: 400 - {GENERIC_TOOL_ERROR}',
+    body={'message': GENERIC_TOOL_ERROR, 'type': 'invalid_request_error', 'param': None, 'code': 'tool_user_error'},
+    response=httpx.Response(400, request=httpx.Request('POST', 'https://agent.example')))
+FAILED_WITHOUT_DETAIL = {'output': [], 'failed_call': {'name': None, 'error': GENERIC_TOOL_ERROR}}
+
+
+def test_ask_turns_a_tool_error_without_detail_into_a_response():
+    """Seen live on 2026-11-10: Foundry's tool_user_error no longer names the tool or repeats its text."""
+    assert checks.ask(_FakeClient({'business': TOOL_ERROR_WITHOUT_DETAIL}), checks.prompt('business')) == FAILED_WITHOUT_DETAIL
+
+
+def test_tool_error_without_detail_is_failed_whatever_the_roles():
+    """Seen live on 2026-11-10: with the connection stored as AgentUserImpersonation every request failed
+    this way, denied or not, so the outcome must not pass for either expectation."""
+    assert checks.classify(FAILED_WITHOUT_DETAIL, USER_B_ROLES, 'business') == 'failed'
+    assert checks.classify(FAILED_WITHOUT_DETAIL, USER_B_ROLES, 'sports') == 'failed'
+    assert checks.called_tools(FAILED_WITHOUT_DETAIL) == [('?', {})]
+
+
+def test_reply_shows_a_tool_error_without_detail():
+    assert checks.reply(FAILED_WITHOUT_DETAIL) == (
+        f'HTTP 400 from the agent endpoint: a tool call failed, and Foundry gave no detail: {GENERIC_TOOL_ERROR}')
+
+
 A_CLIENT = _FakeClient({'business': _response(_call('get_business_headlines', {}, output=ARTICLES))})
 B_CLIENT = _FakeClient({
     'business': _response(_call('get_business_headlines', {}, output=DENIAL_B)),
@@ -356,6 +381,7 @@ def test_run_matrix_records_each_case():
     records = checks.run_matrix({'A': A_CLIENT, 'B': B_CLIENT}, checks.base_cases('apim'), ROLES)
     assert [(r['user'], r['category'], r['outcome'], r['passed']) for r in records] == [
         ('A', 'business', 'articles', True), ('B', 'business', 'denied', True), ('B', 'sports', 'articles', True)]
+    assert [r['tool_result'] for r in records] == ['2 articles; first: "Final tonight"', DENIAL_B, '2 articles; first: "Final tonight"']
 
 
 def test_run_matrix_on_the_wrapper_expects_the_business_tool_hidden():
@@ -376,12 +402,24 @@ def test_run_matrix_records_a_failed_denied_call_as_denied():
     assert (records[0]['outcome'], records[0]['called'], records[0]['passed']) == ('denied', [('top_headlines', {})], True)
 
 
-def test_run_matrix_raises_on_a_required_failure():
+def test_tool_result_shows_the_denial_text_the_first_headline_the_error_or_the_reply():
+    denied = _response(_call('top_headlines', {'category': 'business'}, output=DENIAL_B))
+    assert checks.tool_result(denied, USER_B_ROLES, 'business', 'denied') == DENIAL_B
+    failed = {'output': [], 'failed_call': {'name': None, 'error': 'A user error occurred while executing a tool call.'}}
+    assert checks.tool_result(failed, USER_B_ROLES, 'business', 'failed') == 'A user error occurred while executing a tool call.'
+    hidden = _response(_list_tools('get_sports_headlines'), _message('Your access does not include business news.'))
+    assert checks.tool_result(hidden, USER_B_ROLES, 'business', 'hidden') == 'Your access does not include business news.'
+
+
+def test_tool_result_picks_the_call_for_the_category_and_cuts_long_text():
+    other = json.dumps({'articles': [{'title': 'Final tonight'}]})
+    asked = json.dumps({'articles': [{'title': 'x' * 80}]})
+    r = _response(_call('top_headlines', {'category': 'sports'}, output=other), _call('top_headlines', {'category': 'science'}, output=asked))
+    assert checks.tool_result(r, USER_B_ROLES, 'science', 'articles') == f'1 article; first: "{"x" * 47}..."'
+    plain = _response(_call('top_headlines', {'category': 'science'}, output='not json ' * 20))
+    assert checks.tool_result(plain, USER_B_ROLES, 'science', 'articles') == ('not json ' * 20)[:73] + '...'
+
+
+def test_run_matrix_raises_on_a_failure():
     with pytest.raises(AssertionError, match='science'):
         checks.run_matrix({'B': B_CLIENT}, [checks.science_case('denied')], ROLES)
-
-
-def test_run_matrix_reports_but_does_not_raise_when_not_required():
-    records = checks.run_matrix({'B': B_CLIENT}, [checks.science_case('denied', required=False)], ROLES)
-    assert records[0]['outcome'] == 'articles'
-    assert records[0]['passed'] is False

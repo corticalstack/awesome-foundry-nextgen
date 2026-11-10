@@ -25,7 +25,6 @@ class Case(NamedTuple):
     user: str            # 'A' (News.Read.All) or 'B' (sports, science, health)
     category: str
     expected: str        # an outcome from classify: 'articles', 'denied' or 'hidden'
-    required: bool = True
 
 
 def base_cases(track):
@@ -39,10 +38,10 @@ def base_cases(track):
     )
 
 
-def science_case(expected, required=True):
-    """User B asks for science. The expected outcome depends on whether, and how long ago,
-    08-05c-02 revoked News.Read.Science, so the notebook supplies it."""
-    return Case('B', 'science', expected, required)
+def science_case(expected):
+    """User B asks for science. The expected outcome depends on whether 08-05c-02 revoked
+    News.Read.Science, so the notebook supplies it."""
+    return Case('B', 'science', expected)
 
 
 def prompt(category):
@@ -53,7 +52,7 @@ def gnews_budget():
     """Upper bound on GNews requests for one run of 08-05c-02 and 08-05c-03. The free plan
     allows 100 a day. A denied call never reaches GNews."""
     article_cases = sum(c.expected == 'articles' for track in ('wrapper', 'apim') for c in base_cases(track))
-    return article_cases + 1 + 1  # + science on Track A, + the Track A re-check
+    return article_cases + 1  # + user B's science, on whichever track still allows it
 
 
 # ── Calling the agent as a user ──────────────────────────────────────────────
@@ -93,20 +92,26 @@ def ask(client, text, extra_body=None):
 
     - the model called a tool the MCP server did not list ('Tool ... not found on remote server');
       nothing reached the server: {'output': [], 'rejected_tool': name}
-    - a tool call returned a result with isError true ("An error occurred invoking '<name>': <text>");
-      the model never sees the text: {'output': [], 'failed_call': {'name': name, 'error': text}}
+    - a tool call returned a result with isError true; the model never sees the text:
+      {'output': [], 'failed_call': {'name': name, 'error': text}}. Until 2026-11-06 the message was
+      "An error occurred invoking '<name>': <text>". On 2026-11-10 it was the generic "A user error
+      occurred while executing a tool call.", with no name and no text: then name is None and
+      error is that message.
     """
     try:
         # warnings=False: the SDK does not model Foundry's extra fields on MCP items and warns on each dump.
         return client.responses.create(input=text, extra_body=extra_body).model_dump(warnings=False)
     except BadRequestError as e:
-        message = e.body.get('message', '') if isinstance(e.body, dict) else str(e)
+        body = e.body if isinstance(e.body, dict) else {}
+        message = body.get('message') or str(e)
         rejected = re.search(r'Tool (\S+) not found on remote server', message)
         if rejected:
             return {'output': [], 'rejected_tool': rejected.group(1)}
         failed = re.match(r"An error occurred invoking '([^']+)': (.*?)(?: Troubleshooting guide: \S+)?$", message, re.S)
         if failed:
             return {'output': [], 'failed_call': {'name': failed.group(1), 'error': failed.group(2)}}
+        if body.get('code') == 'tool_user_error':
+            return {'output': [], 'failed_call': {'name': None, 'error': message}}
         raise
 
 
@@ -126,6 +131,8 @@ def reply(response):
     """What the user sees: the agent's text, or the error Foundry answered with instead (see ask)."""
     if 'failed_call' in response:
         call = response['failed_call']
+        if call['name'] is None:
+            return f"HTTP 400 from the agent endpoint: a tool call failed, and Foundry gave no detail: {call['error']}"
         return f"HTTP 400 from the agent endpoint: an error occurred invoking '{call['name']}': {call['error']}"
     if 'rejected_tool' in response:
         return f"HTTP 400 from the agent endpoint: tool {response['rejected_tool']} is not on the MCP server"
@@ -138,8 +145,8 @@ def listed_tools(response):
 
 def called_tools(response):
     called = [(call['name'], json.loads(call['arguments'] or '{}')) for call in _items(response, 'mcp_call')]
-    if 'failed_call' in response:  # Foundry reports no arguments for it
-        called.append((response['failed_call']['name'], {}))
+    if 'failed_call' in response:  # Foundry reports no arguments for it, and since 2026-11-10 no name
+        called.append((response['failed_call']['name'] or '?', {}))
     return called
 
 
@@ -157,6 +164,8 @@ def classify(response, roles, category):
     'denied'       a tool call returned the denial text for the roles, in its result or in the
                    error Foundry failed the request with (with no tool call at all, the model's
                    reply quoting it counts too)
+    'failed'       Foundry failed the request with a tool error and gave no text (seen 2026-11-10),
+                   so a denial cannot be told from any other failure; never counts as a pass
     'articles'     a call for this category returned content
     'substituted'  content came only from calls for other categories
     'hidden'       the server listed no tool for this category and the agent called nothing,
@@ -167,8 +176,11 @@ def classify(response, roles, category):
     calls = _items(response, 'mcp_call')
     if any(denial in (c.get('output') or '') or denial in (c.get('error') or '') for c in calls):
         return 'denied'
-    if denial in response.get('failed_call', {}).get('error', ''):
+    failed = response.get('failed_call')
+    if failed and denial in failed['error']:
         return 'denied'
+    if failed and failed['name'] is None:
+        return 'failed'
     answered = [c for c in calls if c.get('output') and not c.get('error')]
     if any(_asks_for(c, category) for c in answered):
         return 'articles'
@@ -186,35 +198,86 @@ def classify(response, roles, category):
 
 gnews_calls = 0  # tool calls that returned articles in this kernel, against the daily quota
 
+# The matrix prints as a plain-text table, so it reads the same in a notebook, in a terminal and on GitHub.
+# Its last column shows what the tool call returned, as evidence for the outcome, cut to RESULT_WIDTH characters.
+RESULT_WIDTH = 76
+OUTCOMES_LEGEND = '''Outcomes
+  articles     a call for the requested category returned headlines
+  denied       a call came back with the denial text, which names the user's categories
+  hidden       the server listed no tool for the category, and the agent called nothing
+  substituted  the agent fetched another category instead; the matrix fails
+  failed       Foundry reported a tool error with no detail; the matrix fails
+  unknown      none of the above'''
+
+
+def _matrix_columns(cases):
+    """(header, width) per column; the last column is not padded."""
+    return (('User', 4), ('Asked for', max(9, *(len(c.category) for c in cases))), ('Tools listed', 12), ('Tool called', 22),
+            ('Outcome', 11), ('Expected', 9), ('Result', 6), ('Tool result', 0))
+
+
+def _matrix_row(columns, values):
+    return '  '.join(f'{v:>{w}}' if name == 'Tools listed' else f'{v:<{w}}'
+                     for (name, w), v in zip(columns, map(str, values))).rstrip()
+
+
+def _shorten(text, width=RESULT_WIDTH):
+    text = ' '.join(str(text).split())
+    return text if len(text) <= width else text[:width - 3] + '...'
+
+
+def tool_result(response, roles, category, outcome):
+    """What came back, in a few words, as evidence for the outcome: the denial text, the number of
+    articles and the first headline, the error Foundry reported, or the agent's reply."""
+    if outcome == 'denied':
+        return authz.denial_message(roles)
+    if outcome == 'failed':
+        return _shorten(response['failed_call']['error'])
+    answered = [c for c in _items(response, 'mcp_call') if c.get('output') and not c.get('error')]
+    if answered:
+        call = next((c for c in answered if _asks_for(c, category)), answered[0])
+        try:
+            articles = json.loads(call['output']).get('articles') or []
+        except (ValueError, TypeError, AttributeError):
+            articles = []
+        if articles:
+            return _shorten(f'{len(articles)} article{"s" if len(articles) != 1 else ""}; first: "{_shorten(articles[0].get("title", ""), 50)}"')
+        return _shorten(call['output'])
+    return _shorten(reply(response))
+
 
 def run_matrix(clients, cases, roles, extra_body=None):
-    """Send each case's prompt as its user and print one line per case.
+    """Send each case's prompt as its user and print one table row per case.
 
     clients and roles are keyed by user ('A', 'B'); roles are the user's current
     assignments, which set the denial text to look for. Raises AssertionError after the
-    last case if a required case did not get its expected outcome.
+    last case if a case did not get its expected outcome.
     """
     global gnews_calls
+    cases = list(cases)
     records = []
+    columns = _matrix_columns(cases)
+    print(_matrix_row(columns, [name for name, _ in columns]))
+    print(_matrix_row(columns, ['-' * (w or len(name)) for name, w in columns]))
     for case in cases:
-        text = prompt(case.category)
-        response = ask(clients[case.user], text, extra_body)
+        response = ask(clients[case.user], prompt(case.category), extra_body)
         outcome = classify(response, roles[case.user], case.category)
         called = called_tools(response)
         if outcome in ('articles', 'substituted'):
             gnews_calls += len(called)
         record = {
             'user': case.user, 'category': case.category, 'listed': listed_tools(response), 'called': called,
-            'outcome': outcome, 'expected': case.expected, 'required': case.required,
-            'passed': outcome == case.expected,
+            'outcome': outcome, 'expected': case.expected, 'passed': outcome == case.expected,
+            'tool_result': tool_result(response, roles[case.user], case.category, outcome),
         }
         records.append(record)
-        print(f'{case.user} | {text:<35} | listed {len(record["listed"]):>2} | '
-              f'called {", ".join(name for name, _ in called) or "-":<24} | {outcome:<11} | '
-              f'expected {case.expected:<8} | {"PASS" if record["passed"] else "FAIL"}'
-              f'{"" if case.required else " (not required)"}')
-    print(f'GNews calls so far: {gnews_calls} (budget for a full run: {gnews_budget()})')
-    failed = [r for r in records if r['required'] and not r['passed']]
+        print(_matrix_row(columns, [case.user, case.category, len(record['listed']), ', '.join(name for name, _ in called) or '-',
+                                    outcome, case.expected, 'PASS' if record['passed'] else 'FAIL', record['tool_result']]))
+    print()
+    print(OUTCOMES_LEGEND)
+    print()
+    print(f'GNews requests so far in this kernel: {gnews_calls} (budget for a full run of the lab: {gnews_budget()})')
+    failed = [r for r in records if not r['passed']]
     if failed:
         raise AssertionError('Unexpected outcome for: ' + ', '.join(f'{r["user"]} {r["category"]}' for r in failed))
     return records
