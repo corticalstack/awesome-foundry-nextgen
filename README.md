@@ -97,7 +97,6 @@ The agents lab is large enough to warrant its own breakdown:
 ├── assets/                               # Shared images, data, prompts
 ├── docs/screenshots/                     # Portal/architecture screenshots
 ├── docs/diagrams/                        # draw.io sources and their PNG exports
-├── docs/research/                        # Research write-ups behind a lab's design
 ├── scripts/                              # Notebook builders, helpers
 ├── .env.example                          # Variable template
 └── CONTRIBUTING.md                       # How to contribute
