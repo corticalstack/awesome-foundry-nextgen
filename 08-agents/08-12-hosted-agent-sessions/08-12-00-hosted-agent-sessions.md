@@ -47,7 +47,8 @@ Passing a session ID binds a call to a sandbox. It does not replay earlier messa
 
 Session states: `creating`, `active` (compute running), `idle` (compute released, files kept),
 `failed`, `deleting`, `deleted`, `expired`. `stop_session` releases the compute at once and keeps
-the files; `delete_session` removes both.
+the files, and returns HTTP 409 `session_already_stopped` for a session that is already stopped;
+`delete_session` removes both.
 
 ## Idle timeout
 
