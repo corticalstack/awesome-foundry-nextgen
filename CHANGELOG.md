@@ -7,10 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-12
+
+Two new agent labs, and the existing labs move off retiring models and the hosted-agent preview. Lab 08-05c gives each user of one agent their own access to a third-party MCP server through Entra user delegation, and lab 08-12 deploys a hosted agent from source code and manages its sessions. `o3-deep-research` and `gpt-4.1-mini` are replaced before they retire, and the 08-06 agent evaluators produce scores for the first time.
+
 ### Added
 
-- Lab 08-05c, per-user access to an MCP server you do not own ([#54](https://github.com/corticalstack/awesome-foundry-nextgen/issues/54)). One `news-desk-agent` serves two users whose news categories are Entra app roles; Foundry calls the GNews MCP server on each user's behalf (`AgentOnBehalfOfUser` under the `AgentBlueprint` endpoint scheme), and an enforcement point reads the user's roles from the token. Track A is a FastMCP wrapper on Container Apps that filters `tools/list` per user; Track B is an MCP pass-through API with an inbound policy on the core APIM gateway. Includes a measured role revocation and two diagrams in `docs/diagrams/`. 08-05c-04 gives user B's role back for another run of both tracks ([#57](https://github.com/corticalstack/awesome-foundry-nextgen/issues/57)).
+- Lab 08-05c, per-user access to an MCP server you do not own ([#54](https://github.com/corticalstack/awesome-foundry-nextgen/issues/54)). One `news-desk-agent` serves two users whose news categories are Entra app roles; Foundry calls the GNews MCP server on each user's behalf (`AgentOnBehalfOfUser` under the `AgentBlueprint` endpoint scheme), and an enforcement point reads the user's roles from the token.
+  - Track A (08-05c-02) is a FastMCP wrapper on Container Apps that filters `tools/list` per user and denies any other call.
+  - Track B (08-05c-03) is an MCP pass-through API with an inbound policy on the core APIM gateway.
+  - 08-05c-02 ends by revoking one of user B's roles, and 08-05c-04 gives it back for another run of both tracks ([#57](https://github.com/corticalstack/awesome-foundry-nextgen/issues/57)).
+  - `docs/diagrams/` has a diagram of each track and `08-05c-ticket-flow.html`, an animated walk-through of the sign-in, the on-behalf-of token exchange and the gateway's checks.
 - The MCP guide (08-05-00, section 6) lists Microsoft Entra user delegation as a sixth authentication method.
+- Lab 08-12, a hosted agent deployed from source code, and its sessions ([#50](https://github.com/corticalstack/awesome-foundry-nextgen/issues/50)). `contoso-rm-notes-agent` is a meeting-notes assistant on `project-alpha` whose four tools read and write under `$HOME`, so every session operation is visible.
+  - 08-12-01 zips the agent and registers it with `create_version_from_code`, with no container build. It compares `remote_build` (the service runs pip from `requirements.txt`) with `bundled` (wheels shipped in `packages/`), verifies the deployed zip by its SHA-256, and finds the idle timeouts the service accepts: 120 to 3,600 seconds.
+  - 08-12-02 covers platform-created and explicit sessions, `$HOME` isolation between sessions, file upload and read-back, idle timeout and resume, `stop_session` (keeps the files) and `delete_session` (removes them).
+
+### Changed
+
+- Lab 12 moves from `o3-deep-research`, which retires on 2026-11-19, to `gpt-5.6-sol`, deployed on the research hub as `deep-research` ([#46](https://github.com/corticalstack/awesome-foundry-nextgen/issues/46)). The research loop moves to the Responses API, because `gpt-5.6-sol` rejects reasoning together with function tools on Chat Completions. A new APIM policy on the `responses` operation routes the model to the research hub.
+- `CHAT_MODEL` moves from `gpt-4.1-mini`, now deprecated, to `gpt-5.4-mini`. Model names are updated across Bicep, notebooks, helpers and docs, including the model list on every APIM connection, which decides the models a prompt agent can reach. Lab 15 sends `max_completion_tokens`.
+- 08-06 evaluates the agent through the Responses API. 08-06-01 calls the agent that way, and 08-06-03 scores the stored responses with cloud evaluation (`builtin.intent_resolution`, `builtin.tool_call_accuracy`, `builtin.task_adherence`). This replaces `AIAgentConverter`, which failed on `azure-ai-projects` 2.x.
+- Hosted agents follow the general-availability API ([#48](https://github.com/corticalstack/awesome-foundry-nextgen/issues/48)):
+  - Capability host creation is removed from 08-03-01 and 08-10b-01, where it also waited 2 to 5 minutes, and from the 08-10, 08-10c and 08-11 Bicep.
+  - The `Foundry-Features: HostedAgents=V1Preview` header is removed from 08-10, 08-10b, 08-10c and 08-11.
+  - The docs say the agent runs in a per-session sandbox on Microsoft-managed compute, not on a capability host.
+- `scripts/scrub_notebooks.py` redacts the base64 subscription ID in Foundry portal links, and keeps each notebook's JSON layout when it rewrites one.
+
+### Fixed
+
+- 08-05 and 08-05b: the MCP Function apps stopped serving when a tenant policy turned off public network access on their storage accounts, while the apps still reported `Running` ([#51](https://github.com/corticalstack/awesome-foundry-nextgen/issues/51)). 08-05-01 and 08-05b-01 now tag the resource group and the storage account `SecurityControl=Ignore` at creation, and both lab overviews give the recovery steps.
+- 08-06-05 passed with every model-graded metric empty. The prompty evaluators now set `is_reasoning_model=True`.
+- 08-05-01 and 08-05b-01 reused the existing agent version, and its old model, when re-run with a new model. They now create a new version when the model changes.
+- 08-04: a failed Memory API call now fails its cell.
+- 08-10c: its committed outputs held 85 absolute local paths, now replaced with `<repo-root>`.
+- The 08-05 and 08-05b unit test suites now pass in one pytest session.
+
+### Removed
+
+- `docs/gpt-4o-to-gpt-5.1-migration-research.md`, the research notes behind 07-02. The notebook no longer links to them.
 
 ## [0.10.0] - 2026-10-07
 
