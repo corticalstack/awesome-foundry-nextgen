@@ -171,23 +171,6 @@ def test_agent_instructions_forbid_retrying_another_category():
     assert 'do not fetch another category instead' in ident.AGENT_INSTRUCTIONS  # Track A hides tools
 
 
-def test_agent_reference():
-    """extra_body that runs one version through the agent endpoint, which otherwise runs the latest."""
-    assert ident.agent_reference('news-desk-agent', 4) == {
-        'agent_reference': {'type': 'agent_reference', 'name': 'news-desk-agent', 'version': '4'}}
-
-
-def _version(number, *labels):
-    return {'version': str(number), 'definition': {'tools': [{'type': 'mcp', 'server_label': label} for label in labels]}}
-
-
-def test_latest_version_with_tool():
-    versions = [_version(5, 'news_mcp_apim'), _version(4, 'news_mcp_wrapper'), _version(3, 'news_mcp_wrapper'), _version(1)]
-    assert ident.latest_version_with_tool(versions, 'news_mcp_wrapper') == '4'
-    assert ident.latest_version_with_tool(versions, 'news_mcp_apim') == '5'
-    assert ident.latest_version_with_tool([_version(1)], 'news_mcp_wrapper') is None
-
-
 def test_mcp_tool():
     assert ident.mcp_tool('news_mcp_wrapper', 'https://ca.example/mcp', '/subscriptions/x/connections/news-mcp-wrapper') == {
         'type': 'mcp', 'server_label': 'news_mcp_wrapper', 'server_url': 'https://ca.example/mcp',
@@ -207,22 +190,12 @@ def test_delegated_connection_body_matches_learn():
     }}
 
 
-def test_user_impersonation_variant_differs_only_in_auth_type():
-    obo = ident.delegated_connection_body(TARGET, SUFFIX)
-    alt = ident.delegated_connection_body(TARGET, SUFFIX, 'AgentUserImpersonation')
-    assert alt['properties'].pop('authType') == 'AgentUserImpersonation'
-    obo['properties'].pop('authType')
-    assert alt == obo
-
-
-def test_connection_attempts_in_fixed_order():
+def test_connection_attempts_use_only_the_learn_auth_type():
+    """AgentUserImpersonation is stored by ARM but Foundry then fails every tool call (2026-11-10)."""
     assert ident.connection_attempts() == [
         ('AgentOnBehalfOfUser', '2025-04-01-preview'),
         ('AgentOnBehalfOfUser', '2025-10-01-preview'),
         ('AgentOnBehalfOfUser', '2026-09-15-preview'),
-        ('AgentUserImpersonation', '2025-04-01-preview'),
-        ('AgentUserImpersonation', '2025-10-01-preview'),
-        ('AgentUserImpersonation', '2026-09-15-preview'),
     ]
 
 

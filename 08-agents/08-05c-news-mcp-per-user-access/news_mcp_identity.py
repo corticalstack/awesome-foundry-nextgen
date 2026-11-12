@@ -21,9 +21,11 @@ AGENT_API_VERSION = 'v1'
 ENDPOINT_PATCH_CONTENT_TYPE = 'application/merge-patch+json'
 BLUEPRINT_API_VERSION = '2025-05-01'
 
-# No published contract covers a delegated RemoteTool connection, so 08-05c-01 tries these
-# in order and keeps the first that ARM accepts.
-CONNECTION_AUTH_TYPES = ('AgentOnBehalfOfUser', 'AgentUserImpersonation')
+# No published contract covers a delegated RemoteTool connection, so 08-05c-01 tries the Learn
+# shape at these api-versions in order and keeps the first that ARM accepts. It never falls back
+# to AgentUserImpersonation, the value the ARM schema lists: ARM stores it, but Foundry then fails
+# every tool call (observed 2026-11-10).
+CONNECTION_AUTH_TYPE = 'AgentOnBehalfOfUser'
 CONNECTION_API_VERSIONS = ('2025-04-01-preview', '2025-10-01-preview', '2026-09-15-preview')
 
 AGENT_NAME = 'news-desk-agent'
@@ -147,19 +149,6 @@ def endpoint_schemes_body(client_app_id):
     ]}}
 
 
-def agent_reference(name, version):
-    """extra_body that runs one version of an agent. Without it the agent endpoint runs the latest."""
-    return {'agent_reference': {'type': 'agent_reference', 'name': name, 'version': str(version)}}
-
-
-def latest_version_with_tool(versions, server_label):
-    """The newest version number, as a string, among agent versions (as dicts) that carry an MCP
-    tool with this server_label; None if none does."""
-    numbers = [int(v['version']) for v in versions
-               if any(t.get('server_label') == server_label for t in v['definition'].get('tools', []))]
-    return str(max(numbers)) if numbers else None
-
-
 def mcp_tool(server_label, server_url, connection_id):
     """An agent's MCP tool. The connection supplies the authentication; no approval step."""
     return {'type': 'mcp', 'server_label': server_label, 'server_url': server_url,
@@ -170,7 +159,7 @@ def mcp_tool(server_label, server_url, connection_id):
 
 
 def connection_attempts():
-    return [(auth_type, version) for auth_type in CONNECTION_AUTH_TYPES for version in CONNECTION_API_VERSIONS]
+    return [(CONNECTION_AUTH_TYPE, version) for version in CONNECTION_API_VERSIONS]
 
 
 def connection_url(subscription_id, suffix, name, api_version):
