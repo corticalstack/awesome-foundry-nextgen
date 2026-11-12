@@ -727,7 +727,7 @@ chapter(1, 'The trade, on behalf of user B', [3, 4], 22, a => {
   cap(a(.2), 'Foundry uses the blueprint\'s credential to sign in as the agent identity.');
   drawL(a(4.2), '#L3', .9); pop(a(4.2), '#b3');
   trip(a(4.2), '#pk-obo', '#mp3', 2.0);
-  cap(a(4.2), 'It sends <b class="t1">Ticket 1</b> to Entra ID and asks for a <code>News.Read</code> ticket for the same user.');
+  cap(a(4.2), 'It sends <b class="t1">Ticket 1</b> to Entra ID and asks for a <code>News.Read</code> ticket for the same user. This trade is the OAuth 2.0 on-behalf-of (OBO) flow.');
   show(a(6.6), '#eb-trade'); glow(a(6.6), '#c-ai-consent', a(10.5));
   cap(a(6.6), 'Entra ID checks <b class="t1">Ticket 1</b>, and that the agent identity has consent for <code>News.Read</code>.');
   glow(a(11), '#c-res-b', a(14.5)); trip(a(11.5), '#pk-roles', '#mpRoles', 1.8);
