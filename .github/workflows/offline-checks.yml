@@ -107,23 +107,29 @@ jobs:
           "pip install -q pytest && python -m pytest -q -p no:cacheprovider ${{ matrix.tests }}"
 
   function-apps:
-    name: Function app ${{ matrix.name }}
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: contoso-pmo-mcp
+          # 3.11 is the Functions runtime version both setup notebooks deploy with.
+          - name: Function app contoso-pmo-mcp
             dir: 08-agents/08-05-contoso-pmo-mcp/contoso-pmo-mcp
-          - name: private-banking-mcp
+            python: "3.11"
+          - name: Function app private-banking-mcp
             dir: 08-agents/08-05b-contoso-private-banking-mcp/private-banking-mcp
+            python: "3.11"
+          # The agent 08-12-01 deploys from source code, on the python_3_13 runtime.
+          - name: Code deploy 08-12
+            dir: 08-agents/08-12-hosted-agent-sessions/contoso-rm-notes-agent
+            python: "3.13"
     steps:
       - uses: actions/checkout@v7
 
-      # The Functions runtime version both setup notebooks deploy with.
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
 
       - name: Install
         run: pip install -r "${{ matrix.dir }}/requirements.txt"
