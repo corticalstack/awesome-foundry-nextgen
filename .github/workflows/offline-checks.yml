@@ -25,7 +25,7 @@ jobs:
       # Same uv version as the one that wrote uv.lock, so `uv lock --check`
       # compares resolutions rather than lockfile formats. Bump together.
       # setup-uv publishes full version tags only (no moving v10 tag).
-      - uses: astral-sh/setup-uv@v10.2.0
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           version: "0.11.7"
           python-version: "3.13"
