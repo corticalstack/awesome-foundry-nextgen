@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Action versions only. Python packages are tested as a whole set by the weekly
+  # dependency canary and upgraded together in one PR, not one package at a time.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

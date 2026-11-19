@@ -59,11 +59,12 @@ jobs:
       - name: SDK model keyword arguments match
         run: uv run --frozen python scripts/check_sdk_kwargs.py
 
-      # One pytest run per suite. The three suites also pass together in a single run.
+      # One pytest run per suite. The four suites also pass together in a single run.
       - name: Unit tests
         run: |
           for suite in 08-agents/08-05-contoso-pmo-mcp/tests \
                        08-agents/08-05b-contoso-private-banking-mcp/tests \
+                       08-agents/08-05c-news-mcp-per-user-access/tests \
                        11-foundry-iq-multi-agent/tests; do
             uv run --frozen pytest -q "$suite"
           done
@@ -90,6 +91,14 @@ jobs:
           - name: 08-11
             context: 08-agents/08-11-hosted-claude-agent-sdk-agent/src/claude-agent-sdk-invocations
             app: /app/user_agent
+          - name: 08-05c
+            context: 08-agents/08-05c-news-mcp-per-user-access/news-mcp-wrapper
+            app: /app
+            # Test files that need only the image's packages. The lab's other tests load
+            # modules from outside the image and run in the root-env job.
+            tests: >-
+              08-agents/08-05c-news-mcp-per-user-access/tests/test_authz.py
+              08-agents/08-05c-news-mcp-per-user-access/tests/test_wrapper.py
     steps:
       - uses: actions/checkout@v7
 
@@ -116,17 +125,33 @@ jobs:
           -v "$PWD/scripts:/ci:ro" --entrypoint python
           lab-image /ci/check_imports.py "${{ matrix.app }}"
 
+      # NEWS_MCP_WRAPPER_DIR tells the 08-05c tests where the image keeps the wrapper code.
+      - name: Tests inside the image
+        if: matrix.tests
+        run: >-
+          docker run --rm --platform linux/amd64
+          -v "$PWD:/repo:ro" -w /repo -e NEWS_MCP_WRAPPER_DIR="${{ matrix.app }}"
+          --entrypoint sh lab-image -c
+          "pip install -q pytest && python -m pytest -q -p no:cacheprovider ${{ matrix.tests }}"
+
   function-apps:
-    name: Function app ${{ matrix.name }}
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: contoso-pmo-mcp
+          # 3.11 is the Functions runtime version both setup notebooks deploy with.
+          - name: Function app contoso-pmo-mcp
             dir: 08-agents/08-05-contoso-pmo-mcp/contoso-pmo-mcp
-          - name: private-banking-mcp
+            python: "3.11"
+          - name: Function app private-banking-mcp
             dir: 08-agents/08-05b-contoso-private-banking-mcp/private-banking-mcp
+            python: "3.11"
+          # The agent 08-12-01 deploys from source code, on the python_3_13 runtime.
+          - name: Code deploy 08-12
+            dir: 08-agents/08-12-hosted-agent-sessions/contoso-rm-notes-agent
+            python: "3.13"
     steps:
       - uses: actions/checkout@v7
 
@@ -141,10 +166,9 @@ jobs:
           echo "$cmd --upgrade"
           $cmd --upgrade
 
-      # The Functions runtime version both setup notebooks deploy with.
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
 
       - name: Install
         run: pip install -r "${{ matrix.dir }}/requirements.txt"
@@ -191,7 +215,7 @@ jobs:
             echo "|---|---|"
             echo "| Notebooks and helpers | $ROOT |"
             echo "| Container images | $CONTAINERS |"
-            echo "| Function apps | $FUNCTIONS |"
+            echo "| Function apps and 08-12 code deploy | $FUNCTIONS |"
             echo
             cat lock-diff.md 2>/dev/null || echo "(version diff not available)"
             echo
@@ -200,5 +224,6 @@ jobs:
           if [ -n "$number" ]; then
             gh issue comment "$number" --body-file body.md
           else
-            gh issue create --title "$title" --body-file body.md
+            gh issue create --title "$title" --body-file body.md \
+              --label weekly-check --assignee "$GITHUB_REPOSITORY_OWNER"
           fi
