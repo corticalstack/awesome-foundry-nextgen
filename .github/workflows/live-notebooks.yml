@@ -161,7 +161,8 @@ jobs:
           if [ -n "$number" ]; then
             gh issue comment "$number" --body-file body.md
           else
-            gh issue create --title "$title" --body-file body.md
+            gh issue create --title "$title" --body-file body.md \
+              --label weekly-check --assignee "$GITHUB_REPOSITORY_OWNER"
           fi
 
       - name: Fail the job when a notebook failed
