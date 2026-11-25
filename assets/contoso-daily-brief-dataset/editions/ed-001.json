@@ -1,0 +1,31 @@
+{
+  "edition_id": "ed-001",
+  "title": "Northwind buys into a port, Relecloud heats homes",
+  "published": "2026-11-16",
+  "articles": [
+    {
+      "article_id": "ed-001-01",
+      "category": "Business",
+      "headline": "Northwind Traders buys 40% of the Alderbrook container terminal",
+      "summary": "Northwind Traders will pay 310 million euros for a 40% stake in the operator of the Alderbrook container terminal. The food distributor says direct berth access will cut two days from deliveries to its northern warehouses. The deal is due to close in the first quarter of 2027, subject to competition review."
+    },
+    {
+      "article_id": "ed-001-02",
+      "category": "Technology",
+      "headline": "Relecloud's liquid-cooled server hall now heats 2,400 homes",
+      "summary": "Relecloud has connected its newest server hall to the local district heating network, sending waste heat to 2,400 homes. In a six-month pilot the liquid cooling system used 38% less electricity than the air-cooled hall next door. The company plans to convert three more halls in 2027."
+    },
+    {
+      "article_id": "ed-001-03",
+      "category": "Science",
+      "headline": "Trey Research finds a kelp forest recovering twice as fast as predicted",
+      "summary": "A Trey Research survey of 12 coastal sites found kelp canopy cover rose from 18% to 41% in three years after divers removed sea urchins. Models had predicted the recovery would take six years. The team will repeat the survey each spring to see whether the gains hold."
+    },
+    {
+      "article_id": "ed-001-04",
+      "category": "Sport",
+      "headline": "Alpine Ski House wins the opening relay of the Tailspin Cup",
+      "summary": "The Alpine Ski House team won the mixed relay that opened the Tailspin Cup season, finishing 0.8 seconds ahead of the Adventure Works squad. It is the team's first relay win in four seasons. The next round is a sprint on Saturday 21 November."
+    }
+  ]
+}

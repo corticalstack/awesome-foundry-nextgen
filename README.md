@@ -89,6 +89,7 @@ The agents lab is large enough to warrant its own breakdown:
 | 08-10c | [Runtime model selection and telemetry](08-agents/08-10c-hosted-copilot-sdk-agent-runtime-model/) | Switch a hosted agent's model and reasoning effort mid-conversation from a chat UI without a new version or redeploy, and see what logging and telemetry a hosted agent produces out of the box. |
 | 08-11 | [Hosted Claude Agent SDK agent](08-agents/08-11-hosted-claude-agent-sdk-agent/) | Deploy a Claude Agent SDK agent as a Foundry hosted agent, calling a Foundry-deployed Claude model over the Anthropic Messages API with Managed Identity, and run the M365 license-analytics demo. |
 | 08-12 | [Hosted agent from source code and sessions](08-agents/08-12-hosted-agent-sessions/) | Deploy a hosted agent from a zip of source code (remote build and bundled dependencies, no container registry), then work its sessions: isolation, file upload, idle timeout, stop and delete. |
+| 08-13 | [Long-running conversations for a newsletter](08-agents/08-13-newsletter-conversations/) | One Foundry conversation per newsletter edition, with the edition's articles in the conversation and the edition id in its metadata, then list, find, read back and resume the conversations from a fresh kernel. Runs on a prompt agent and again on a hosted agent deployed from source. |
 
 ## Repository layout
 

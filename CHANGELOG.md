@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Lab 08-13, long-running conversations for a newsletter. One Foundry conversation per edition of the fictional Contoso Daily Brief contains the edition's articles and has the edition id in its metadata.
+  - 08-13-01 creates `newsletter-agent`, a prompt agent with no tools, and one conversation per edition, then asks a first question in each.
+  - 08-13-02 starts from a fresh kernel with no stored ids: it lists the conversations on the agent endpoint, finds one by edition id, reads its history back, resumes it by conversation id and updates its metadata.
+  - 08-13-03 repeats the flow on `newsletter-hosted-agent`, a hosted agent deployed from source with `create_version_from_code`: the conversation calls are the same, and the edition seeded into the conversation reaches the model through the agent's own code.
+  - The five editions are in `assets/contoso-daily-brief-dataset/`, so the lab needs no news API key.
+
 ## [0.11.0] - 2026-11-12
 
 Two new agent labs, and the existing labs move off retiring models and the hosted-agent preview. Lab 08-05c gives each user of one agent their own access to a third-party MCP server through Entra user delegation, and lab 08-12 deploys a hosted agent from source code and manages its sessions. `o3-deep-research` and `gpt-4.1-mini` are replaced before they retire, and the 08-06 agent evaluators produce scores for the first time.
