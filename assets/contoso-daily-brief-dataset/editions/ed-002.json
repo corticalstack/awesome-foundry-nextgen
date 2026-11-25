@@ -1,0 +1,31 @@
+{
+  "edition_id": "ed-002",
+  "title": "Woodgrove lifts its savings rate, Fabrikam tests a sodium-ion van",
+  "published": "2026-11-17",
+  "articles": [
+    {
+      "article_id": "ed-002-01",
+      "category": "Business",
+      "headline": "Woodgrove Bank raises its easy-access savings rate to 2.9%",
+      "summary": "Woodgrove Bank will lift its easy-access savings rate from 2.5% to 2.9% on 1 December and leave its fixed mortgage rates unchanged. The bank says deposits fell 3% over the summer as customers moved money to rivals. Analysts at First Up Consultants expect at least two competitors to follow before the end of the year."
+    },
+    {
+      "article_id": "ed-002-02",
+      "category": "Technology",
+      "headline": "Fabrikam starts road trials of a sodium-ion delivery van",
+      "summary": "Fabrikam has put 20 sodium-ion delivery vans on the road, with Wide World Importers as its first fleet customer. Each van has a range of 260 km and charges to 80% in 18 minutes. Fabrikam says the battery pack costs about a fifth less than its lithium equivalent."
+    },
+    {
+      "article_id": "ed-002-03",
+      "category": "Health",
+      "headline": "Lamna Healthcare trial: a weekly patch works as well as daily tablets",
+      "summary": "A 12-month Lamna Healthcare trial with 1,200 participants found that a weekly blood pressure patch controlled readings as well as daily tablets. People on the patch kept to their treatment 91% of the time, against 74% for tablets. Lamna will submit the results to regulators in early 2027."
+    },
+    {
+      "article_id": "ed-002-04",
+      "category": "Sport",
+      "headline": "Adventure Works to sponsor the national women's cycling tour for three seasons",
+      "summary": "Adventure Works will be the title sponsor of the national women's cycling tour for three seasons from 2027. The race grows from five stages to eight, and prize money doubles to 400,000 euros. Organisers say the extra stages add two mountain finishes."
+    }
+  ]
+}

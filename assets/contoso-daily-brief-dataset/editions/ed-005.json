@@ -1,0 +1,31 @@
+{
+  "edition_id": "ed-005",
+  "title": "Blue Yonder sells rail and air on one ticket, Trey Research drills into old ice",
+  "published": "2026-11-20",
+  "articles": [
+    {
+      "article_id": "ed-005-01",
+      "category": "Business",
+      "headline": "Blue Yonder Airlines and Margie's Travel to sell combined rail and air tickets",
+      "summary": "Blue Yonder Airlines will sell single tickets that combine a train to the airport with a flight, in a partnership with Margie's Travel. The scheme starts at 14 stations in March 2027. If a late train makes a passenger miss the flight, the airline rebooks them at no charge."
+    },
+    {
+      "article_id": "ed-005-02",
+      "category": "Technology",
+      "headline": "Consolidated Messenger tests delivery robots on two campuses",
+      "summary": "Consolidated Messenger has started a three-month test of 30 pavement delivery robots at Bellows College and the Graphic Design Institute. Each robot carries up to 15 kg and travels at walking pace. Students collect their parcels with a code sent to their phone."
+    },
+    {
+      "article_id": "ed-005-03",
+      "category": "Science",
+      "headline": "Trey Research recovers an ice core that reaches back 1.2 million years",
+      "summary": "A Trey Research team has recovered a 2,700 metre ice core holding air trapped up to 1.2 million years ago. The core should show how carbon dioxide levels changed when ice ages shifted from a 41,000-year rhythm to a 100,000-year one. The first results are due in late 2027."
+    },
+    {
+      "article_id": "ed-005-04",
+      "category": "Sport",
+      "headline": "Wingtip Toys becomes shirt sponsor of Southridge United",
+      "summary": "Wingtip Toys has signed a two-season shirt sponsorship with Southridge United worth 9 million euros. As part of the deal the football club will give 5,000 match tickets a season to local schools. The new shirt goes on sale on 1 December."
+    }
+  ]
+}

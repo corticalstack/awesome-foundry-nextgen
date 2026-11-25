@@ -1,0 +1,31 @@
+{
+  "edition_id": "ed-003",
+  "title": "Fourth Coffee drops cash, Proseware fits a language model on a phone",
+  "published": "2026-11-18",
+  "articles": [
+    {
+      "article_id": "ed-003-01",
+      "category": "Business",
+      "headline": "Fourth Coffee to stop taking cash in 120 city-centre shops",
+      "summary": "Fourth Coffee will stop accepting cash in 120 city-centre shops from January, about a quarter of its 470 shops. Cash made up 6% of sales in those shops last year. The other 350 shops will keep taking cash, and the chain will review the change after six months."
+    },
+    {
+      "article_id": "ed-003-02",
+      "category": "Technology",
+      "headline": "Proseware releases a language model that runs on a phone with no network",
+      "summary": "Proseware has released a language model small enough to run on a mid-range phone with no network connection. The model takes up 1.8 GB and answers at about 20 words a second in the company's tests. Litware will ship it in its note-taking app in December."
+    },
+    {
+      "article_id": "ed-003-03",
+      "category": "Science",
+      "headline": "Bellows College astronomers confirm the path of a comet due in December",
+      "summary": "Astronomers at Bellows College have confirmed the orbit of a comet first spotted in September. It passes closest to the Sun on 9 December and should be visible through binoculars in the evening sky for about two weeks. The team says it will not return for roughly 4,000 years."
+    },
+    {
+      "article_id": "ed-003-04",
+      "category": "World",
+      "headline": "City Power & Light restores supply to 85,000 homes after the weekend storm",
+      "summary": "City Power & Light has reconnected the last of the 85,000 homes that lost electricity in the storm of 14 and 15 November. Crews replaced 310 poles and 42 km of line in three days. The utility will pay 75 euros to each household that was without power for more than 48 hours."
+    }
+  ]
+}

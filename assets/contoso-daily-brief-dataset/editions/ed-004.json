@@ -1,0 +1,31 @@
+{
+  "edition_id": "ed-004",
+  "title": "Regulator reviews Northwind's port deal, VanArsdel recalls dryers",
+  "published": "2026-11-19",
+  "articles": [
+    {
+      "article_id": "ed-004-01",
+      "category": "Business",
+      "headline": "Competition authority opens a review of Northwind's terminal deal",
+      "summary": "The competition authority has opened a first-stage review of Northwind Traders' purchase of 40% of the Alderbrook container terminal. Rival distributors have until 11 December to submit comments. Northwind says it still expects the 310 million euro deal to close in the first quarter of 2027."
+    },
+    {
+      "article_id": "ed-004-02",
+      "category": "Technology",
+      "headline": "VanArsdel recalls 60,000 tumble dryers over a faulty door sensor",
+      "summary": "VanArsdel is recalling 60,000 tumble dryers sold between March and September 2026 because a faulty door sensor can let the drum turn with the door open. No injuries have been reported. Owners can book a free repair, which takes about 30 minutes."
+    },
+    {
+      "article_id": "ed-004-03",
+      "category": "Health",
+      "headline": "Humongous Insurance to cover physiotherapy by video call",
+      "summary": "From 1 January, Humongous Insurance will cover up to 10 physiotherapy sessions a year by video call on its standard plans. A pilot with 4,000 members found recovery times matched in-person treatment for back and knee complaints. Members in rural areas used the service three times as often as those in cities."
+    },
+    {
+      "article_id": "ed-004-04",
+      "category": "Sport",
+      "headline": "Tailspin Cup moves Saturday's sprint to a higher course for lack of snow",
+      "summary": "Organisers have moved Saturday's Tailspin Cup sprint 600 metres higher up the valley because the original course has too little snow. The start time stays at 10:30. Alpine Ski House, who lead the standings after the opening relay, say the steeper course suits their team."
+    }
+  ]
+}
