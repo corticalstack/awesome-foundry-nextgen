@@ -152,6 +152,10 @@ jobs:
           - name: Code deploy 08-12
             dir: 08-agents/08-12-hosted-agent-sessions/contoso-rm-notes-agent
             python: "3.13"
+          # The agent 08-13-03 deploys from source code, on the same runtime.
+          - name: Code deploy 08-13
+            dir: 08-agents/08-13-newsletter-conversations/newsletter-hosted-agent
+            python: "3.13"
     steps:
       - uses: actions/checkout@v7
 
@@ -215,7 +219,7 @@ jobs:
             echo "|---|---|"
             echo "| Notebooks and helpers | $ROOT |"
             echo "| Container images | $CONTAINERS |"
-            echo "| Function apps and 08-12 code deploy | $FUNCTIONS |"
+            echo "| Function apps and the 08-12 and 08-13 code deploys | $FUNCTIONS |"
             echo
             cat lock-diff.md 2>/dev/null || echo "(version diff not available)"
             echo
